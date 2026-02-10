@@ -2,7 +2,6 @@ let currentPage = 1;
 const totalPages = 68;
 const MAX_PAGES_VISIBLE = 7;
 
-
 const misLibrosReales = [
     { id: 1, titulo: "Sister brothers", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
     { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 356, img: "../Imagenes/Libro2.png" },
@@ -85,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 <div class="product-actions" style="display: flex; gap: 10px; margin-top: 10px;">
                     <button class="btn-primary" onclick="activarCargaIndividual(${libro.id})" style="flex: 1; background-color: #5d4037; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Añadir</button>
-                    <button class="btn-secondary" onclick="window.location.href='CargandoArticulo.html'" style="flex: 1; background-color: transparent; border: 2px solid #5d4037; color: #5d4037; padding: 8px; border-radius: 5px; cursor: pointer;">Comprar</button>
+                    <button class="btn-secondary" onclick="window.location.href='CargandoCompra.html'" style="flex: 1; background-color: transparent; border: 2px solid #5d4037; color: #5d4037; padding: 8px; border-radius: 5px; cursor: pointer;">Comprar</button>
                 </div>
             </div>`;
     }
