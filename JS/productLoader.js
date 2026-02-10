@@ -2,9 +2,9 @@ let currentPage = 1;
 const totalPages = 68;
 const MAX_PAGES_VISIBLE = 7;
 
-
+// Tus 8 libros reales con sus títulos y precios
 const misLibrosReales = [
-    { id: 1, titulo: "sister brothers", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
+    { id: 1, titulo: "Sister brothers", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
     { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 356, img: "../Imagenes/Libro2.png" },
     { id: 3, titulo: "Diario de ana frank", autor: "Stephen King", precio: 456, img: "../Imagenes/Libro3.png" },
     { id: 4, titulo: "Julio verde", autor: "Adam Nevill", precio: 764, img: "../Imagenes/Libro4.png" },
@@ -32,13 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (page < 1 || page > totalPages) return;
         currentPage = page;
 
-    
+        // Limpiamos y mostramos el mensaje de carga
         productsContainer.innerHTML = `
             <div class="loading-message" style="grid-column: 1/-1; text-align: center; padding: 50px;">
                 <h2 style="color: #5d4037;">Cargando Catálogo...</h2>
                 <p>Página ${page} de ${totalPages}</p>
             </div>`;
 
+        // Esperamos un momento para que se vea la transición
         setTimeout(() => {
             productsContainer.innerHTML = generateProducts(page);
             updatePaginationView();
@@ -48,12 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateProducts(page) {
         let html = '';
         
+        // Página 1: Usamos tus libros reales con sus nombres
         if (page === 1) {
             misLibrosReales.forEach((libro, index) => {
                 html += crearHtmlTarjeta(libro, index);
             });
         } 
-        
+        // Otras páginas: Simulamos el contenido usando tus portadas
         else {
             for (let i = 0; i < 8; i++) {
                 const mockId = ((page - 1) * 8) + i + 1;
@@ -70,9 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function crearHtmlTarjeta(libro, index) {
-        
+        // El secreto de la animación está en el "animation-delay" (${index * 0.1}s)
         return `
-            <div class="book-product-card" style="opacity: 0; animation: entradaCascada 0.6s ease forwards ${index * 0.1}s; background-color: rgba(240, 231, 203, 0.9); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+            <div class="book-product-card" style="opacity: 0; animation: entradaCascada 0.6s ease forwards ${index * 0.1}s; background-color: rgba(240, 231, 203, 0.9); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; position: relative;">
                 <span class="book-tag-grid" style="background-color: #fbc02d; color: white; padding: 3px 10px; border-radius: 8px 0; position: absolute; top: 0; left: 0; font-size: 0.8em;">Oferta</span>
                 <img src="${libro.img}" alt="${libro.titulo}" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 4px;"> 
                 <p class="book-title-grid" style="font-weight: bold; margin: 10px 0; color: #5d4037;">${libro.titulo}</p>
@@ -87,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
+    // --- MÓDULO DE PAGINACIÓN ---
     function updatePaginationView() {
         const pages = calculatePaginationRange();
         let html = '';
