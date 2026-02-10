@@ -1,177 +1,136 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
-
     <title>Servidor en mantenimiento</title>
-
+    <link rel="icon" type="image/png" href="Imagenes/logo.png">
     <style>
+        /* Mantenemos tu estilo original pero agregamos el fondo */
+        body { 
+            font-family: sans-serif; 
+            text-align: center; 
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #5d4037;
+            position: relative;
+            overflow: hidden;
+        }
 
-        body { font-family: sans-serif; text-align: center; background-color: #f4ece2; color: #5d4037; }
+        /* Capa de fondo con la imagen 5.jpg */
+        .background-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('Imagenes/Carrusel/5.jpg'); 
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.6) blur(2px);
+            z-index: -1;
+        }
+
+        /* Contenedor para que el juego se vea claro sobre el fondo */
+        .content-box {
+            background-color: rgba(244, 236, 226, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+
+        .logo-img {
+            width: 80px;
+            margin-bottom: 10px;
+        }
 
         .tablero { display: grid; grid-template-columns: repeat(3, 100px); gap: 5px; justify-content: center; margin-top: 20px; }
-
         .celda { width: 100px; height: 100px; background: #fff; border: 2px solid #8d6e63; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-
         #status { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; color: #8d6e63; }
-
         .btn-reiniciar { margin-top: 20px; padding: 10px 20px; background-color: #5d4037; color: white; border: none; border-radius: 5px; cursor: pointer; display: none; }
-
     </style>
-
 </head>
-
 <body>
+    <div class="background-overlay"></div>
 
-    <h1>¡Ups! Servidor en mantenimiento</h1>
+    <div class="content-box">
+        <img src="Imagenes/logo.png" alt="Logo" class="logo-img">
+        
+        <h1>¡Ups! Servidor en mantenimiento</h1>
+        <p>Estamos trabajando para mejorar tu experiencia. Mientras tanto, ¿qué tal una partida de Gato?</p>
+        
+        <div id="status">Turno de: X</div>
+        <div class="tablero" id="tablero">
+            <div class="celda" onclick="jugar(0)"></div>
+            <div class="celda" onclick="jugar(1)"></div>
+            <div class="celda" onclick="jugar(2)"></div>
+            <div class="celda" onclick="jugar(3)"></div>
+            <div class="celda" onclick="jugar(4)"></div>
+            <div class="celda" onclick="jugar(5)"></div>
+            <div class="celda" onclick="jugar(6)"></div>
+            <div class="celda" onclick="jugar(7)"></div>
+            <div class="celda" onclick="jugar(8)"></div>
+        </div>
 
-    <p>Estamos trabajando para mejorar tu experiencia. Mientras tanto, ¿qué tal una partida de Gato?</p>
-
-   
-
-    <div id="status">Turno de: X</div>
-
-    <div class="tablero" id="tablero">
-
-        <div class="celda" onclick="jugar(0)"></div>
-
-        <div class="celda" onclick="jugar(1)"></div>
-
-        <div class="celda" onclick="jugar(2)"></div>
-
-        <div class="celda" onclick="jugar(3)"></div>
-
-        <div class="celda" onclick="jugar(4)"></div>
-
-        <div class="celda" onclick="jugar(5)"></div>
-
-        <div class="celda" onclick="jugar(6)"></div>
-
-        <div class="celda" onclick="jugar(7)"></div>
-
-        <div class="celda" onclick="jugar(8)"></div>
-
+        <button id="reset-btn" class="btn-reiniciar" onclick="reiniciar()">Jugar de nuevo</button>
+        <br><br>
+        <a href="index.html" style="color: #8d6e63; font-weight: bold; text-decoration: none;">Volver al inicio</a>
     </div>
 
-
-
-    <button id="reset-btn" class="btn-reiniciar" onclick="reiniciar()">Jugar de nuevo</button>
-
-
-
     <script>
-
         let turno = 'X';
-
         let estado = ["", "", "", "", "", "", "", "", ""];
-
         let juegoActivo = true;
 
-
-
         const combinacionesGanadoras = [
-
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Filas
-
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columnas
-
-            [0, 4, 8], [2, 4, 6]             // Diagonales
-
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
         ];
 
-
-
         function jugar(i) {
-
             if (estado[i] === "" && juegoActivo) {
-
                 estado[i] = turno;
-
                 document.getElementsByClassName('celda')[i].innerText = turno;
-
-               
-
+                
                 if (verificarGanador()) {
-
                     document.getElementById('status').innerText = "¡Ganó la " + turno + "!";
-
                     juegoActivo = false;
-
                     document.getElementById('reset-btn').style.display = 'inline-block';
-
                     return;
-
                 }
-
-
 
                 if (!estado.includes("")) {
-
                     document.getElementById('status').innerText = "¡Empate!";
-
                     juegoActivo = false;
-
                     document.getElementById('reset-btn').style.display = 'inline-block';
-
                     return;
-
                 }
 
-
-
                 turno = (turno === 'X') ? 'O' : 'X';
-
                 document.getElementById('status').innerText = "Turno de: " + turno;
-
             }
-
         }
-
-
 
         function verificarGanador() {
-
             return combinacionesGanadoras.some(combinacion => {
-
                 return combinacion.every(indice => estado[indice] === turno);
-
             });
-
         }
-
-
 
         function reiniciar() {
-
             turno = 'X';
-
             estado = ["", "", "", "", "", "", "", "", ""];
-
             juegoActivo = true;
-
             document.getElementById('status').innerText = "Turno de: X";
-
             document.getElementById('reset-btn').style.display = 'none';
-
             const celdas = document.getElementsByClassName('celda');
-
             for (let i = 0; i < celdas.length; i++) {
-
                 celdas[i].innerText = "";
-
             }
-
         }
-
     </script>
-
-    <br><br>
-
-    <a href="index.html" style="color: #8d6e63;">Volver al inicio</a>
-
 </body>
-
 </html>
