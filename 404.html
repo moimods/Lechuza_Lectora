@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Servidor en mantenimiento - La Lechuza Lectora</title>
+    <link rel="icon" type="image/png" href="Imagenes/logo.png">
+    
     <style>
-        
         body { 
             font-family: 'Roboto', sans-serif; 
             text-align: center; 
@@ -20,91 +21,95 @@
             position: relative;
         }
 
-        
+        /* 2. CORRECCIÓN DE LA RUTA DEL FONDO */
         .background {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('Imagenes/Carrusel/5.jpg'); 
             background-size: cover;
             background-position: center;
-            filter: brightness(0.5) blur(3px); 
+            filter: brightness(0.5) blur(3px);
             z-index: -1;
         }
 
-        
         .game-card {
-            background-color: rgba(244, 236, 226, 0.9); 
+            background-color: rgba(244, 236, 226, 0.95);
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            max-width: 450px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
+        /* 3. CORRECCIÓN DEL TAMAÑO DEL LOGO */
         .logo-error {
-            width: 80px;
+            width: 100px; /* Un poco más grande para que luzca */
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
-        h1 { margin: 10px 0; font-size: 1.8em; }
+        h1 { margin: 10px 0; font-size: 2em; color: #5d4037; }
+        p { font-size: 1em; line-height: 1.4; margin-bottom: 20px; }
 
         .tablero { 
             display: grid; 
-            grid-template-columns: repeat(3, 100px); 
-            gap: 8px; 
-            justify-content: center; 
-            margin-top: 20px; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            margin: 20px auto;
+            max-width: 300px;
         }
 
         .celda { 
-            width: 100px; 
-            height: 100px; 
+            aspect-ratio: 1 / 1;
             background: #fff; 
             border: 2px solid #8d6e63; 
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 2.5rem; 
+            font-weight: bold;
             display: flex; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
-            transition: background 0.3s;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .celda:hover { background: #fdf5e6; }
+        .celda:hover { transform: scale(1.05); background: #fdf5e6; }
 
-        #status { font-size: 1.3rem; font-weight: bold; margin: 15px 0; color: #5d4037; }
+        #status { font-size: 1.4rem; font-weight: bold; margin: 15px 0; color: #5d4037; }
 
         .btn-reiniciar { 
-            margin-top: 20px; 
+            margin-top: 15px; 
             padding: 12px 25px; 
             background-color: #5d4037; 
             color: white; 
             border: none; 
-            border-radius: 5px; 
+            border-radius: 8px; 
             cursor: pointer; 
             font-weight: bold;
             display: none; 
         }
-
-        .btn-reiniciar:hover { background-color: #8d6e63; }
 
         .back-link { 
             display: block; 
             margin-top: 25px; 
             color: #5d4037; 
             text-decoration: none; 
-            font-weight: bold; 
+            font-weight: bold;
+            font-size: 0.9em;
         }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="background"></div>
 
     <div class="game-card">
-        <img src="Imagenes/logo.png" alt="Logo" class="logo-error">
+        <img src="Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo-error">
         
         <h1>¡Mantenimiento!</h1>
-        <p>Estamos mejorando tu experiencia. Mientras esperas, ¡echa una partida!</p>
+        <p>Estamos mejorando tu portal literario. Mientras esperas, ¿podrás ganarle a la X?</p>
         
         <div id="status">Turno de: X</div>
         
@@ -139,10 +144,11 @@
         function jugar(i) {
             if (estado[i] === "" && juegoActivo) {
                 estado[i] = turno;
-                document.getElementsByClassName('celda')[i].innerText = turno;
+                const celda = document.getElementsByClassName('celda')[i];
+                celda.innerText = turno;
                 
-                
-                document.getElementsByClassName('celda')[i].style.color = (turno === 'X') ? '#d32f2f' : '#fbc02d';
+                // Colores de tu marca: Café para X, Dorado para O
+                celda.style.color = (turno === 'X') ? '#5d4037' : '#fbc02d';
 
                 if (verificarGanador()) {
                     document.getElementById('status').innerText = "¡Ganó la " + turno + "!";
