@@ -814,10 +814,14 @@ a { text-decoration: none; color: inherit; }
     margin-top: 5px;
 }
 
-.product-grid {
+
+#products-container.product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 25px; 
+    width: 100%;
+    align-items: start;
+    margin-bottom: 50px; 
 }
 
 .book-product-card {
@@ -3233,4 +3237,14 @@ a { text-decoration: none; color: inherit; }
 
 .book-product-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.catalog-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh; 
+}
+
+.catalog-container {
+    flex-grow: 1; 
 }

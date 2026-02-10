@@ -6,10 +6,8 @@
     <title>La Lechuza Lectora - Catálogo</title>
 
     <link rel="stylesheet" href="../Estilos/Estilo1.css"> 
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
-
     <script src="../JS/loginRedirect.js"></script> 
     <script src="../JS/productLoader.js"></script>
     <script src="../JS/filterSidebar.js"></script>
@@ -18,10 +16,8 @@
 </head>
 <body>
 
-
     <header class="navbar detail-navbar">
         <div class="logo-container">
-
             <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
@@ -39,24 +35,19 @@
         </nav>
         
         <div class="auth-actions user-actions">
-
             <button class="icon-button"><i class="fa-solid fa-house"></i></button>
-
             <button class="btn-primary">Iniciar Sesión</button>
         </div>
     </header>
 
-
     <main class="main-content catalog-main">
         <div class="background-overlay" style="filter: brightness(0.8);"></div>
         
-
         <button id="filter-toggle" class="btn-filter-toggle">
             <i class="fa-solid fa-filter"></i> Filtros
         </button>
 
         <div class="catalog-container">
-
             <aside class="filter-sidebar" id="filter-sidebar">
                 <div class="sidebar-header">
                     <h2>Filtros</h2>
@@ -65,7 +56,6 @@
                     </button>
                 </div>
                 
-
                 <div class="filter-section filter-genres">
                     <h3>Género Principal</h3>
                     <div class="filter-options">
@@ -88,7 +78,6 @@
                     </div>
                 </div>
 
-                            
                 <div class="filter-section filter-subgenres">
                     <h3>Subgéneros/Temas</h3>
                     <div class="filter-options">
@@ -110,7 +99,6 @@
                     </div>
                 </div>
 
-
                 <div class="filter-section filter-age">
                     <h3>Clasificación de Edad</h3>
                     <div class="filter-options">
@@ -119,75 +107,6 @@
                         <label><input type="radio" name="age-group" data-filter="Adulto"> Adulto (+18)</label>
                     </div>
                 </div>
-
-
-                <div class="filter-section filter-format">
-                    <h3>Tamaño/Formato</h3>
-                    <div class="filter-options">
-                        <label><input type="checkbox" data-filter="Bolsillo"> Bolsillo (Pocket)</label>
-                        <label><input type="checkbox" data-filter="Estandar"> Estándar</label>
-                        <label><input type="checkbox" data-filter="A4"> Formato A4</label>
-                        <label><input type="checkbox" data-filter="A5"> Formato A5</label>
-                        <label><input type="checkbox" data-filter="Digital"> Digital/eBook</label>
-                        <label><input type="checkbox" data-filter="Audiolibro"> Audiolibro</label>
-                    </div>
-                </div>
-
-
-                <div class="filter-section filter-pages">
-                    <h3>Páginas (Máx.)</h3>
-                    <div class="page-range">
-                        <input type="range" id="pages-range-input" min="50" max="1500" value="1500">
-                        <div class="page-values">
-                            <span id="pages-min-display">50</span> - <span id="pages-max-display">1500</span> págs.
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="filter-section filter-material">
-                    <h3>Material/Cubierta</h3>
-                    <div class="filter-options">
-                        <label><input type="checkbox" data-filter="TapaDura"> Tapa Dura</label>
-                        <label><input type="checkbox" data-filter="TapaBlanda"> Tapa Blanda</label>
-                        <label><input type="checkbox" data-filter="Lujo"> Edición de Lujo</label>
-                        <label><input type="checkbox" data-filter="Reciclado"> Papel Reciclado</label>
-                    </div>
-                </div>
-                
-
-                <div class="filter-section filter-colors">
-                    <h3>Color de Cubierta</h3>
-                    <div class="color-options">
-
-                        <span class="color-swatch" style="background-color: #5d4037;" data-filter="Marrón"></span>
-                        <span class="color-swatch" style="background-color: #d32f2f;" data-filter="Rojo"></span>
-                        <span class="color-swatch" style="background-color: #1976d2;" data-filter="Azul"></span>
-                        <span class="color-swatch" style="background-color: #fbc02d;" data-filter="Amarillo"></span>
-                        <span class="color-swatch" style="background-color: #388e3c;" data-filter="Verde"></span>
-                        <span class="color-swatch" style="background-color: #7b1fa2;" data-filter="Morado"></span>
-                        <span class="color-swatch" style="background-color: #e64a19;" data-filter="Naranja"></span>
-                        <span class="color-swatch" style="background-color: #000000;" data-filter="Negro"></span>
-                        <span class="color-swatch" style="background-color: #ffffff; border: 1px solid #ccc;" data-filter="Blanco"></span>
-                        <span class="color-swatch" style="background-color: #c0c0c0;" data-filter="Gris"></span>
-                        <span class="color-swatch" style="background-color: #8b4513;" data-filter="Sepia"></span>
-                        <span class="color-swatch" style="background-color: #ffc0cb;" data-filter="Rosa"></span>
-                        <span class="color-swatch" style="background-color: #00bcd4;" data-filter="Cian"></span>
-                        <span class="color-swatch" style="background-color: #a52a2a;" data-filter="Terracota"></span>
-                        <span class="color-swatch" style="background-color: #ffeb3b;" data-filter="Dorado"></span>
-                    </div>
-                </div>
-                
-
-                <div class="filter-section filter-offers">
-                    <h3>Condición</h3>
-                    <div class="filter-options">
-                        <label><input type="checkbox" data-filter="Ofertas"> Sólo Ofertas y Descuentos</label>
-                        <label><input type="checkbox" data-filter="Nuevos"> Productos Nuevos</label>
-                        <label><input type="checkbox" data-filter="BestSeller"> Best Sellers</label>
-                    </div>
-                </div>
-
 
                 <div class="filter-section filter-price">
                     <h3>Precio Máximo</h3>
@@ -199,32 +118,22 @@
                     </div>
                 </div>
 
-
-
                 <div class="filter-section">
                     <h3>Filtros Activos</h3>
-                    <div class="filter-tags" id="active-filters-tags">
-
-                    </div>
+                    <div class="filter-tags" id="active-filters-tags"></div>
                 </div>
             </aside>
             
-
             <section class="product-grid" id="products-container">
-
-            </section>
+                </section>
         </div>
         
-
         <div class="carousel-nav catalog-pagination">
             <button id="prev-page-btn">← Previous</button> 
-            <div class="pagination">
-
-            </div>
+            <div class="pagination"></div>
             <button id="next-page-btn">Next →</button>
         </div>
     </main>
-
 
     <footer class="site-footer">
         <div class="social-links">
