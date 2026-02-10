@@ -3248,3 +3248,13 @@ a { text-decoration: none; color: inherit; }
 .catalog-container {
     flex-grow: 1; 
 }
+
+
+.card-loader p {
+    animation: palpito 1.5s ease-in-out infinite;
+}
+
+@keyframes palpito {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

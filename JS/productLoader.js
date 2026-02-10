@@ -69,7 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 <div class="card-loader" id="loader-${libro.id}" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 10; flex-direction: column; justify-content: center; align-items: center;">
                     <div class="spinner-mini"></div>
-                    <p style="font-size: 0.8em; color: #5d4037; font-weight: bold; margin-top: 10px;">Cargando...</p>
+                    <p style="font-size: 0.8em; color: #5d4037; font-weight: bold; margin-top: 10px; padding: 0 10px;">
+                        La Lechuza está buscando tu libro...
+                    </p>
                 </div>
 
                 <span class="book-tag-grid" style="background-color: #fbc02d; color: white; padding: 3px 10px; border-radius: 8px 0; position: absolute; top: 0; left: 0; font-size: 0.8em;">Oferta</span>
@@ -86,15 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
-    // --- FUNCIÓN PARA MOSTRAR LA CARGA POR LIBRO ---
     window.activarCargaIndividual = function(id) {
         const loader = document.getElementById(`loader-${id}`);
         if (loader) {
-            loader.style.display = 'flex'; // Muestra el spinner
+            loader.style.display = 'flex';
             
-            // Simula la carga de 1.5 segundos
             setTimeout(() => {
-                loader.style.display = 'none'; // Oculta el spinner
+                loader.style.display = 'none';
                 alert("¡Artículo añadido correctamente!");
             }, 1500);
         }
