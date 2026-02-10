@@ -2,20 +2,20 @@ let currentPage = 1;
 const totalPages = 68;
 const MAX_PAGES_VISIBLE = 7;
 
-// Tus 8 libros reales con las rutas corregidas a tus archivos .png
+
 const misLibrosReales = [
-    { id: 1, titulo: "Los fantasmas favoritos", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
-    { id: 2, titulo: "Joe Hill Fantasmas", autor: "Joe Hill", precio: 399, img: "../Imagenes/Libro2.png" },
-    { id: 3, titulo: "Stephen King", autor: "Stephen King", precio: 399, img: "../Imagenes/Libro3.png" },
-    { id: 4, titulo: "El Ritual", autor: "Adam Nevill", precio: 399, img: "../Imagenes/Libro4.png" },
+    { id: 1, titulo: "sister brothers", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
+    { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 399, img: "../Imagenes/Libro2.png" },
+    { id: 3, titulo: "Diario de ana frank", autor: "Stephen King", precio: 399, img: "../Imagenes/Libro3.png" },
+    { id: 4, titulo: "Julio verde", autor: "Adam Nevill", precio: 399, img: "../Imagenes/Libro4.png" },
     { id: 5, titulo: "Cine de Terror", autor: "Antonio José", precio: 399, img: "../Imagenes/Libro5.png" },
-    { id: 6, titulo: "La noche del terror ciego", autor: "Lázaro Berber", precio: 399, img: "../Imagenes/Libro6.png" },
-    { id: 7, titulo: "El sótano del terror", autor: "By Mart", precio: 399, img: "../Imagenes/Libro7.png" },
-    { id: 8, titulo: "Hasta los huesos", autor: "J.R. Johansson", precio: 399, img: "../Imagenes/Libro8.png" }
+    { id: 6, titulo: "Stephen King", autor: "Lázaro Berber", precio: 399, img: "../Imagenes/Libro6.png" },
+    { id: 7, titulo: "El hobbit", autor: "By Mart", precio: 399, img: "../Imagenes/Libro7.png" },
+    { id: 8, titulo: "cuando resolvamos la historia", autor: "J.R. Johansson", precio: 399, img: "../Imagenes/Libro8.png" }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
-    // REFERENCIA A TU ID REAL DEL HTML
+    
     const productsContainer = document.getElementById('products-container');
     const paginationContainer = document.querySelector('.carousel-nav.catalog-pagination');
 
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (page < 1 || page > totalPages) return;
         currentPage = page;
 
-        // Limpiamos el contenedor y mostramos carga con el estilo de tu marca
+    
         productsContainer.innerHTML = `
             <div class="loading-message" style="grid-column: 1/-1; text-align: center; padding: 50px;">
                 <h2 style="color: #5d4037;">Cargando Catálogo...</h2>
@@ -47,13 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function generateProducts(page) {
         let html = '';
-        // Si es la página 1, usamos tus libros reales
+        
         if (page === 1) {
             misLibrosReales.forEach((libro, index) => {
                 html += crearHtmlTarjeta(libro, index);
             });
         } 
-        // Si es otra página, simulamos usando tus portadas reales en bucle
+        
         else {
             for (let i = 0; i < 8; i++) {
                 const mockId = ((page - 1) * 8) + i + 1;
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function crearHtmlTarjeta(libro, index) {
-        // Estructura de tarjeta con animación de cascada y estilos integrados
+        
         return `
             <div class="book-product-card" style="opacity: 0; animation: entradaCascada 0.6s ease forwards ${index * 0.1}s; background-color: rgba(240, 231, 203, 0.9); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
                 <span class="book-tag-grid" style="background-color: #fbc02d; color: white; padding: 3px 10px; border-radius: 8px 0; position: absolute; top: 0; left: 0; font-size: 0.8em;">Oferta</span>
