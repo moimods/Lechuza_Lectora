@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Servidor en mantenimiento</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #f4ece2; color: #5d4037; }
+        .tablero { display: grid; grid-template-columns: repeat(3, 100px); gap: 5px; justify-content: center; margin-top: 20px; }
+        .celda { width: 100px; height: 100px; background: #fff; border: 2px solid #8d6e63; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>¡Ups! Servidor en mantenimiento</h1>
+    <p>Estamos trabajando para mejorar tu experiencia. Mientras tanto, ¿qué tal una partida de Gato?</p>
+    
+    <div id="status">Turno de: X</div>
+    <div class="tablero" id="tablero">
+        <div class="celda" onclick="jugar(0)"></div>
+        <div class="celda" onclick="jugar(1)"></div>
+        <div class="celda" onclick="jugar(2)"></div>
+        <div class="celda" onclick="jugar(3)"></div>
+        <div class="celda" onclick="jugar(4)"></div>
+        <div class="celda" onclick="jugar(5)"></div>
+        <div class="celda" onclick="jugar(6)"></div>
+        <div class="celda" onclick="jugar(7)"></div>
+        <div class="celda" onclick="jugar(8)"></div>
+    </div>
+
+    <script>
+        let turno = 'X';
+        let estado = ["", "", "", "", "", "", "", "", ""];
+        function jugar(i) {
+            if (estado[i] === "") {
+                estado[i] = turno;
+                document.getElementsByClassName('celda')[i].innerText = turno;
+                turno = (turno === 'X') ? 'O' : 'X';
+                document.getElementById('status').innerText = "Turno de: " + turno;
+            }
+        }
+    </script>
+    <br>
+    <a href="index.html" style="color: #8d6e63;">Volver al inicio</a>
+</body>
+</html>
