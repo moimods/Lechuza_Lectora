@@ -2,6 +2,18 @@ let currentPage = 1;
 const totalPages = 68;
 const MAX_PAGES_VISIBLE = 7;
 
+// Tus 8 libros reales con las rutas corregidas a tus archivos .png
+const misLibrosReales = [
+    { id: 1, titulo: "Los fantasmas favoritos", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
+    { id: 2, titulo: "Joe Hill Fantasmas", autor: "Joe Hill", precio: 399, img: "../Imagenes/Libro2.png" },
+    { id: 3, titulo: "Stephen King", autor: "Stephen King", precio: 399, img: "../Imagenes/Libro3.png" },
+    { id: 4, titulo: "El Ritual", autor: "Adam Nevill", precio: 399, img: "../Imagenes/Libro4.png" },
+    { id: 5, titulo: "Cine de Terror", autor: "Antonio José", precio: 399, img: "../Imagenes/Libro5.png" },
+    { id: 6, titulo: "La noche del terror ciego", autor: "Lázaro Berber", precio: 399, img: "../Imagenes/Libro6.png" },
+    { id: 7, titulo: "El sótano del terror", autor: "By Mart", precio: 399, img: "../Imagenes/Libro7.png" },
+    { id: 8, titulo: "Hasta los huesos", autor: "J.R. Johansson", precio: 399, img: "../Imagenes/Libro8.png" }
+];
+
 document.addEventListener('DOMContentLoaded', () => {
     const productsContainer = document.getElementById('products-container');
     const paginationContainer = document.querySelector('.carousel-nav.catalog-pagination');
@@ -15,18 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = paginationContainer.querySelector('#next-page-btn');
     const paginationDiv = paginationContainer.querySelector('.pagination');
 
-        function loadProducts(page) {
+    function loadProducts(page) {
         if (page < 1 || page > totalPages) return;
 
         currentPage = page;
+        
+        // Efecto de carga
         productsContainer.innerHTML = `
             <div class="loading-message">
-                <h2>Cargando productos...</h2>
-                <p>Simulación: Cargando página ${page} de la base de datos.</p>
+                <h2>Cargando Catálogo...</h2>
+                <p>Página ${page} de ${totalPages}</p>
             </div>
         `;
 
         setTimeout(() => {
+            // Aquí cargamos los productos (Reales en pág 1, simulados en el resto)
             productsContainer.innerHTML = generateMockProducts(page);
             updatePaginationView();
 
@@ -37,39 +52,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function generateMockProducts(page) {
-
         let html = '';
-        const itemsPerPage = 12;
-        const start = (page - 1) * itemsPerPage;
         
-        for (let i = 0; i < itemsPerPage; i++) {
-            const mockId = start + i + 1;
-            html += `
-                <div class="book-product-card">
-                    <span class="book-tag-grid" style="background-color: var(--color-secondary);">Oferta</span>
-                    <img src="../../Imagenes/mock_portada${(mockId % 5) + 1}.jpg" alt="Libro #${mockId}"> 
-                    <p class="book-title-grid">Título Simulado del Libro #${mockId}</p>
-                    <div class="rating-small">
-                        <i class="fa-solid fa-star"></i> 4.${(mockId % 9)}
-                    </div>
-                    <span class="book-price-grid">$${(399 + mockId * 5)}</span>
-                    
-                    <!-- INICIO DEL CÓDIGO DE BOTONES DE CARRITO -->
-                    <div class="product-actions">
-                        <button class="btn-primary btn-add-to-cart" data-product-id="${mockId}">
-                            Añadir al Carrito
-                        </button>
-                        <button class="btn-secondary btn-buy-now">
-                            Comprar
-                        </button>
-                    </div>
-                    <!-- FIN DEL CÓDIGO DE BOTONES -->
-                </div>
-            `;
+        // PÁGINA 1: Tus libros reales con animación
+        if (page === 1) {
+            misLibrosReales.forEach((libro, index) => {
+                html += crearHtmlTarjeta(libro, index);
+            });
+        } 
+        // OTRAS PÁGINAS: Simulación para que no se vea vacío
+        else {
+            const itemsPerPage = 8;
+            const start = (page - 1) * itemsPerPage;
+            for (let i = 0; i < itemsPerPage; i++) {
+                const mockId = start + i + 1;
+                const libroSimulado = {
+                    id: mockId,
+                    titulo: `Libro de Terror #${mockId}`,
+                    autor: "Autor de la Lechuza",
+                    precio: 399 + (mockId * 2),
+                    img: `../Imagenes/Libro${(i % 8) + 1}.png` // Rotamos tus portadas reales
+                };
+                html += crearHtmlTarjeta(libroSimulado, i);
+            }
         }
         return html;
     }
 
+    // Función unificada para crear el HTML de la tarjeta
+    function crearHtmlTarjeta(libro, index) {
+        return `
+            <div class="book-product-card" style="opacity: 0; transform: translateY(30px); animation: entradaCascada 0.6s ease forwards ${index * 0.1}s;">
+                <span class="book-tag-grid" style="background-color: var(--color-secondary);">Oferta</span>
+                <img src="${libro.img}" alt="${libro.titulo}"> 
+                <p class="book-title-grid">${libro.titulo}</p>
+                <div class="rating-small">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <span>4.8</span>
+                </div>
+                <span class="book-price-grid">$${libro.precio}</span>
+                <div class="product-actions">
+                    <button class="btn-primary btn-add-to-cart" data-product-id="${libro.id}">
+                        Añadir al Carrito
+                    </button>
+                    <button class="btn-secondary btn-buy-now">
+                        Comprar
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- TU LÓGICA DE PAGINACIÓN (Mantenida intacta) ---
     function calculatePaginationRange() {
         const pages = [];
         const delta = 2; 
@@ -85,11 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalPages > 1 && !pages.includes(totalPages)) { pages.push(totalPages); }
         
         const uniquePages = Array.from(new Set(pages));
-        const finalPages = uniquePages.filter((p, index) => {
+        return uniquePages.filter((p, index) => {
             if (p === '...' && uniquePages[index - 1] === 1) return false;
             return true;
         });
-        return finalPages;
     }
 
     function updatePaginationView() {
@@ -131,21 +168,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         input.addEventListener('blur', finalizeInput);
         input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                finalizeInput();
-            }
+            if (e.key === 'Enter') finalizeInput();
         });
     }
-
 
     function attachPaginationListeners() {
         document.querySelectorAll('.page-number').forEach(span => {
             const page = parseInt(span.getAttribute('data-page'));
-            
-            span.addEventListener('click', () => {
-                loadProducts(page);
-            });
-            
+            span.addEventListener('click', () => loadProducts(page));
             if (page === totalPages) {
                  span.addEventListener('dblclick', () => handleCustomPageInput(span));
             }
@@ -153,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (prevBtn) prevBtn.onclick = () => loadProducts(currentPage - 1);
         if (nextBtn) nextBtn.onclick = () => loadProducts(currentPage + 1);
-
         if (prevBtn) prevBtn.disabled = currentPage === 1;
         if (nextBtn) nextBtn.disabled = currentPage === totalPages;
     }
