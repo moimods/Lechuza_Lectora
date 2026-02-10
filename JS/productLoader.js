@@ -2,7 +2,6 @@ let currentPage = 1;
 const totalPages = 68;
 const MAX_PAGES_VISIBLE = 7;
 
-// Tus 8 libros reales con sus títulos y precios
 const misLibrosReales = [
     { id: 1, titulo: "Sister brothers", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
     { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 356, img: "../Imagenes/Libro2.png" },
@@ -15,7 +14,6 @@ const misLibrosReales = [
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
-    
     const productsContainer = document.getElementById('products-container');
     const paginationContainer = document.querySelector('.carousel-nav.catalog-pagination');
 
@@ -32,14 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (page < 1 || page > totalPages) return;
         currentPage = page;
 
-        // Limpiamos y mostramos el mensaje de carga
         productsContainer.innerHTML = `
             <div class="loading-message" style="grid-column: 1/-1; text-align: center; padding: 50px;">
                 <h2 style="color: #5d4037;">Cargando Catálogo...</h2>
                 <p>Página ${page} de ${totalPages}</p>
             </div>`;
 
-        // Esperamos un momento para que se vea la transición
         setTimeout(() => {
             productsContainer.innerHTML = generateProducts(page);
             updatePaginationView();
@@ -48,15 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function generateProducts(page) {
         let html = '';
-        
-        // Página 1: Usamos tus libros reales con sus nombres
         if (page === 1) {
             misLibrosReales.forEach((libro, index) => {
                 html += crearHtmlTarjeta(libro, index);
             });
-        } 
-        // Otras páginas: Simulamos el contenido usando tus portadas
-        else {
+        } else {
             for (let i = 0; i < 8; i++) {
                 const mockId = ((page - 1) * 8) + i + 1;
                 const libroSimulado = {
@@ -72,9 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function crearHtmlTarjeta(libro, index) {
-        // El secreto de la animación está en el "animation-delay" (${index * 0.1}s)
         return `
-            <div class="book-product-card" style="opacity: 0; animation: entradaCascada 0.6s ease forwards ${index * 0.1}s; background-color: rgba(240, 231, 203, 0.9); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; position: relative;">
+            <div class="book-product-card" id="card-${libro.id}" style="opacity: 0; animation: entradaCascada 0.6s ease forwards ${index * 0.1}s; background-color: rgba(240, 231, 203, 0.9); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; position: relative; overflow: hidden;">
+                
+                <div class="card-loader" id="loader-${libro.id}" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 10; flex-direction: column; justify-content: center; align-items: center;">
+                    <div class="spinner-mini"></div>
+                    <p style="font-size: 0.8em; color: #5d4037; font-weight: bold; margin-top: 10px;">Cargando...</p>
+                </div>
+
                 <span class="book-tag-grid" style="background-color: #fbc02d; color: white; padding: 3px 10px; border-radius: 8px 0; position: absolute; top: 0; left: 0; font-size: 0.8em;">Oferta</span>
                 <img src="${libro.img}" alt="${libro.titulo}" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 4px;"> 
                 <p class="book-title-grid" style="font-weight: bold; margin: 10px 0; color: #5d4037;">${libro.titulo}</p>
@@ -83,13 +80,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <span class="book-price-grid" style="color: #d32f2f; font-weight: bold; font-size: 1.2em;">$${libro.precio}</span>
                 <div class="product-actions" style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button class="btn-primary" style="flex: 1; background-color: #5d4037; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Añadir</button>
+                    <button class="btn-primary" onclick="activarCargaIndividual(${libro.id})" style="flex: 1; background-color: #5d4037; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Añadir</button>
                     <button class="btn-secondary" style="flex: 1; background-color: transparent; border: 2px solid #5d4037; color: #5d4037; padding: 8px; border-radius: 5px; cursor: pointer;">Comprar</button>
                 </div>
             </div>`;
     }
 
-    // --- MÓDULO DE PAGINACIÓN ---
+    // --- FUNCIÓN PARA MOSTRAR LA CARGA POR LIBRO ---
+    window.activarCargaIndividual = function(id) {
+        const loader = document.getElementById(`loader-${id}`);
+        if (loader) {
+            loader.style.display = 'flex'; // Muestra el spinner
+            
+            // Simula la carga de 1.5 segundos
+            setTimeout(() => {
+                loader.style.display = 'none'; // Oculta el spinner
+                alert("¡Artículo añadido correctamente!");
+            }, 1500);
+        }
+    };
+
     function updatePaginationView() {
         const pages = calculatePaginationRange();
         let html = '';
