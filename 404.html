@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Servidor en mantenimiento</title>
     <style>
-        /* Mantenemos tu estilo original pero ajustamos el fondo */
         body { 
             font-family: sans-serif; 
             text-align: center; 
@@ -20,19 +19,18 @@
             overflow: hidden;
         }
 
-        /* Capa de fondo corregida */
+        /* CAPA DE FONDO CORREGIDA CON RUTA ABSOLUTA */
         .background-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            /* Ajusta esta ruta si tu carpeta es Imagenes o imagenes (mayúsculas/minúsculas importan) */
-            background-image: url('Imagenes/Carrusel/4.jpg'); 
+            /* El "/" al inicio le dice al navegador que busque desde la raíz del proyecto */
+            background-image: url('/Imagenes/Carrusel/5.jpg'); 
             background-size: cover;
             background-position: center;
             filter: brightness(0.6) blur(2px);
             z-index: -1;
         }
 
-        /* Contenedor del contenido */
         .content-box {
             background-color: rgba(244, 236, 226, 0.9);
             padding: 30px;
@@ -71,11 +69,10 @@
 
         <button id="reset-btn" class="btn-reiniciar" onclick="reiniciar()">Jugar de nuevo</button>
         <br><br>
-        <a href="index.html" style="color: #8d6e63; font-weight: bold; text-decoration: none;">Volver al inicio</a>
+        <a href="/index.html" style="color: #8d6e63; font-weight: bold; text-decoration: none;">Volver al inicio</a>
     </div>
 
     <script>
-        // La lógica del juego se mantiene igual
         let turno = 'X';
         let estado = ["", "", "", "", "", "", "", "", ""];
         let juegoActivo = true;
