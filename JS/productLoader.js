@@ -5,13 +5,13 @@ const MAX_PAGES_VISIBLE = 7;
 
 const misLibrosReales = [
     { id: 1, titulo: "sister brothers", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
-    { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 399, img: "../Imagenes/Libro2.png" },
-    { id: 3, titulo: "Diario de ana frank", autor: "Stephen King", precio: 399, img: "../Imagenes/Libro3.png" },
-    { id: 4, titulo: "Julio verde", autor: "Adam Nevill", precio: 399, img: "../Imagenes/Libro4.png" },
-    { id: 5, titulo: "Cine de Terror", autor: "Antonio José", precio: 399, img: "../Imagenes/Libro5.png" },
-    { id: 6, titulo: "Stephen King", autor: "Lázaro Berber", precio: 399, img: "../Imagenes/Libro6.png" },
-    { id: 7, titulo: "El hobbit", autor: "By Mart", precio: 399, img: "../Imagenes/Libro7.png" },
-    { id: 8, titulo: "cuando resolvamos la historia", autor: "J.R. Johansson", precio: 399, img: "../Imagenes/Libro8.png" }
+    { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 356, img: "../Imagenes/Libro2.png" },
+    { id: 3, titulo: "Diario de ana frank", autor: "Stephen King", precio: 456, img: "../Imagenes/Libro3.png" },
+    { id: 4, titulo: "Julio verde", autor: "Adam Nevill", precio: 764, img: "../Imagenes/Libro4.png" },
+    { id: 5, titulo: "Cine de Terror", autor: "Antonio José", precio: 412, img: "../Imagenes/Libro5.png" },
+    { id: 6, titulo: "Stephen King", autor: "Lázaro Berber", precio: 342, img: "../Imagenes/Libro6.png" },
+    { id: 7, titulo: "El hobbit", autor: "By Mart", precio: 755, img: "../Imagenes/Libro7.png" },
+    { id: 8, titulo: "cuando resolvamos la historia", autor: "J.R. Johansson", precio: 432, img: "../Imagenes/Libro8.png" }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
