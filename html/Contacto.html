@@ -4,65 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Contacto</title>
-    <link rel="icon" type="image/x-icon" href="../Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="../Imagenes/logo.png">
     <link rel="stylesheet" href="../Estilos/Estilo1.css">
+    
     <script src="../JS/Boton_Ini.js"></script>
     <script src="../JS/Boton_Inicio_Sesion_html.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
 
-
     <header class="navbar detail-navbar">
         <div class="logo-container">
-            <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
-            <span class="site-name">LA LECHUZA LECTORA</span>
+            <a href="../index.html" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+                <span class="site-name">LA LECHUZA LECTORA</span>
+            </a>
         </div>
         
         <nav class="nav-links">
-            <a href="Acerca de.html">Acerca de</a>
+            <a href="Acerca_de.html">Acerca de</a>
             <a href="#" class="active-link">Contacto</a>
             <a href="Ayuda.html">Ayuda</a>
             <a href="Catalogo.html">Catálogo</a>
         </nav>
         
         <div class="auth-actions user-actions">
-            <button class="icon-button"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary">Iniciar Sesión</button>
+            <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
+            <button class="btn-primary" id="btn-login-redirect">Iniciar Sesión</button>
         </div>
     </header>
 
-
     <main class="main-content contact-main">
-        <div class="background-overlay contact-bg" style="filter: brightness(0.8);"></div>
+        <div class="background-overlay contact-bg" style="background: url('../Imagenes/Carrusel/5.jpg') no-repeat center center/cover; filter: brightness(0.4);"></div>
 
         <div class="contact-container">
             <h1 class="page-title">Contáctanos</h1>
-            <p class="page-subtitle">Hablemos de libros. Si tienes preguntas, sugerencias o requieres soporte, utiliza el formulario de contacto o consulta nuestros canales en redes sociales.</p>
+            <p class="page-subtitle">Hablemos de libros. Si tienes preguntas, sugerencias o requieres soporte, utiliza el formulario.</p>
 
             <div class="contact-grid">
                 
-
                 <div class="contact-form-wrapper">
-                    <img src="../Imagenes/logo.png" alt="Logo Grande de Fondo" class="large-logo-bg">
+                    <img src="../Imagenes/logo.png" alt="Logo Grande de Fondo" class="large-logo-bg" style="opacity: 0.1;">
 
-                    <form class="contact-form">
+                    <form class="contact-form" id="form-contacto">
                         <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" placeholder="Ej. Carlos">
+                        <input type="text" id="nombre" name="nombre" placeholder="Ej. Carlos" required>
                         
                         <label for="apellidos">Apellidos</label>
-                        <input type="text" id="apellidos" placeholder="Ej. Martínez Castro">
+                        <input type="text" id="apellidos" name="apellidos" placeholder="Ej. Martínez Castro" required>
 
-                        <label for="email">Correo Electronico</label>
-                        <input type="email" id="email" placeholder="example@example.com">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" name="email" placeholder="example@example.com" required>
 
                         <label for="mensaje">Mensaje</label>
-                        <textarea id="mensaje" placeholder="..." rows="5"></textarea>
+                        <textarea id="mensaje" name="mensaje" placeholder="¿En qué podemos ayudarte?..." rows="5" required></textarea>
 
-                        <button type="submit" class="btn-send">Enviar</button>
+                        <button type="submit" class="btn-send">Enviar Mensaje</button>
                     </form>
                 </div>
-                
 
                 <div class="social-info-card">
                     <h2>Nuestras Redes Sociales</h2>
@@ -73,15 +73,14 @@
                         <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
                     </div>
                     <address>
-                        Av Telecomunicaciones, Chinam Pac de Juárez, Iztapalapa, 09208 Ciudad de México, CDMX.<br><br>
+                        <i class="fa-solid fa-location-dot"></i> Av Telecomunicaciones, Chinampac de Juárez, Iztapalapa, 09208 CDMX.<br><br>
                         <strong>Teléfono</strong><br>
-                        55-24-01-43-82
+                        <i class="fa-solid fa-phone"></i> 55-24-01-43-82
                     </address>
                 </div>
             </div>
         </div>
     </main>
-
 
     <footer class="site-footer">
         <div class="social-links">
@@ -91,8 +90,16 @@
             <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
     </footer>
+
+    <script>
+        document.getElementById('form-contacto').onsubmit = function(e) {
+            e.preventDefault();
+            alert("¡Mensaje enviado con éxito! La Lechuza te responderá pronto.");
+            this.reset();
+        };
+    </script>
 </body>
 </html>
