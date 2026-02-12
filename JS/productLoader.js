@@ -2,7 +2,7 @@ let currentPage = 1;
 const totalPages = 68;
 const MAX_PAGES_VISIBLE = 7;
 
-// Libros reales
+
 const misLibrosReales = [
     { id: 1, titulo: "Sister brothers", autor: "Roald Dahl", precio: 399, img: "../Imagenes/Libro1.png" },
     { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 356, img: "../Imagenes/Libro2.png" },
@@ -82,21 +82,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="book-price-grid" style="color: #d32f2f; font-weight: bold; font-size: 1.2em;">$${libro.precio}</span>
                 
                 <div class="product-actions" style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button class="btn-primary" onclick="activarCargaIndividual(${libro.id})" style="flex: 1; background-color: #5d4037; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Añadir</button>
+                    <button class="btn-primary" 
+                        onclick="agregarAlCarritoClick(${libro.id}, '${libro.titulo}', ${libro.precio}, '${libro.img}')" 
+                        style="flex: 1; background-color: #5d4037; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">
+                        Añadir
+                    </button>
                     
-                    <button class="btn-secondary" onclick="window.location.href='Logeado/compra/CargandoArticulo.html'" style="flex: 1; background-color: transparent; border: 2px solid #5d4037; color: #5d4037; padding: 8px; border-radius: 5px; cursor: pointer;">Comprar</button>
+                    <button class="btn-secondary" 
+                        onclick="window.location.href='Logeado/compra/CargandoArticulo.html'" 
+                        style="flex: 1; background-color: transparent; border: 2px solid #5d4037; color: #5d4037; padding: 8px; border-radius: 5px; cursor: pointer;">
+                        Comprar
+                    </button>
                 </div>
             </div>`;
     }
 
-    window.activarCargaIndividual = function(id) {
+    
+    window.agregarAlCarritoClick = function(id, titulo, precio, imagen) {
+        
         const loader = document.getElementById(`loader-${id}`);
         if (loader) {
             loader.style.display = 'flex';
+            
+            
+            if (typeof addToCart === 'function') {
+                addToCart({
+                    id: id,
+                    name: titulo,
+                    price: precio,
+                    image: imagen
+                }, false);
+            }
+
+        
             setTimeout(() => {
                 loader.style.display = 'none';
-                alert("¡Artículo añadido correctamente!");
-            }, 2000); 
+            }, 2000);
         }
     };
 
