@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
-    
 <head>
- <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-TK19VPTE2T"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TK19VPTE2T"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TK19VPTE2T');
+    </script>
 
-  gtag('config', 'G-TK19VPTE2T');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Inicio</title>
-    <link rel="icon" type="image/x-icon" href="Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="Imagenes/logo.png">
     <link rel="stylesheet" href="Estilos/Estilo1.css">
-    <script src="JS/Boton_Inicio_Sesion.js"></script>
-    <script src="JS/registro-boton.js"></script>
+    
+    <script src="JS/Boton_Inicio_Sesion.js" defer></script>
+    <script src="JS/registro-boton.js" defer></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
@@ -36,7 +35,7 @@
         </div>
         
         <nav class="nav-links">
-            <a href="html/Acerca de.html">Acerca de</a>
+            <a href="html/Acerca_de.html">Acerca de</a>
             <a href="html/Contacto.html">Contacto</a>
             <a href="html/Ayuda.html">Ayuda</a>
             <a href="html/Catalogo.html">Catálogo</a>
@@ -48,25 +47,26 @@
     </header>
 
     <main class="main-content">
-<div class="background-overlay" style="filter: brightness(0.6) blur(1px);"></div>
+        <div class="background-overlay" style="filter: brightness(0.6) blur(1px);"></div>
 
-<div class="background-carousel">
-    <figure>
-
-         <img src="Imagenes/Carrusel/1.jpg"/>
-         <img src="Imagenes/Carrusel/2.jpg"/>
-         <img src="Imagenes/Carrusel/3.jpg"/>
-         <img src="Imagenes/Carrusel/4.jpg"/>
-         <img src="Imagenes/Carrusel/5.jpg"/>
-    </figure>
-</div>
+        <div class="background-carousel">
+            <figure>
+                <img src="Imagenes/Carrusel/1.jpg" alt="Fondo 1"/>
+                <img src="Imagenes/Carrusel/2.jpg" alt="Fondo 2"/>
+                <img src="Imagenes/Carrusel/3.jpg" alt="Fondo 3"/>
+                <img src="Imagenes/Carrusel/4.jpg" alt="Fondo 4"/>
+                <img src="Imagenes/Carrusel/5.jpg" alt="Fondo 5"/>
+            </figure>
+        </div>
 
         <div class="content-container">
-            
             <div class="welcome-card">
                 <h2>BIENVENIDO!!!</h2>
-                <p>La Lechuza Lectora es tu portal digital para explorar mundos inexplorados y conectar con las grandes mentes de la **literatura**. Creemos en el poder de las historias. Por eso, hemos creado la página web más completa para la venta de libros de gran variedad, desde los más clásicos hasta los más vendidos actualmente. No somos solo una librería, somos una **comunidad** donde cada clic te acerca a tu próxima página favorita!!!.</p>
-                <button class="btn-secondary">Crear Cuenta</button>
+                <p>La Lechuza Lectora es tu portal digital para explorar mundos inexplorados y conectar con las grandes mentes de la <strong>literatura</strong>. Creemos en el poder de las historias...</p>
+                
+                <button class="btn-secondary" onclick="window.location.href='html/Inicio_de_sesion/Registro.html'">
+                    Crear Cuenta
+                </button>
             </div>
 
             <div class="featured-book">
@@ -77,11 +77,7 @@
             <div class="reviews-section">
                 <div class="review-card">
                     <div class="rating">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
                     </div>
                     <h3>Venta de Libros a Buen precio</h3>
                     <p>La mejor Página para realizar compras y con envío gratis!!!</p>
@@ -96,11 +92,7 @@
 
                 <div class="review-card">
                     <div class="rating">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                     </div>
                     <h3>Excelente Servicio</h3>
                     <p>Mi pedido llego en menos de 3 días!!!</p>
@@ -124,9 +116,8 @@
             <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
     </footer>
-
 </body>
 </html>
