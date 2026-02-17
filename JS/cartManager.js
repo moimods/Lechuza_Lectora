@@ -3,7 +3,6 @@ const CHECKOUT_START_URL = 'compra/resumen_compra.html';
 const CART_PAGE_URL = 'carrito.html'; 
 const STORAGE_KEY = 'laLechuzaLectoraCart'; 
 
-// Carga inicial de datos para que el contador no se resetee al navegar
 function saveCart() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
 }
@@ -38,15 +37,10 @@ function updateCartCount() {
     }
 }
 
-// Corregido: Ahora maneja mejor los datos que vienen del Catálogo
 function addToCart(producto, buyNow = false) {
     loadCart(); 
+    if (buyNow) cartItems = []; 
 
-    if (buyNow) {
-        cartItems = []; 
-    }
-
-    // Aseguramos que el ID se compare correctamente como String
     const itemIndex = cartItems.findIndex(item => String(item.id) === String(producto.id));
     
     if (itemIndex > -1) {
@@ -71,20 +65,17 @@ function addToCart(producto, buyNow = false) {
     }
 }
 
-// Funciones globales para que los botones del HTML puedan llamarlas
 window.updateItemQuantity = function(productId, newQuantity) {
     const itemIndex = cartItems.findIndex(item => String(item.id) === String(productId));
-
     if (itemIndex > -1) {
         if (newQuantity <= 0) {
             cartItems.splice(itemIndex, 1);
         } else {
             cartItems[itemIndex].quantity = newQuantity;
         }
-        
         saveCart();
         updateCartCount();
-        renderCart(); // Refresca la lista visualmente
+        renderCart(); 
     }
 };
 
@@ -97,7 +88,6 @@ window.removeItem = function(productId) {
 
 function generateCartItemHTML(item) {
     const itemTotal = (parseFloat(item.price) * item.quantity).toFixed(2);
-    
     return `
         <div class="cart-item" data-product-id="${item.id}">
             <img src="${item.image}" alt="Portada de ${item.name}" onerror="this.src='../../Imagenes/logo.png'">
@@ -119,7 +109,6 @@ function generateCartItemHTML(item) {
 function renderCart() {
     const container = document.getElementById('cart-items-container');
     const totals = calculateTotals();
-
     if (!container) return;
 
     if (cartItems.length === 0) {
@@ -130,13 +119,10 @@ function renderCart() {
         container.innerHTML = cartItems.map(generateCartItemHTML).join('');
     }
 
-    // Actualización de los elementos de resumen (Derecha)
     const totalItemsDisplay = document.getElementById('total-items-display');
     if (totalItemsDisplay) totalItemsDisplay.textContent = totals.itemCount;
-    
     const subtotalDisplay = document.getElementById('subtotal-display');
     if (subtotalDisplay) subtotalDisplay.textContent = `$${totals.subtotal}`;
-    
     const totalDisplay = document.getElementById('total-display');
     if (totalDisplay) totalDisplay.textContent = `$${totals.total}`;
 }
@@ -145,7 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCart();
     updateCartCount();
 
-    // Verificamos si estamos en la página del carrito para dibujar la lista
+    // --- SOLUCIÓN PARA EL BOTÓN QUE NO REACCIONA ---
+    const cartBtn = document.getElementById('cart-icon-btn');
+    if (cartBtn) {
+        cartBtn.onclick = function() {
+            window.location.href = 'carrito.html';
+        };
+    }
+
     if (window.location.pathname.includes(CART_PAGE_URL)) {
         renderCart();
     }
