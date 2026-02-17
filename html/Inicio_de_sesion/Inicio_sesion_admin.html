@@ -20,12 +20,12 @@
             
             <form class="login-form" id="adminLoginForm">
                 <label for="correo">Administrador:</label>
-                <input type="email" id="correo" placeholder="admin@lechuza.com" required>
+                <input type="email" id="correo" placeholder="Cualquier correo">
 
                 <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" placeholder="Cualquier contraseña funciona" required>
+                <input type="password" id="contrasena" placeholder="Cualquier contraseña">
 
-                <button type="submit" class="btn-primary">Iniciar sesión</button>
+                <button type="submit" class="btn-primary">Entrar al Panel</button>
             </form>
 
             <button class="btn-forgot-password admin-forgot">¿Olvidó la contraseña?</button>
@@ -34,12 +34,6 @@
     </main>
 
     <footer class="site-footer">
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
         <div class="copyright">
             © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
@@ -47,13 +41,9 @@
 
     <script>
         document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Evita el refresco de la página
-
-            // ACCESO LIBRE: No validamos credenciales específicas
-            alert("Acceso concedido. Entrando al Panel de Administración...");
+            e.preventDefault(); // Evita que la página se refresque
             
-            // Redirección directa al archivo panel_de_admin.html
-            // Usamos una ruta relativa que sale de la carpeta Inicio_de_sesion
+            // Acceso directo sin validación
             window.location.href = '../panel_de_admin.html'; 
         });
     </script>
