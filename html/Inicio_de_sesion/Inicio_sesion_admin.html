@@ -41,10 +41,15 @@
 
     <script>
         document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Evita que la página se refresque
+            e.preventDefault(); 
             
-            // Acceso directo sin validación
-            window.location.href = '../panel_de_admin.html'; 
+            // ACCIÓN: Forzamos la ruta que vimos en tu captura de pantalla
+            // Si el archivo está en /html/panel_de_admin.html, esta es la ruta correcta
+            // desde la carpeta Inicio_de_sesion
+            const targetPath = "../panel_de_admin.html";
+            
+            console.log("Redirigiendo a:", targetPath);
+            window.location.href = targetPath; 
         });
     </script>
 </body>
