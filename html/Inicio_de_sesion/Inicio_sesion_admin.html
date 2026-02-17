@@ -43,12 +43,12 @@
         document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
             e.preventDefault(); 
             
-            // Usamos la ruta exacta que aparece en tu navegador
-            // Esto debería llevarte directo al archivo sin importar las subcarpetas
-            const target = "https://la-lechuza-lectoraa.vercel.app/html/panel_de_admin.html";
+            // SOLUCIÓN AL ERROR 404 DE CONSOLA:
+            // Forzamos la ruta absoluta que el navegador necesita para encontrar el archivo
+            const targetPath = "/html/panel_de_admin.html";
             
-            console.log("Navegando a panel admin...");
-            window.location.href = target; 
+            console.log("Intentando acceder a:", targetPath);
+            window.location.href = targetPath; 
         });
     </script>
 </body>
