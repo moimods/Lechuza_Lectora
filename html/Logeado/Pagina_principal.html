@@ -9,9 +9,9 @@
     <title>La Lechuza Lectora - Inicio (Sesión Iniciada)</title>
     <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css"> 
-    <script src="../../JS/UserDropdown.js"></script>
-    <script src="../../Js/cartManager.js"></script>
-    <script src="../../Js/productLoader.js"></script>
+    <script src="../../JS/UserDropdown.js" defer></script>
+    <script src="../../Js/cartManager.js" defer></script>
+    <script src="../../Js/productLoader.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
@@ -35,51 +35,42 @@
         </nav>
         
         <div class="auth-actions user-actions">
-
             <button class="icon-button"><i class="fa-solid fa-bell"></i></button>
-
 
             <button class="icon-button cart-button" id="cart-icon-btn">
                 <i class="fa-solid fa-cart-shopping"></i>
-
                 <span class="cart-badge" id="cart-count">0</span> 
             </button>
 
             <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/avatar.png" alt="Avatar Usuario" class="avatar" id="avatar-btn">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover;">
                 
-
                 <div class="dropdown-menu" id="avatar-dropdown">
-
                     <a href="perfil.html" id="profile-link">Mi Perfil</a>
-
-                    <a href="#" id="logout-btn">Cerrar Sesión</a>
+                    <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
                 </div>
             </div>
         </div>
     </header>
 
-
     <main class="main-content">
-<div class="background-overlay" style="filter: brightness(0.6) blur(1px);"></div>
+        <div class="background-overlay" style="filter: brightness(0.6) blur(1px);"></div>
 
-<div class="background-carousel">
-    <figure>
-
-         <img src="../../Imagenes/Carrusel/1.jpg"/>
-         <img src="../../Imagenes/Carrusel/2.jpg"/>
-         <img src="../../Imagenes/Carrusel/3.jpg"/>
-         <img src="../../Imagenes/Carrusel/4.jpg"/>
-         <img src="../../Imagenes/Carrusel/5.jpg"/>
-    </figure>
-</div>
+        <div class="background-carousel">
+            <figure>
+                 <img src="../../Imagenes/Carrusel/1.jpg" alt="Fondo 1"/>
+                 <img src="../../Imagenes/Carrusel/2.jpg" alt="Fondo 2"/>
+                 <img src="../../Imagenes/Carrusel/3.jpg" alt="Fondo 3"/>
+                 <img src="../../Imagenes/Carrusel/4.jpg" alt="Fondo 4"/>
+                 <img src="../../Imagenes/Carrusel/5.jpg" alt="Fondo 5"/>
+            </figure>
+        </div>
 
         <div class="content-container">
-            
             <div class="welcome-card">
                 <h2>BIENVENIDO!!!</h2>
-                <p>La Lechuza Lectora es tu portal digital para explorar mundos inexplorados y conectar con las grandes mentes de la **literatura**. Creemos en el poder de las historias. Por eso, hemos creado la página web más completa para la venta de libros de gran variedad, desde los más clásicos hasta los más vendidos actualmente. No somos solo una librería, somos una **comunidad** donde cada clic te acerca a tu próxima página favorita!!!.</p>
-                <button class="btn-secondary">Crear Cuenta</button>
+                <p>La Lechuza Lectora es tu portal digital para explorar mundos inexplorados y conectar con las grandes mentes de la <strong>literatura</strong>. Creemos en el poder de las historias. Por eso, hemos creado la página web más completa para la venta de libros de gran variedad, desde los más clásicos hasta los más vendidos actualmente. No somos solo una librería, somos una <strong>comunidad</strong> donde cada clic te acerca a tu próxima página favorita!!!.</p>
+                <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'">Ir al Catálogo</button>
             </div>
 
             <div class="featured-book">
@@ -90,11 +81,7 @@
             <div class="reviews-section">
                 <div class="review-card">
                     <div class="rating">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
                     </div>
                     <h3>Venta de Libros a Buen precio</h3>
                     <p>La mejor Página para realizar compras y con envío gratis!!!</p>
@@ -109,11 +96,7 @@
 
                 <div class="review-card">
                     <div class="rating">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                     </div>
                     <h3>Excelente Servicio</h3>
                     <p>Mi pedido llego en menos de 3 días!!!</p>
@@ -128,6 +111,7 @@
             </div>
         </div>
     </main>
+
     <footer class="site-footer">
         <div class="social-links">
             <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
@@ -136,9 +120,8 @@
             <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
     </footer>
-
 </body>
 </html>
