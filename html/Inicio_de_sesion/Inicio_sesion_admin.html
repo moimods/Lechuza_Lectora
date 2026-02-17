@@ -39,18 +39,21 @@
         </div>
     </footer>
 
-    <script>
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            
-            // Usamos la ruta absoluta que coincide con tu URL de Vercel
-            const targetPath = "/html/panel_de_admin.html";
-            
-            console.log("Intentando acceder a:", targetPath);
-            
-            // Forzamos la redirección
-            window.location.href = targetPath;
-        });
-    </script>
+   <script>
+    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        
+        // LA RUTA CORRECTA SEGÚN TU ESTRUCTURA:
+        // Subimos un nivel (../) para salir de 'Inicio_de_sesion'
+        // Entramos a la carpeta 'Admin'
+        // Abrimos el archivo 'panel_de_admin.html'
+        const targetPath = "../Admin/panel_de_admin.html";
+        
+        console.log("Redirigiendo a:", targetPath);
+        
+        // Ejecutamos la navegación
+        window.location.href = targetPath;
+    });
+</script>
 </body>
 </html>
