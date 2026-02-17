@@ -2,15 +2,19 @@ let cartItems = [];
 const CHECKOUT_START_URL = 'compra/resumen_compra.html'; 
 const CART_PAGE_URL = 'carrito.html'; 
 const STORAGE_KEY = 'laLechuzaLectoraCart'; 
+
+// Carga inicial de datos para que el contador no se resetee al navegar
 function saveCart() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
 }
+
 function loadCart() {
     const storedCart = localStorage.getItem(STORAGE_KEY);
     if (storedCart) {
         cartItems = JSON.parse(storedCart);
     }
 }
+
 function calculateTotals() {
     const subtotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
     const shippingCost = 0; 
@@ -18,24 +22,23 @@ function calculateTotals() {
 
     return {
         subtotal: subtotal.toFixed(2),
-        shipping: shippingCost === 0 ? 'Gratis' : shippingCost.toFixed(2),
+        shipping: shippingCost === 0 ? 'Gratis' : `$${shippingCost.toFixed(2)}`,
         total: total.toFixed(2),
         itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
     };
 }
 
-
 function updateCartCount() {
-    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totals = calculateTotals();
     const countElement = document.getElementById('cart-count');
     
     if (countElement) {
-        countElement.textContent = totalItems;
-        countElement.style.display = totalItems > 0 ? 'block' : 'none';
+        countElement.textContent = totals.itemCount;
+        countElement.style.display = totals.itemCount > 0 ? 'block' : 'none';
     }
 }
 
-
+// Corregido: Ahora maneja mejor los datos que vienen del Catálogo
 function addToCart(producto, buyNow = false) {
     loadCart(); 
 
@@ -43,13 +46,12 @@ function addToCart(producto, buyNow = false) {
         cartItems = []; 
     }
 
-    
+    // Aseguramos que el ID se compare correctamente como String
     const itemIndex = cartItems.findIndex(item => String(item.id) === String(producto.id));
     
     if (itemIndex > -1) {
         cartItems[itemIndex].quantity += 1;
     } else {
-     
         cartItems.push({ 
             id: producto.id, 
             quantity: 1, 
@@ -64,10 +66,13 @@ function addToCart(producto, buyNow = false) {
 
     if (buyNow) {
         startCheckout();
+    } else {
+        alert(`${producto.name} se añadió al carrito.`);
     }
 }
 
-function updateItemQuantity(productId, newQuantity) {
+// Funciones globales para que los botones del HTML puedan llamarlas
+window.updateItemQuantity = function(productId, newQuantity) {
     const itemIndex = cartItems.findIndex(item => String(item.id) === String(productId));
 
     if (itemIndex > -1) {
@@ -79,39 +84,34 @@ function updateItemQuantity(productId, newQuantity) {
         
         saveCart();
         updateCartCount();
-
-        if (window.location.pathname.includes(CART_PAGE_URL)) {
-             renderCart();
-        }
+        renderCart(); // Refresca la lista visualmente
     }
-}
+};
 
-function removeItem(productId) {
+window.removeItem = function(productId) {
     cartItems = cartItems.filter(item => String(item.id) !== String(productId));
     saveCart();
     updateCartCount();
-    if (window.location.pathname.includes(CART_PAGE_URL)) {
-         renderCart();
-    }
-}
+    renderCart();
+};
 
 function generateCartItemHTML(item) {
     const itemTotal = (parseFloat(item.price) * item.quantity).toFixed(2);
     
     return `
         <div class="cart-item" data-product-id="${item.id}">
-            <img src="${item.image}" alt="Portada de ${item.name}">
+            <img src="${item.image}" alt="Portada de ${item.name}" onerror="this.src='../../Imagenes/logo.png'">
             <div class="item-details">
                 <h2>${item.name}</h2>
                 <p>Precio unitario: $${parseFloat(item.price).toFixed(2)}</p>
                 <div class="item-quantity-controls">
-                    <button class="btn-qty-control btn-minus" onclick="updateItemQuantity('${item.id}', ${item.quantity - 1})">-</button>
+                    <button class="btn-qty-control" onclick="updateItemQuantity('${item.id}', ${item.quantity - 1})">-</button>
                     <span class="item-quantity-display">${item.quantity}</span>
-                    <button class="btn-qty-control btn-plus" onclick="updateItemQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                    <button class="btn-qty-control" onclick="updateItemQuantity('${item.id}', ${item.quantity + 1})">+</button>
                 </div>
-                <button class="btn-remove" onclick="removeItem('${item.id}')">Quitar del carrito</button>
+                <button class="btn-remove" onclick="removeItem('${item.id}')">Eliminar</button>
             </div>
-            <span class="item-price total-item-price">$${itemTotal}</span>
+            <span class="item-price">$${itemTotal}</span>
         </div>
     `;
 }
@@ -123,47 +123,30 @@ function renderCart() {
     if (!container) return;
 
     if (cartItems.length === 0) {
-        container.innerHTML = '';
+        container.innerHTML = '<p style="text-align:center; padding:20px;">Tu carrito está vacío.</p>';
         document.getElementById('empty-cart-message').style.display = 'block';
     } else {
         document.getElementById('empty-cart-message').style.display = 'none';
         container.innerHTML = cartItems.map(generateCartItemHTML).join('');
     }
 
-
+    // Actualización de los elementos de resumen (Derecha)
     const totalItemsDisplay = document.getElementById('total-items-display');
     if (totalItemsDisplay) totalItemsDisplay.textContent = totals.itemCount;
     
     const subtotalDisplay = document.getElementById('subtotal-display');
     if (subtotalDisplay) subtotalDisplay.textContent = `$${totals.subtotal}`;
     
-    const shippingDisplay = document.getElementById('shipping-display');
-    if (shippingDisplay) shippingDisplay.textContent = totals.shipping;
-    
     const totalDisplay = document.getElementById('total-display');
     if (totalDisplay) totalDisplay.textContent = `$${totals.total}`;
-}
-
-function startCheckout() {
-    if (cartItems.length > 0) {
-        window.location.href = CHECKOUT_START_URL; 
-    } else {
-        alert("Tu carrito está vacío. Añade algunos libros antes de continuar.");
-    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();
     updateCartCount();
 
-
+    // Verificamos si estamos en la página del carrito para dibujar la lista
     if (window.location.pathname.includes(CART_PAGE_URL)) {
-         renderCart();
+        renderCart();
     }
-
-    
-    window.addToCart = addToCart;
-    window.updateItemQuantity = updateItemQuantity;
-    window.removeItem = removeItem;
-    window.startCheckout = startCheckout;
 });

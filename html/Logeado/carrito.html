@@ -30,14 +30,14 @@
 
             <button class="icon-button cart-button" id="cart-icon-btn">
                 <i class="fa-solid fa-cart-shopping"></i>
-                <span class="cart-badge" id="cart-count" style="display: none;">0</span> 
+                <span class="cart-badge" id="cart-count">0</span> 
             </button>
             
             <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/avatar.png" alt="Avatar Usuario" class="avatar" id="avatar-btn">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover;">
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="perfil.html" id="profile-link">Mi Perfil</a>
-                    <a href="#" id="logout-btn">Cerrar Sesión</a>
+                    <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
                 </div>
             </div>
         </div>
@@ -51,8 +51,7 @@
                 <h1 class="cart-title">Productos de tu carrito</h1>
                 <p class="cart-subtitle">Las mejores ofertas literarias en La Lechuza Lectora</p>
 
-                <div id="cart-items-container">
-                    </div>
+                <div id="cart-items-container"></div>
                 
                 <div id="empty-cart-message" style="text-align: center; color: #888; margin-top: 30px; display: none;">
                     Tu carrito está vacío. ¡Es hora de buscar nuevas historias!
@@ -75,16 +74,16 @@
                     </div>
 
                     <div class="payment-methods" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-                        <button class="btn-checkout" id="btn-mercadopago" style="background-color: #009ee3; color: white; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                            <i class="fa-solid fa-wallet"></i> Pagar con Mercado Pago
+                        <button class="btn-checkout" id="btn-mercadopago" style="background-color: #009ee3; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: default;">
+                            <i class="fa-solid fa-wallet"></i> Mercado Pago
                         </button>
 
-                        <button class="btn-checkout" id="btn-paypal" style="background-color: #ffc439; color: #003087; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                            <i class="fa-brands fa-paypal"></i> Pagar con PayPal
+                        <button class="btn-checkout" id="btn-paypal" style="background-color: #ffc439; color: #003087; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: default;">
+                            <i class="fa-brands fa-paypal"></i> PayPal
                         </button>
                     </div>
 
-                    <button class="btn-secondary" id="btn-start-checkout" style="width: 100%; margin-top: 15px; border: 1px solid #5d4037;">Continuar pedido manualmente</button>
+                    <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'" style="width: 100%; margin-top: 15px; border: 1px solid #5d4037;">Seguir comprando</button>
                 </div>
             </div>
         </div>
