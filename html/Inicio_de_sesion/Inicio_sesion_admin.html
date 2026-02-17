@@ -43,12 +43,12 @@
         document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
             e.preventDefault(); 
             
-            // ACCIÓN: Forzamos la ruta que vimos en tu captura de pantalla
-            // Si el archivo está en /html/panel_de_admin.html, esta es la ruta correcta
-            // desde la carpeta Inicio_de_sesion
-            const targetPath = "../panel_de_admin.html";
+            // SOLUCIÓN DEFINITIVA: 
+            // Usamos la ruta raíz "/" para que busque desde el inicio de tu sitio en Vercel
+            // Esto coincide exactamente con tu captura: la-lechuza-lectoraa.vercel.app/html/panel_de_admin.html
+            const targetPath = "/html/panel_de_admin.html";
             
-            console.log("Redirigiendo a:", targetPath);
+            console.log("Intentando acceder a:", targetPath);
             window.location.href = targetPath; 
         });
     </script>
