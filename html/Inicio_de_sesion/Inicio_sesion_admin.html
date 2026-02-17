@@ -43,13 +43,12 @@
         document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
             e.preventDefault(); 
             
-            // SOLUCIÓN DEFINITIVA: 
-            // Usamos la ruta raíz "/" para que busque desde el inicio de tu sitio en Vercel
-            // Esto coincide exactamente con tu captura: la-lechuza-lectoraa.vercel.app/html/panel_de_admin.html
-            const targetPath = "/html/panel_de_admin.html";
+            // Usamos la ruta exacta que aparece en tu navegador
+            // Esto debería llevarte directo al archivo sin importar las subcarpetas
+            const target = "https://la-lechuza-lectoraa.vercel.app/html/panel_de_admin.html";
             
-            console.log("Intentando acceder a:", targetPath);
-            window.location.href = targetPath; 
+            console.log("Navegando a panel admin...");
+            window.location.href = target; 
         });
     </script>
 </body>
