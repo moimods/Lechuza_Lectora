@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Login Administrador</title>
-        <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
+    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
@@ -15,22 +15,23 @@
         <div class="form-card login-card admin-login-card">
             <div class="center-logo-box">
                 <img src="../../Imagenes/logo.png" alt="Logo Central" class="main-logo">
+                <h2 style="color: #5d4037; margin-top: 10px;">Acceso Panel Control</h2>
             </div>
             
-            <form class="login-form">
+            <form class="login-form" id="adminLoginForm">
                 <label for="correo">Administrador:</label>
-                <input type="email" id="correo" required>
+                <input type="email" id="correo" placeholder="admin@lechuza.com" required>
 
                 <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" required>
+                <input type="password" id="contrasena" placeholder="••••••••" required>
 
-                <button type="submit" class="btn-primary">Iniciar sesion</button>
+                <button type="submit" class="btn-primary">Iniciar sesión</button>
             </form>
 
-            <button class="btn-forgot-password admin-forgot">Olvido la contraseña?</button>
+            <button class="btn-forgot-password admin-forgot">¿Olvidó la contraseña?</button>
+            <a href="../../index.html" style="display: block; text-align: center; margin-top: 15px; font-size: 0.9em; color: #5d4037;">Volver al Inicio</a>
         </div>
     </main>
-
 
     <footer class="site-footer">
         <div class="social-links">
@@ -40,8 +41,27 @@
             <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
     </footer>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Evita que la página se recargue sola
+
+            // Obtenemos los valores ingresados
+            const user = document.getElementById('correo').value;
+            const pass = document.getElementById('contrasena').value;
+
+            // Validación simple para fines del proyecto
+            if (user === "admin@lechuza.com" && pass === "admin123") {
+                alert("Acceso concedido. Entrando al Panel de Administración...");
+                // Redirige al panel que está en la misma carpeta Inicio_de_sesion o fuera según tu estructura
+                window.location.href = '../panel_de_admin.html'; 
+            } else {
+                alert("Usuario o contraseña de administrador incorrectos.");
+            }
+        });
+    </script>
 </body>
 </html>
