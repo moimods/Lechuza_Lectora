@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Definimos las rutas sin carpetas adicionales ya que están en el mismo nivel
-    const TO_LOGIN_URL = 'inicio_sesion_admin.html'; 
+    // Definimos la ruta exacta según lo que muestra tu navegador en Vercel
+    // IMPORTANTE: 'Inicio_sesion.html' con I mayúscula como se ve en tu captura
+    const TO_LOGIN_URL = 'Inicio_sesion.html'; 
     const TO_CHANGE_PASSWORD_URL = 'cambio_Contraseña.html'; 
 
     const btnRegresar = document.getElementById('btn-regresar');
@@ -10,9 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnRegresar) {
         btnRegresar.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log("Navegando a:", TO_LOGIN_URL);
-            // Usamos replace para evitar que el error 404 se guarde en el historial
-            window.location.replace(TO_LOGIN_URL);
+            console.log("Navegando a la pantalla de inicio de sesión...");
+            // Al estar en la misma carpeta, solo necesitamos el nombre del archivo
+            window.location.href = TO_LOGIN_URL;
         });
     }
 
@@ -29,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (correo.trim() !== "") {
                 alert("Código enviado con éxito.");
             } else {
-                alert("Por favor, ingrese un correo válido.");
+                alert("Por favor, ingrese un correo.");
             }
         });
     }
