@@ -1,38 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
-    const TO_CHANGE_PASSWORD_URL = 'cambio_Contraseña.html'; 
+    // Definimos las rutas sin carpetas adicionales ya que están en el mismo nivel
     const TO_LOGIN_URL = 'inicio_sesion_admin.html'; 
+    const TO_CHANGE_PASSWORD_URL = 'cambio_Contraseña.html'; 
 
-    const btnEnviarCodigo = document.getElementById('btn-enviar-codigo');
-    const btnSiguiente = document.getElementById('btn-siguiente');
     const btnRegresar = document.getElementById('btn-regresar');
+    const btnSiguiente = document.getElementById('btn-siguiente');
+    const btnEnviarCodigo = document.getElementById('btn-enviar-codigo');
 
-    if (btnEnviarCodigo) {
-        btnEnviarCodigo.addEventListener('click', () => {
-            const emailInput = document.getElementById('correo');
-            
-            if (emailInput && emailInput.value.trim() !== '') {
-                alert(`Simulación: Código enviado a ${emailInput.value.trim()}.`); 
-            } else {
-                alert("Por favor, introduce tu correo electrónico.");
-            }
+    if (btnRegresar) {
+        btnRegresar.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("Navegando a:", TO_LOGIN_URL);
+            // Usamos replace para evitar que el error 404 se guarde en el historial
+            window.location.replace(TO_LOGIN_URL);
         });
     }
 
     if (btnSiguiente) {
         btnSiguiente.addEventListener('click', (e) => {
-            e.preventDefault(); // Evita comportamientos extraños del botón
-            console.log("Redirigiendo a: " + TO_CHANGE_PASSWORD_URL);
+            e.preventDefault();
             window.location.href = TO_CHANGE_PASSWORD_URL;
         });
     }
 
-    if (btnRegresar) {
-        btnRegresar.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log("Regresando a: " + TO_LOGIN_URL);
-            
-            window.location.href = TO_LOGIN_URL;
+    if (btnEnviarCodigo) {
+        btnEnviarCodigo.addEventListener('click', () => {
+            const correo = document.getElementById('correo').value;
+            if (correo.trim() !== "") {
+                alert("Código enviado con éxito.");
+            } else {
+                alert("Por favor, ingrese un correo válido.");
+            }
         });
     }
 });
