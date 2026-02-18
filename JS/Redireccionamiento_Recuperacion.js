@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // CORRECCIÓN: El nombre del archivo debe ser inicio_sesion_admin.html
+    
     const TO_CHANGE_PASSWORD_URL = 'cambio_Contraseña.html'; 
     const TO_LOGIN_URL = 'inicio_sesion_admin.html'; 
 
@@ -20,17 +20,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (btnSiguiente) {
-        btnSiguiente.addEventListener('click', () => {
-            console.log("Simulando validación exitosa. Redirigiendo a cambio de contraseña...");
+        btnSiguiente.addEventListener('click', (e) => {
+            e.preventDefault(); // Evita comportamientos extraños del botón
+            console.log("Redirigiendo a: " + TO_CHANGE_PASSWORD_URL);
             window.location.href = TO_CHANGE_PASSWORD_URL;
         });
     }
 
     if (btnRegresar) {
-        btnRegresar.addEventListener('click', () => {
-            console.log("Regresando al formulario de inicio de sesión.");
-            // Ahora redirigirá correctamente al login del administrador
+        btnRegresar.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("Regresando a: " + TO_LOGIN_URL);
+            
             window.location.href = TO_LOGIN_URL;
         });
     }
-}); // Se eliminó la llave extra que causaba error de sintaxis
+});
