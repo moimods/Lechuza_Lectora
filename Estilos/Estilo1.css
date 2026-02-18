@@ -3295,3 +3295,31 @@ a { text-decoration: none; color: inherit; }
 .map-wrapper iframe:hover {
     filter: none;
 }
+
+.btn-payment {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-mp {
+    background-color: #009ee3; 
+    color: white;
+}
+
+.btn-pp {
+    background-color: #ffc439; 
+    color: #003087;
+}
+
+.btn-payment:hover {
+    filter: brightness(0.9);
+}

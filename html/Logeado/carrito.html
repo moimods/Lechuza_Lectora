@@ -9,6 +9,7 @@
 
     <script src="../../JS/userDropdown.js" defer></script>
     <script src="../../JS/cartManager.js" defer></script> 
+    <script src="../../JS/paymentManager.js" defer></script>
 </head>
 <body>
 
@@ -74,16 +75,16 @@
                     </div>
 
                     <div class="payment-methods" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-                        <button class="btn-checkout" id="btn-mercadopago" style="background-color: #009ee3; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: default;">
+                        <button class="btn-checkout" id="btn-mercadopago" style="background-color: #009ee3; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border: none; padding: 12px; border-radius: 5px; font-weight: bold;">
                             <i class="fa-solid fa-wallet"></i> Mercado Pago
                         </button>
 
-                        <button class="btn-checkout" id="btn-paypal" style="background-color: #ffc439; color: #003087; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: default;">
+                        <button class="btn-checkout" id="btn-paypal" style="background-color: #ffc439; color: #003087; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border: none; padding: 12px; border-radius: 5px; font-weight: bold;">
                             <i class="fa-brands fa-paypal"></i> PayPal
                         </button>
                     </div>
 
-                    <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'" style="width: 100%; margin-top: 15px; border: 1px solid #5d4037;">Seguir comprando</button>
+                    <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'" style="width: 100%; margin-top: 15px; border: 1px solid #5d4037; padding: 10px; cursor: pointer;">Seguir comprando</button>
                 </div>
             </div>
         </div>
