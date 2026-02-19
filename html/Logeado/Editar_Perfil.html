@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - La Lechuza Lectora</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../../Estilos/Estilo1.css">
+    <script src="../../JS/UserDropdown.js" defer></script>
+</head>
+<body>
+    
+    <header class="navbar detail-navbar">
+        <div class="logo-container">
+            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <span class="site-name">LA LECHUZA LECTORA</span>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="Acerca_de.html">Acerca de</a>
+            <a href="Contacto.html">Contacto</a>
+            <a href="Ayuda.html">Ayuda</a>
+            <a href="Catalogo_Logeado.html">Catálogo</a>
+        </nav>
+        
+        <div class="auth-actions user-actions">
+            <button class="icon-button" onclick="window.location.href='perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+            <div class="avatar-dropdown-container">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
+            </div>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <div class="background-overlay" style="filter: brightness(0.8);"></div> 
+        
+        <div class="profile-main-wrapper">
+            <h1 class="profile-title-custom">Editar Mi Información</h1>
+
+            <div class="edit-profile-container" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto;">
+                <form id="edit-profile-form">
+                    <div class="edit-photo-section" style="text-align: center; margin-bottom: 25px;">
+                        <img src="../../Imagenes/miku.png.jpg" alt="Avatar actual" id="preview-avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #5d4037;">
+                        <div style="margin-top: 10px;">
+                            <label for="file-upload" class="btn-secondary" style="cursor: pointer; background: #5d4037; color: white; padding: 8px 15px; border-radius: 5px; font-size: 0.9rem;">
+                                <i class="fas fa-camera"></i> Cambiar Foto
+                            </label>
+                            <input id="file-upload" type="file" style="display:none;" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; color: #5d4037; font-weight: bold; margin-bottom: 5px;">Nombre Completo</label>
+                        <input type="text" value="Fernando Machorro" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label style="display: block; color: #5d4037; font-weight: bold; margin-bottom: 5px;">Correo Electrónico</label>
+                        <input type="email" value="machorro29salvidar@gmail.com" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" onclick="window.location.href='perfil.html'" style="background: #ccc; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Cancelar</button>
+                        <button type="submit" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="copyright" style="text-align: center; padding: 20px; color: #5d4037;">
+            © Todos los derechos reservados 2026. La Lechuza Lectora ©
+        </div>
+    </footer>
+
+    <script>
+    
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById('preview-avatar').src = reader.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        });
+
+    
+        document.getElementById('edit-profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('¡Información actualizada correctamente!');
+            window.location.href = 'perfil.html';
+        });
+    </script>
+</body>
+</html>
