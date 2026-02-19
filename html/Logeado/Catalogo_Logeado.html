@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <script src="../../JS/userDropdown.js" defer></script>
+    <script src="../../JS/UserDropdown.js" defer></script>
     <script src="../../JS/productLoader.js" defer></script>
     <script src="../../JS/filterSidebar.js" defer></script>
     <script src="../../JS/cartManager.js" defer></script>
@@ -17,7 +17,7 @@
 
     <header class="navbar detail-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo">
+            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
 
@@ -36,13 +36,14 @@
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='../../index.html'"><i class="fa-solid fa-house"></i></button>
 
-            <button class="icon-button cart-button" id="cart-icon-btn">
+            <a href="carrito.html" class="icon-link cart-button" id="cart-icon-btn">
                 <i class="fa-solid fa-cart-shopping"></i>
-                <span class="cart-badge" id="cart-count">2</span> 
-            </button>
-
+                <span class="cart-badge" id="cart-count">2</span>
+            </a>
+            
             <div class="avatar-dropdown-container">
                 <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
+                
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="perfil.html" id="profile-link">Mi Perfil</a>
                     <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
@@ -81,13 +82,8 @@
                 </div>
             </aside>
 
-            <section class="product-grid" id="products-container"></section>
-        </div>
-
-        <div class="carousel-nav catalog-pagination">
-            <button id="prev-page-btn">← Previous</button>
-            <div class="pagination"></div>
-            <button id="next-page-btn">Next →</button>
+            <section class="product-grid" id="products-container">
+                </section>
         </div>
     </main>
 
@@ -104,6 +100,7 @@
     </footer>
 
     <script>
+        
         const searchInput = document.getElementById('main-search');
         if (searchInput) {
             searchInput.addEventListener('keyup', () => {
@@ -116,6 +113,7 @@
             });
         }
 
+        
         window.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('products-container');
             if (container) {
@@ -124,7 +122,7 @@
                     const card = document.createElement('div');
                     card.className = 'book-product-card';
                     card.innerHTML = `
-                        <img src="${libro.imagen}" alt="${libro.titulo}">
+                        <img src="${libro.imagen}" alt="${libro.titulo}" style="object-fit: cover;">
                         <h3 class="book-title-grid">${libro.titulo}</h3>
                         <p class="book-author-grid">${libro.autor || 'Autor desconocido'}</p>
                         <span class="book-price-grid">$${libro.precio}</span>
