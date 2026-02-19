@@ -23,7 +23,7 @@
         
         <div class="search-bar detail-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Buscar Libros, Autores, Editoriales y más...">
+            <input type="text" id="main-search" placeholder="Buscar Libros, Autores, Editoriales y más...">
         </div>
         
         <nav class="nav-links">
@@ -77,46 +77,6 @@
                     </div>
                 </div>
 
-                <div class="filter-section filter-subgenres">
-                    <h3>Subgéneros/Temas</h3>
-                    <div class="filter-options">
-                        <label><input type="checkbox" data-filter="SuspensoPsicologico"> Suspenso Psicológico</label>
-                        <label><input type="checkbox" data-filter="Distopia"> Distopía</label>
-                        <label><input type="checkbox" data-filter="FantasiaUrbana"> Fantasía Urbana</label>
-                        <label><input type="checkbox" data-filter="Ciberpunk"> Ciberpunk</label>
-                        <label><input type="checkbox" data-filter="FiccionHistorica"> Ficción Histórica</label>
-                        <label><input type="checkbox" data-filter="NovelaNegra"> Novela Negra</label>
-                        <label><input type="checkbox" data-filter="Western"> Western</label>
-                        <label><input type="checkbox" data-filter="CienciaDura"> Ciencia Dura</label>
-                        <label><input type="checkbox" data-filter="CrimenReal"> Crimen Real</label>
-                        <label><input type="checkbox" data-filter="Cocina"> Cocina</label>
-                        <label><input type="checkbox" data-filter="Viajes"> Viajes</label>
-                        <label><input type="checkbox" data-filter="Mitologia"> Mitología</label>
-                        <label><input type="checkbox" data-filter="Comedia"> Comedia</label>
-                        <label><input type="checkbox" data-filter="Filosofia"> Filosofía</label>
-                        <label><input type="checkbox" data-filter="Tecnologia"> Tecnología</label>
-                    </div>
-                </div>
-
-                <div class="filter-section filter-age">
-                    <h3>Clasificación de Edad</h3>
-                    <div class="filter-options">
-                        <label><input type="radio" name="age-group" data-filter="General"> General (Todos)</label>
-                        <label><input type="radio" name="age-group" data-filter="JovenAdulto"> Joven Adulto (14+)</label>
-                        <label><input type="radio" name="age-group" data-filter="Adulto"> Adulto (+18)</label>
-                    </div>
-                </div>
-
-                <div class="filter-section filter-price">
-                    <h3>Precio Máximo</h3>
-                    <div class="price-range">
-                        <input type="range" id="price-range-input" min="500" max="5000" value="5000">
-                        <div class="price-values">
-                            <span id="price-min-display">$500</span> - <span id="price-max-display">$5000</span>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="filter-section">
                     <h3>Filtros Activos</h3>
                     <div class="filter-tags" id="active-filters-tags"></div>
@@ -136,10 +96,10 @@
 
     <footer class="site-footer">
         <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="https://x.com" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <div class="copyright">
             © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
@@ -147,13 +107,46 @@
     </footer>
 
     <script>
-        document.addEventListener('click', function(e) {
-            
-            if (e.target && (e.target.innerText === 'Añadir' || e.target.innerText === 'Comprar')) {
-                console.log("Usuario no logeado intentando comprar. Redirigiendo...");
         
+        const searchInput = document.getElementById('main-search');
+        searchInput.addEventListener('keyup', () => {
+            const term = searchInput.value.toLowerCase();
+            const books = document.querySelectorAll('.book-product-card');
+
+            books.forEach(book => {
+                const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
+    
+                book.style.display = title.includes(term) ? "flex" : "none";
+            });
+        });
+
+    
+        document.addEventListener('click', function(e) {
+            if (e.target && (e.target.innerText === 'Añadir' || e.target.innerText === 'Comprar')) {
                 window.location.href = "Inicio_de_sesion/Inicio_sesion.html";
             }
+        });
+
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('products-container');
+            const misLibros = JSON.parse(localStorage.getItem('misLibros')) || [];
+
+            misLibros.forEach(libro => {
+                const card = document.createElement('div');
+                card.className = 'book-product-card';
+                card.innerHTML = `
+                    <img src="${libro.imagen}" alt="${libro.titulo}">
+                    <h3 class="book-title-grid">${libro.titulo}</h3>
+                    <p class="book-author-grid">${libro.autor}</p>
+                    <span class="book-price-grid">$${libro.precio}</span>
+                    <div class="product-actions">
+                        <button class="btn-add-to-cart">Añadir</button>
+                        <button class="btn-buy-now">Comprar</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         });
     </script>
 </body>
