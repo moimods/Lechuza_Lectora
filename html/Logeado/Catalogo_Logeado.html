@@ -34,7 +34,6 @@
         </nav>
 
         <div class="auth-actions user-actions">
-            <button class="icon-button"><i class="fa-solid fa-bell"></i></button>
             <button class="icon-button" onclick="window.location.href='../../index.html'"><i class="fa-solid fa-house"></i></button>
 
             <button class="icon-button cart-button" id="cart-icon-btn">
@@ -81,8 +80,7 @@
                 </div>
             </aside>
 
-            <section class="product-grid" id="products-container">
-                </section>
+            <section class="product-grid" id="products-container"></section>
         </div>
 
         <div class="carousel-nav catalog-pagination">
@@ -105,7 +103,6 @@
     </footer>
 
     <script>
-        
         const searchInput = document.getElementById('main-search');
         searchInput.addEventListener('keyup', () => {
             const term = searchInput.value.toLowerCase();
@@ -117,7 +114,6 @@
             });
         });
 
-        
         window.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('products-container');
             const misLibros = JSON.parse(localStorage.getItem('misLibros')) || [];
