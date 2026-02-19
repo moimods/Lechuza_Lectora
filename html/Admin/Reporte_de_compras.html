@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,7 +6,54 @@
     <title>La Lechuza Lectora - Reporte de Compras</title>
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    </head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        
+        .key-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            text-align: center;
+        }
+        .metric-card i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
+        .metric-card .corner-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            opacity: 0.5;
+        }
+    
+        .report-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .report-data-table th, .report-data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        .chart-container {
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+</head>
 <body class="dashboard-page">
 
     <header class="navbar dashboard-navbar">
@@ -17,9 +63,11 @@
         </div>
         
         <div class="admin-profile">
-            <i class="fa-solid fa-house"></i>
+            <a href="panel_de_admin.html" style="color: inherit; text-decoration: none;">
+                <i class="fa-solid fa-house"></i>
+            </a>
             <span>Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar">
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover;">
         </div>
     </header>
 
@@ -28,56 +76,70 @@
             <h1 class="report-title">Reporte de compras</h1>
 
             <div class="key-metrics-grid">
-                <div class="metric-card gold-bg">
-                    <i class="fa-solid fa-sack-dollar"></i>
+                <div class="metric-card">
+                    <i class="fa-solid fa-sack-dollar" style="color: #daa520;"></i>
                     <p>Ventas totales</p>
                     <strong>$1,250,000</strong>
                 </div>
-                <div class="metric-card growth-bg">
+                <div class="metric-card">
                     <i class="fa-solid fa-arrow-up green-arrow"></i>
                     <p>CRECIMIENTO ACUMULADO</p>
                     <strong>+18%</strong>
-                    <i class="fa-solid fa-chart-bar"></i>
+                    <i class="fa-solid fa-chart-line corner-icon"></i>
                 </div>
-                <div class="metric-card best-month-bg">
-                    <i class="fa-solid fa-calendar-alt"></i>
+                <div class="metric-card">
+                    <i class="fa-solid fa-calendar-alt" style="color: #2196f3;"></i>
                     <p>MES CON MAYORES VENTAS</p>
-                    <strong>Febe ($85,000)</strong>
-                    <i class="fa-solid fa-arrow-down red-arrow"></i>
+                    <strong>Febrero ($85,000)</strong>
+                    <i class="fa-solid fa-arrow-down red-arrow corner-icon"></i>
                 </div>
             </div>
 
             <div class="charts-and-table-grid">
-                <div class="chart-card sales-per-month">
+                <div class="chart-card">
                     <h2>Ventas por Mes</h2>
-                    <div class="chart-placeholder">
-                        <img src="../../Imagenes/line-chart-placeholder.png" alt="Gráfico de Ventas por Mes" style="width: 100%; height: auto;">
+                    <div class="chart-container">
+                        <canvas id="ventasMesChart"></canvas>
                     </div>
                 </div>
 
-                <div class="chart-card monthly-growth">
+                <div class="chart-card">
                     <h2>Crecimiento Mensual</h2>
-                    <div class="chart-placeholder">
-                        <img src="../../Imagenes/bar-pie-chart-placeholder.png" alt="Gráfico de Crecimiento y Tiempos" style="width: 100%; height: auto;">
+                    <div class="chart-container">
+                        <canvas id="crecimientoChart"></canvas>
                     </div>
                 </div>
                 
-                <div class="data-table-card distribution-table">
+                <div class="data-table-card distribution-table" style="grid-column: span 2;">
                     <h2>Distribución de Ventas por Trimestre</h2>
-                    <table class="report-data-table distribution-table-data">
+                    <table class="report-data-table">
                         <thead>
-                            <tr>
+                            <tr style="background-color: var(--color-primary); color: white;">
                                 <th>MES</th>
-                                <th>VENTAS</th>
-                                <th>VENTAS</th>
+                                <th>VENTAS PROYECTADAS</th>
+                                <th>VENTAS REALES</th>
                                 <th>% Crecimiento (vs. Mes Ant.)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>Enero</td><td>$90,000</td><td>$90,000</td><td>T1 <span class="green-arrow">▲+10%</span> <span class="green-arrow">▲+20%</span> <span class="green-arrow">▲</span></td></tr>
-                            <tr><td>Fenzo</td><td>$102,000</td><td class="negative">-2%</td><td>T2 <span class="red-arrow">▼-5%</span> <span class="green-arrow">▲+20%</span> <span class="green-arrow">▲</span></td></tr>
-                            <tr><td>Marzo</td><td>$124,000</td><td>250%</td><td>T3 <span class="red-arrow">▼-25%</span> <span class="green-arrow">▲+20%</span> <span class="green-arrow">▲</span></td></tr>
-                            <tr><td>Diciembre</td><td>$112,000</td><td>$115,000</td><td>T4 <span class="red-arrow">▼-28%</span> <span class="red-arrow">▼+18%</span> <span class="green-arrow">▲</span></td></tr>
+                            <tr>
+                                <td>Enero</td>
+                                <td>$90,000</td>
+                                <td>$95,000</td>
+                                <td>T1 <span class="green-arrow">▲+10%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Febrero</td>
+                                <td>$102,000</td>
+                                <td>$85,000</td>
+                                <td>T2 <span class="red-arrow">▼-5%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Marzo</td>
+                                <td>$124,000</td>
+                                <td>$130,000</td>
+                                <td>T3 <span class="green-arrow">▲+20%</span></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -85,7 +147,40 @@
         </div>
     </main>
 
-    <footer class="site-footer">...</footer>
+    <footer class="site-footer" style="text-align: center; padding: 20px;">
+        © Todos los derechos reservados 2026. La Lechuza Lectora
+    </footer>
 
+    <script>
+    
+        const ctxVentas = document.getElementById('ventasMesChart').getContext('2d');
+        new Chart(ctxVentas, {
+            type: 'bar',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar'],
+                datasets: [{
+                    label: 'Ventas Reales',
+                    data: [95000, 85000, 130000],
+                    backgroundColor: '#5d4037'
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        const ctxCrecimiento = document.getElementById('crecimientoChart').getContext('2d');
+        new Chart(ctxCrecimiento, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar'],
+                datasets: [{
+                    label: 'Crecimiento %',
+                    data: [10, -5, 20],
+                    borderColor: '#fbc02d',
+                    fill: false
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    </script>
 </body>
 </html>
