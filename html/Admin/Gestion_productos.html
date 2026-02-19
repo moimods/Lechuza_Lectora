@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Lechuza Lectora - Gestión de Productos</title>
+    <link rel="stylesheet" href="../../Estilos/Estilo1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        .form-container-admin {
+            max-width: 600px;
+            background-color: var(--color-background-card);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .btn-save-product {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn-save-product:hover {
+            background-color: #4e342e;
+        }
+
+        .preview-box {
+            width: 150px;
+            height: 200px;
+            border: 2px dashed #ccc;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+
+    <header class="navbar dashboard-navbar">
+        <div class="logo-container">
+            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <span class="site-name">LA LECHUZA LECTORA</span>
+        </div>
+        
+        <div class="auth-actions user-actions">
+            <a href="panel_de_admin.html" style="text-decoration: none; color: inherit;">
+                <i class="fa-solid fa-house"></i>
+            </a>
+            <span>Admin</span>
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover;">
+        </div>
+    </header>
+
+    <main class="main-content inventory-main">
+        <div class="background-overlay dashboard-bg" style="filter: brightness(0.6);"></div>
+
+        <div class="form-container-admin">
+            <div class="inventory-header">
+                <i class="fa-solid fa-arrow-left" onclick="location.href='panel_de_admin.html'" style="cursor: pointer;"></i>
+                <h1 class="dashboard-title">Agregar / Modificar Libro</h1>
+            </div>
+
+            <form id="productForm">
+                <div class="form-group">
+                    <label for="titulo">Título del Libro:</label>
+                    <input type="text" id="titulo" placeholder="Ej. El Hobbit" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="autor">Autor:</label>
+                    <input type="text" id="autor" placeholder="Ej. J.R.R. Tolkien" required>
+                </div>
+
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label for="precio">Precio de Venta ($):</label>
+                        <input type="number" id="precio" placeholder="0.00" step="0.01" required>
+                    </div>
+                    <div>
+                        <label for="stock">Cantidad Inicial:</label>
+                        <input type="number" id="stock" placeholder="10" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="imagen">Portada del Libro:</label>
+                    <input type="file" id="imagen" accept="image/*" onchange="previewImage(event)">
+                    <div class="preview-box" id="imagePreview">
+                        <span>Sin imagen</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save-product">Guardar Cambios</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
+        © Todos los derechos reservados 2026. La Lechuza Lectora
+    </footer>
+
+    <script>
+        
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('imagePreview');
+                output.innerHTML = `<img src="${reader.result}">`;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert("¡Producto guardado exitosamente en el catálogo!");
+            window.location.href = 'panel_de_admin.html';
+        });
+    </script>
+</body>
+</html>

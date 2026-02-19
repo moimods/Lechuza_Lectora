@@ -14,7 +14,7 @@
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
-        </header>
+    </header>
 
     <main class="main-content profile-main">
         <div class="background-overlay admin-profile-bg" style="filter: brightness(0.6);"></div>
@@ -30,23 +30,30 @@
                 </div>
             </div>
 
-            <div class="admin-actions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px;">
-                <div class="action-module" style="background: white; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer;">
+            <div class="admin-actions-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px;">
+                
+                <div class="action-module" onclick="location.href='Gestion_de_inventario.html'" style="background: white; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer;">
                     <i class="fa-solid fa-warehouse" style="font-size: 40px; color: #5d4037;"></i>
                     <h3>Almacén de Libros</h3>
                     <p>Gestión de Inventario</p>
                 </div>
                 
-                <div class="action-module" style="background: white; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer;">
+                <div class="action-module" onclick="location.href='Reporte_de_ventas.html'" style="background: white; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer;">
                     <i class="fa-solid fa-sack-dollar" style="font-size: 40px; color: #5d4037;"></i>
                     <h3>Reportes de Ventas</h3>
                     <p>Ventas del mes</p>
                 </div>
 
-                <div class="action-module" style="background: white; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer;">
+                <div class="action-module" onclick="location.href='Reporte_de_compras.html'" style="background: white; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer;">
                     <i class="fa-solid fa-list-check" style="font-size: 40px; color: #5d4037;"></i>
                     <h3>Reportes de Compras</h3>
                     <p>Libros adquiridos</p>
+                </div>
+
+                <div class="action-module" onclick="location.href='Gestion_productos.html'" style="background: white; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; border: 2px solid #fbc02d;">
+                    <i class="fa-solid fa-book-medical" style="font-size: 40px; color: #5d4037;"></i>
+                    <h3>Gestión de Productos</h3>
+                    <p>Agregar libros y precios</p>
                 </div>
             </div>
             
