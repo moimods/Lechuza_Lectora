@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Lechuza Lectora - Catálogo (Sesión Iniciada)</title>
+    <title>La Lechuza Lectora - Catálogo</title>
 
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -13,7 +13,6 @@
     <script src="../../JS/cartManager.js" defer></script>
 
     <style>
-        
         .dropdown-menu {
             display: none;
             position: absolute;
@@ -21,128 +20,127 @@
             top: 60px;
             background-color: #fdf5e6;
             min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
             z-index: 1000;
             border-radius: 5px;
         }
-
-        .dropdown-menu.show {
-            display: block;
-        }
-
+        .dropdown-menu.show { display: block; }
         .dropdown-menu a {
             color: #5d4037;
             padding: 12px 16px;
             text-decoration: none;
             display: block;
         }
-
-        .dropdown-menu a:hover {
-            background-color: #d7ccc8;
-        }
+        .dropdown-menu a:hover { background-color: #d7ccc8; }
     </style>
 </head>
 <body>
 
-    <header class="navbar detail-navbar">
-        <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo">
-            <span class="site-name">LA LECHUZA LECTORA</span>
-        </div>
+<header class="navbar detail-navbar">
+    <div class="logo-container">
+        <img src="../../Imagenes/logo.png" class="logo">
+        <span class="site-name">LA LECHUZA LECTORA</span>
+    </div>
 
-        <div class="search-bar detail-search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="main-search" placeholder="Buscar Libros, Autores, Editoriales y más...">
-        </div>
-<nav class="nav-links">
-            <a href="Acerca_de.html">Acerca de</a>
-            <a href="Contacto.html">Contacto</a>
-            <a href="Ayuda.html">Ayuda</a>
-            <a href="Catalogo_Logeado.html" class="active-link">Catálogo</a>
-        </nav>
-        <div class="auth-actions user-actions">
-            <button class="icon-button" onclick="window.location.href='../../index.html'"><i class="fa-solid fa-house"></i></button>
+    <div class="search-bar detail-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="main-search" placeholder="Buscar libros...">
+    </div>
 
-            <button class="icon-button cart-button" id="cart-icon-btn">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span class="cart-badge" id="cart-count">2</span>
-            </button>
+    <nav class="nav-links">
+        <a href="Acerca_de.html">Acerca de</a>
+        <a href="Contacto.html">Contacto</a>
+        <a href="Ayuda.html">Ayuda</a>
+        <a href="#" class="active-link">Catálogo</a>
+    </nav>
 
-            <div class="avatar-dropdown-container" style="position: relative;">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%; width: 40px; height: 40px;">
-                <div class="dropdown-menu" id="avatar-dropdown">
-                    <a href="perfil.html">Mi Perfil</a>
-                    <a href="../../index.html">Cerrar Sesión</a>
-                </div>
+    <div class="auth-actions user-actions">
+        <button class="icon-button" onclick="window.location.href='../../index.html'">
+            <i class="fa-solid fa-house"></i>
+        </button>
+
+        <button class="icon-button cart-button" id="cart-icon-btn">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="cart-badge" id="cart-count">0</span>
+        </button>
+
+        <div class="avatar-dropdown-container" style="position: relative;">
+            <img src="../../Imagenes/miku.png.jpg" class="avatar" id="avatar-btn"
+                 style="cursor:pointer; object-fit:cover; border-radius:50%; width:40px; height:40px;">
+            <div class="dropdown-menu" id="avatar-dropdown">
+                <a href="perfil.html">Mi Perfil</a>
+                <a href="../../index.html">Cerrar Sesión</a>
             </div>
         </div>
-    </header>
+    </div>
+</header>
 
-    <main class="main-content catalog-main">
-        <div class="background-overlay" style="filter: brightness(0.8);"></div>
+<main class="main-content catalog-main">
+    <div class="catalog-container">
+        <aside class="filter-sidebar" id="filter-sidebar"></aside>
+        <section class="product-grid" id="products-container"></section>
+    </div>
+</main>
 
-        <button id="filter-toggle" class="btn-filter-toggle"><i class="fa-solid fa-filter"></i> Filtros</button>
+<footer class="site-footer">
+    <div class="copyright">
+        © Todos los derechos reservados 2026
+    </div>
+</footer>
 
-        <div class="catalog-container">
-            <aside class="filter-sidebar" id="filter-sidebar">
-                <div class="sidebar-header">
-                    <h2>Filtros</h2>
-                    <button id="sidebar-close-btn" class="btn-close-sidebar"><i class="fa-solid fa-times"></i></button>
-                </div>
-                <div class="filter-section filter-genres">
-                    <h3>Género Principal</h3>
-                    <div class="filter-options">
-                        <label><input type="checkbox" data-filter="Terror"> Terror</label>
-                        <label><input type="checkbox" data-filter="Novela"> Novela Contemporánea</label>
-                    </div>
-                </div>
-            </aside>
+<script>
 
-            <section class="product-grid" id="products-container">
-            </section>
-        </div>
-    </main>
+const avatarBtn = document.getElementById('avatar-btn');
+const dropdownMenu = document.getElementById('avatar-dropdown');
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="https://x.com" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-            <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
-        <div class="copyright">© Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©</div>
-    </footer>
+avatarBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle('show');
+});
 
-    <script>
-        
-        const avatarBtn = document.getElementById('avatar-btn');
-        const dropdownMenu = document.getElementById('avatar-dropdown');
+window.addEventListener('click', () => {
+    dropdownMenu.classList.remove('show');
+});
 
-        if (avatarBtn && dropdownMenu) {
-            avatarBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('show');
-            });
-
-            window.addEventListener('click', function() {
-                if (dropdownMenu.classList.contains('show')) {
-                    dropdownMenu.classList.remove('show');
-                }
-            });
-        }
+const searchInput = document.getElementById('main-search');
+searchInput.addEventListener('keyup', () => {
+    const term = searchInput.value.toLowerCase();
+    document.querySelectorAll('.book-product-card').forEach(book => {
+        const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
+        book.style.display = title.includes(term) ? "flex" : "none";
+    });
+});
 
 
-        const searchInput = document.getElementById('main-search');
-        if (searchInput) {
-            searchInput.addEventListener('keyup', () => {
-                const term = searchInput.value.toLowerCase();
-                const books = document.querySelectorAll('.book-product-card');
-                books.forEach(book => {
-                    const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
-                    book.style.display = title.includes(term) ? "flex" : "none";
-                });
-            });
-        }
-    </script>
+window.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('products-container');
+    const misLibros = JSON.parse(localStorage.getItem('misLibros')) || [];
+
+    container.innerHTML = "";
+
+    misLibros.forEach(libro => {
+        const card = document.createElement('div');
+        card.className = 'book-product-card';
+
+        card.innerHTML = `
+            <img src="${libro.imagen}" alt="${libro.titulo}">
+            <h3 class="book-title-grid">${libro.titulo}</h3>
+            <p class="book-author-grid">${libro.autor || 'Autor desconocido'}</p>
+            <span class="book-price-grid">$${libro.precio}</span>
+            <div class="product-actions">
+                <button class="btn-add-to-cart">Añadir</button>
+                <button class="btn-buy-now">Comprar</button>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+
+    if (typeof inicializarBotonesCarrito === "function") {
+        inicializarBotonesCarrito();
+    }
+});
+</script>
+
 </body>
 </html>
