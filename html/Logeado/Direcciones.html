@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Direcciones - La Lechuza Lectora</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../../Estilos/Estilo1.css">
+    <script src="../../JS/UserDropdown.js" defer></script>
+</head>
+<body>
+    
+    <header class="navbar detail-navbar">
+        <div class="logo-container">
+            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <span class="site-name">LA LECHUZA LECTORA</span>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="Acerca_de.html">Acerca de</a>
+            <a href="Contacto.html">Contacto</a>
+            <a href="Ayuda.html">Ayuda</a>
+            <a href="Catalogo_Logeado.html">Catálogo</a>
+        </nav>
+        
+        <div class="auth-actions user-actions">
+            <button class="icon-button" onclick="window.location.href='perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+            <div class="avatar-dropdown-container">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
+            </div>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <div class="background-overlay" style="filter: brightness(0.8);"></div> 
+        
+        <div class="profile-main-wrapper">
+            <h1 class="profile-title-custom">Mis Direcciones</h1>
+
+            <div class="address-container" style="max-width: 800px; margin: 0 auto;">
+                
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <button class="btn-primary" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        <i class="fas fa-map-marker-alt"></i> Agregar Nueva Dirección
+                    </button>
+                </div>
+
+                <div class="address-list" style="display: grid; gap: 20px;">
+                    
+                    <div class="address-card" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #5d4037;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="background: #fdf5e6; color: #5d4037; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Principal</span>
+                                <h3 style="margin: 10px 0 5px; color: #333;">Casa</h3>
+                                <p style="margin: 0; color: #666; line-height: 1.5;">
+                                    Calle de los Libros #123, Col. Centro<br>
+                                    Puebla, Puebla. C.P. 72000<br>
+                                    México
+                                </p>
+                                <p style="margin: 10px 0 0; font-size: 0.85rem; color: #999;"><i class="fas fa-phone"></i> +52 222 123 4567</p>
+                            </div>
+                            <div class="address-actions">
+                                <button title="Editar" style="background: none; border: none; color: #5d4037; cursor: pointer; font-size: 1.1rem; margin-right: 15px;"><i class="fas fa-edit"></i></button>
+                                <button title="Eliminar" style="background: none; border: none; color: #d32f2f; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="address-card" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #d7ccc8;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="margin: 0 0 5px; color: #333;">Trabajo</h3>
+                                <p style="margin: 0; color: #666; line-height: 1.5;">
+                                    Av. Tecnológico #456, Edificio B, Int. 4<br>
+                                    Puebla, Puebla. C.P. 72100<br>
+                                    México
+                                </p>
+                            </div>
+                            <div class="address-actions">
+                                <button title="Hacer principal" style="background: none; border: none; color: #888; cursor: pointer; font-size: 1rem; margin-right: 15px;"><i class="far fa-star"></i></button>
+                                <button title="Editar" style="background: none; border: none; color: #5d4037; cursor: pointer; font-size: 1.1rem; margin-right: 15px;"><i class="fas fa-edit"></i></button>
+                                <button title="Eliminar" style="background: none; border: none; color: #d32f2f; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="copyright" style="text-align: center; padding: 20px; color: #5d4037;">
+            © Todos los derechos reservados 2026. La Lechuza Lectora ©
+        </div>
+    </footer>
+
+</body>
+</html>
