@@ -12,11 +12,17 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* Estilos específicos para la integración del mapa */
+        
         .location-section {
             max-width: 1100px;
             margin: 50px auto;
             padding: 0 20px;
+        }
+
+        
+        .map-container-relative {
+            position: relative;
+            width: 100%;
         }
 
         .map-wrapper {
@@ -29,12 +35,26 @@
 
         .map-wrapper iframe {
             display: block;
-            filter: grayscale(10%) sepia(5%); /* Ajuste ligero para legibilidad */
+            filter: grayscale(10%) sepia(5%);
         }
 
-        /* Asegurar que el logo del mapa sea visible si decides agregarlo encima */
-        .map-container-relative {
-            position: relative;
+
+        .map-custom-marker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -100%); 
+            width: 65px; /* Tamaño del logo */
+            height: auto;
+            z-index: 10;
+            pointer-events: none; 
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.6));
+            animation: bounce 2s infinite; 
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, -100%); }
+            50% { transform: translate(-50%, -115%); }
         }
     </style>
 </head>
@@ -69,7 +89,6 @@
             <p class="page-subtitle">Hablemos de libros. Si tienes preguntas, sugerencias o requieres soporte, utiliza el formulario o visítanos.</p>
 
             <div class="contact-grid">
-                
                 <div class="contact-form-wrapper">
                     <img src="../Imagenes/logo.png" alt="Logo Grande de Fondo" class="large-logo-bg" style="opacity: 0.1; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; pointer-events: none;">
 
@@ -110,16 +129,21 @@
 
             <section class="location-section">
                 <h2 style="text-align: center; color: #f4ece2; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Nuestra Ubicación</h2>
-                <div class="map-wrapper map-container-relative">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.535928816434!2d-99.05835612397444!3d19.3892305818817!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1e2a045939e6d%3A0x679462804b39e6d!2sTecNM%20-%20Campus%20Iztapalapa!5e0!3m2!1ses-419!2smx!4v1708310000000!5m2!1ses-419!2smx" 
-                        width="100%" 
-                        height="450" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                
+                <div class="map-container-relative">
+                    <img src="../Imagenes/logo.png" alt="Marcador La Lechuza" class="map-custom-marker">
+
+                    <div class="map-wrapper">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.581335022881!2d-99.0560845!3d19.3872297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1fc2ec4339311%3A0x6b772c9a9296770b!2sTecNM%20-%20Campus%20Iztapalapa!5e0!3m2!1ses-419!2smx!4v1700000000000!5m2!1ses-419!2smx" 
+                            width="100%" 
+                            height="450" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
                 </div>
             </section>
         </div>
