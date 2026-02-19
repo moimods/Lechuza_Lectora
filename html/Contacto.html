@@ -29,7 +29,12 @@
 
         .map-wrapper iframe {
             display: block;
-            filter: grayscale(20%) sepia(10%); /* Toque vintage para combinar con la marca */
+            filter: grayscale(10%) sepia(5%); /* Ajuste ligero para legibilidad */
+        }
+
+        /* Asegurar que el logo del mapa sea visible si decides agregarlo encima */
+        .map-container-relative {
+            position: relative;
         }
     </style>
 </head>
@@ -57,7 +62,7 @@
     </header>
 
     <main class="main-content contact-main">
-        <div class="background-overlay contact-bg" style="background: url('../Imagenes/Carrusel/5.jpg') no-repeat center center/cover; filter: brightness(0.4);"></div>
+        <div class="background-overlay contact-bg" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('../Imagenes/Carrusel/5.jpg') no-repeat center center/cover;"></div>
 
         <div class="contact-container">
             <h1 class="page-title">Contáctanos</h1>
@@ -66,7 +71,7 @@
             <div class="contact-grid">
                 
                 <div class="contact-form-wrapper">
-                    <img src="../Imagenes/logo.png" alt="Logo Grande de Fondo" class="large-logo-bg" style="opacity: 0.1;">
+                    <img src="../Imagenes/logo.png" alt="Logo Grande de Fondo" class="large-logo-bg" style="opacity: 0.1; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; pointer-events: none;">
 
                     <form class="contact-form" id="form-contacto">
                         <label for="nombre">Nombre</label>
@@ -94,20 +99,22 @@
                         <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
                     </div>
                     <address>
-                        <i class="fa-solid fa-location-dot"></i> Av Telecomunicaciones, Chinampac de Juárez, Iztapalapa, 09208 CDMX.<br><br>
+                        <i class="fa-solid fa-location-dot" style="color: #5d4037;"></i> <strong>La Lechuza Lectora</strong><br>
+                        TecNM - Campus Iztapalapa<br>
+                        Av Telecomunicaciones, Chinampac de Juárez, Iztapalapa, 09208 CDMX.<br><br>
                         <strong>Teléfono</strong><br>
-                        <i class="fa-solid fa-phone"></i> 55-24-01-43-82
+                        <i class="fa-solid fa-phone" style="color: #5d4037;"></i> 55-24-01-43-82
                     </address>
                 </div>
             </div>
 
             <section class="location-section">
                 <h2 style="text-align: center; color: #f4ece2; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Nuestra Ubicación</h2>
-                <div class="map-wrapper">
+                <div class="map-wrapper map-container-relative">
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.5146036737336!2d-99.05156942478635!3d19.389972781878367!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1e29202958067%3A0xc4a193796f642637!2sAv.%20Telecomunicaciones%2C%20Chinameca%20Pac%20de%20Ju%C3%A1rez%2C%20Iztapalapa%2C%2009208%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX!5e0!3m2!1ses-419!2smx!4v1707660000000!5m2!1ses-419!2smx" 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.535928816434!2d-99.05835612397444!3d19.3892305818817!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1e2a045939e6d%3A0x679462804b39e6d!2sTecNM%20-%20Campus%20Iztapalapa!5e0!3m2!1ses-419!2smx!4v1708310000000!5m2!1ses-419!2smx" 
                         width="100%" 
-                        height="400" 
+                        height="450" 
                         style="border:0;" 
                         allowfullscreen="" 
                         loading="lazy" 
