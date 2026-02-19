@@ -16,9 +16,11 @@
         </div>
         
         <div class="auth-actions user-actions">
-            <i class="fa-solid fa-house"></i>
+            <a href="panel_de_admin.html" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <i class="fa-solid fa-house"></i>
+            </a>
             <span>Admin</span>
-            <img src="../../Imagenes/avatar.png" alt="Avatar Admin" class="avatar">
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover;">
         </div>
     </header>
 
@@ -27,7 +29,7 @@
 
         <div class="inventory-container">
             <div class="inventory-header">
-                <i class="fa-solid fa-arrow-left"></i>
+                <i class="fa-solid fa-arrow-left" onclick="location.href='panel_de_admin.html'" style="cursor: pointer;"></i>
                 <h1 class="dashboard-title">Gestión de Inventario</h1>
             </div>
 
@@ -48,31 +50,41 @@
                     <tbody>
                         <tr>
                             <td><input type="checkbox"></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>15/02/2026</td>
+                            <td>Pasillo A - Estante 4</td>
+                            <td>Sección Terror</td>
+                            <td>$150.00</td>
+                            <td>$399.00</td>
                             <td><span class="status-tag available">Disponible</span></td>
                             <td><button class="btn-edit">Editar</button></td>
                         </tr>
-                         <tr>
+                        <tr>
                             <td><input type="checkbox"></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>16/02/2026</td>
+                            <td>Pasillo C - Estante 2</td>
+                            <td>Novedades</td>
+                            <td>$210.00</td>
+                            <td>$456.00</td>
                             <td><span class="status-tag sold-out">Agotado</span></td>
                             <td><button class="btn-edit">Editar</button></td>
                         </tr>
                         <tr>
                             <td><input type="checkbox"></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>17/02/2026</td>
+                            <td>Pasillo B - Estante 1</td>
+                            <td>Clásicos</td>
+                            <td>$300.00</td>
+                            <td>$764.00</td>
+                            <td><span class="status-tag available">Disponible</span></td>
+                            <td><button class="btn-edit">Editar</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>18/02/2026</td>
+                            <td>Pasillo A - Estante 5</td>
+                            <td>Sección Juvenil</td>
+                            <td>$120.00</td>
+                            <td>$356.00</td>
                             <td><span class="status-tag available">Disponible</span></td>
                             <td><button class="btn-edit">Editar</button></td>
                         </tr>
@@ -88,12 +100,14 @@
                     </div>
                     <span>Next →</span>
                 </div>
-                <button class="btn-print">Imprimir</button>
+                <button class="btn-print">Imprimir Reporte</button>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">...</footer>
+    <footer class="site-footer">
+        © Todos los derechos reservados 2026. La Lechuza Lectora
+    </footer>
 
 </body>
 </html>
