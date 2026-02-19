@@ -133,7 +133,7 @@
             });
         }
 
-        
+
         const searchInput = document.getElementById('main-search');
         if (searchInput) {
             searchInput.addEventListener('keyup', () => {
@@ -145,29 +145,6 @@
                 });
             });
         }
-
-    
-        window.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('products-container');
-            if (container) {
-                const misLibros = JSON.parse(localStorage.getItem('misLibros')) || [];
-                misLibros.forEach(libro => {
-                    const card = document.createElement('div');
-                    card.className = 'book-product-card';
-                    card.innerHTML = `
-                        <img src="${libro.imagen}" alt="${libro.titulo}">
-                        <h3 class="book-title-grid">${libro.titulo}</h3>
-                        <p class="book-author-grid">${libro.autor || 'Autor desconocido'}</p>
-                        <span class="book-price-grid">$${libro.precio}</span>
-                        <div class="product-actions">
-                            <button class="btn-add-to-cart">Añadir</button>
-                            <button class="btn-buy-now">Comprar</button>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            }
-        });
     </script>
 </body>
 </html>
