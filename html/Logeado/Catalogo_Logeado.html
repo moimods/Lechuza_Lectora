@@ -34,6 +34,7 @@
         </nav>
 
         <div class="auth-actions user-actions">
+            <button class="icon-button"><i class="fa-solid fa-bell"></i></button>
             <button class="icon-button" onclick="window.location.href='../../index.html'"><i class="fa-solid fa-house"></i></button>
 
             <button class="icon-button cart-button" id="cart-icon-btn">
@@ -42,7 +43,7 @@
             </button>
 
             <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover;">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="perfil.html" id="profile-link">Mi Perfil</a>
                     <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
@@ -104,13 +105,12 @@
     </footer>
 
     <script>
-        
+    
         const searchInput = document.getElementById('main-search');
         if (searchInput) {
             searchInput.addEventListener('keyup', () => {
                 const term = searchInput.value.toLowerCase();
                 const books = document.querySelectorAll('.book-product-card');
-
                 books.forEach(book => {
                     const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
                     book.style.display = title.includes(term) ? "flex" : "none";
