@@ -1,242 +1,148 @@
-
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>La Lechuza Lectora - Ayuda</title>
-
-    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
+    <title>La Lechuza Lectora - Catálogo (Sesión Iniciada)</title>
 
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
-
-    <script src="../../JS/Boton_Ini.js" defer></script>
-
-    <script src="../../JS/UserDropdown.js" defer></script>
-
-    <script src="../../JS/cartManager.js" defer></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-</head>
+    <script src="../../JS/productLoader.js" defer></script>
+    <script src="../../JS/filterSidebar.js" defer></script>
+    <script src="../../JS/cartManager.js" defer></script>
 
+    <style>
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            background-color: #fdf5e6;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 5px;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu a {
+            color: #5d4037;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #d7ccc8;
+        }
+    </style>
+</head>
 <body>
 
-
-
     <header class="navbar detail-navbar">
-
         <div class="logo-container">
-
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo">
-
             <span class="site-name">LA LECHUZA LECTORA</span>
-
         </div>
 
-       
+        <div class="search-bar detail-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="main-search" placeholder="Buscar Libros, Autores, Editoriales y más...">
+        </div>
 
         <nav class="nav-links">
-
-            <a href="Acerca de.html">Acerca de</a>
-
+            <a href="Acerca_de.html">Acerca de</a>
             <a href="Contacto.html">Contacto</a>
-
-            <a href="#" class="active-link">Ayuda</a>
-
-            <a href="Catalogo_Logeado.html">Catálogo</a>
-
+            <a href="Ayuda.html">Ayuda</a>
+            <a href="#" class="active-link">Catálogo</a>
         </nav>
 
-       
-
         <div class="auth-actions user-actions">
+            <button class="icon-button" onclick="window.location.href='../../index.html'"><i class="fa-solid fa-house"></i></button>
 
-            <a href="carrito.html" class="icon-link cart-button" id="cart-icon-btn">
-
+            <button class="icon-button cart-button" id="cart-icon-btn">
                 <i class="fa-solid fa-cart-shopping"></i>
+                <span class="cart-badge" id="cart-count">2</span>
+            </button>
 
-                <span class="cart-badge" id="cart-count">0</span>
-
-            </a>
-
-           
-
-            <div class="avatar-dropdown-container">
-
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover;">
-
-               
-
+            <div class="avatar-dropdown-container" style="position: relative;">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%; width: 40px; height: 40px;">
                 <div class="dropdown-menu" id="avatar-dropdown">
-
-                    <a href="perfil.html" id="profile-link">Mi Perfil</a>
-
-                    <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
-
+                    <a href="perfil.html">Mi Perfil</a>
+                    <a href="../../index.html">Cerrar Sesión</a>
                 </div>
-
             </div>
-
         </div>
-
     </header>
 
+    <main class="main-content catalog-main">
+        <div class="background-overlay" style="filter: brightness(0.8);"></div>
 
+        <button id="filter-toggle" class="btn-filter-toggle"><i class="fa-solid fa-filter"></i> Filtros</button>
 
-    <main class="main-content help-main">
-
-        <div class="background-overlay help-bg" style="filter: brightness(0.8);"></div>
-
-
-
-        <div class="help-container">
-
-            <h1 class="help-title">¿Con qué podemos ayudarte?</h1>
-
-           
-
-            <div class="help-search-bar">
-
-                <i class="fa-solid fa-magnifying-glass"></i>
-
-                <input type="text" placeholder="Buscar en Ayuda">
-
-            </div>
-
-
-
-            <div class="help-modules-grid">
-
-                <a href="#" class="help-module">
-
-                    <i class="fa-solid fa-file-invoice-dollar icon-red"></i>
-
-                    <div class="module-text">
-
-                        <h3>Administrar y cancelar compras</h3>
-
-                        <p>Pagar, seguir envíos, modificar, reclamar o cancelar compras.</p>
-
+        <div class="catalog-container">
+            <aside class="filter-sidebar" id="filter-sidebar">
+                <div class="sidebar-header">
+                    <h2>Filtros</h2>
+                    <button id="sidebar-close-btn" class="btn-close-sidebar"><i class="fa-solid fa-times"></i></button>
+                </div>
+                <div class="filter-section filter-genres">
+                    <h3>Género Principal</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" data-filter="Terror"> Terror</label>
+                        <label><input type="checkbox" data-filter="Novela"> Novela Contemporánea</label>
                     </div>
+                </div>
+            </aside>
 
-                    <i class="fa-solid fa-angle-right"></i>
-
-                </a>
-
-
-
-                <a href="#" class="help-module">
-
-                    <i class="fa-solid fa-undo-alt icon-yellow"></i>
-
-                    <div class="module-text">
-
-                        <h3>Devoluciones y reembolsos</h3>
-
-                        <p>Devolver un producto o consultar por reintegros de dinero de una compra.</p>
-
-                    </div>
-
-                    <i class="fa-solid fa-angle-right"></i>
-
-                </a>
-
-
-
-                <a href="#" class="help-module">
-
-                    <i class="fa-solid fa-question-circle icon-orange"></i>
-
-                    <div class="module-text">
-
-                        <h3>Preguntas frecuentes sobre compras</h3>
-
-                    </div>
-
-                    <i class="fa-solid fa-angle-right"></i>
-
-                </a>
-
-
-
-                <a href="perfil.html" class="help-module">
-
-                    <i class="fa-solid fa-user-circle icon-brown"></i>
-
-                    <div class="module-text">
-
-                        <h3>Perfil</h3>
-
-                    </div>
-
-                    <i class="fa-solid fa-angle-right"></i>
-
-                </a>
-
-
-
-                <a href="#" class="help-module">
-
-                    <i class="fa-solid fa-key icon-brown"></i>
-
-                    <div class="module-text">
-
-                        <h3>Seguridad y acceso a la cuenta</h3>
-
-                    </div>
-
-                    <i class="fa-solid fa-angle-right"></i>
-
-                </a>
-
-            </div>
-
-
-
-            <div class="contact-prompt">
-
-                <h2>¿Necesitas más ayuda?</h2>
-
-                <button class="btn-contact-us" onclick="window.location.href='Contacto.html'">Contáctanos</button>
-
-            </div>
-
+            <section class="product-grid" id="products-container">
+            </section>
         </div>
-
     </main>
 
-
-
     <footer class="site-footer">
-
         <div class="social-links">
-
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-
+            <a href="https://x.com" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
-
-        <div class="copyright">
-
-            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
-
-        </div>
-
+        <div class="copyright">© Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©</div>
     </footer>
 
+    <script>
+        
+        const avatarBtn = document.getElementById('avatar-btn');
+        const dropdownMenu = document.getElementById('avatar-dropdown');
 
+        avatarBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
 
+        window.addEventListener('click', function() {
+            if (dropdownMenu.classList.contains('show')) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+
+        
+        const searchInput = document.getElementById('main-search');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', () => {
+                const term = searchInput.value.toLowerCase();
+                const books = document.querySelectorAll('.book-product-card');
+                books.forEach(book => {
+                    const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
+                    book.style.display = title.includes(term) ? "flex" : "none";
+                });
+            });
+        }
+    </script>
 </body>
-
 </html>
