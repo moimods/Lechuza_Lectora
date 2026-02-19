@@ -9,9 +9,50 @@
     <script src="../JS/Boton_Inicio_Sesion_html.js"></script>
     <script src="../JS/Boton_Ini.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        
+        .about-container p, 
+        .mission-card p, 
+        .values-card li {
+            text-align: justify; 
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .history-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr; 
+            gap: 40px;
+            align-items: center;
+        }
+
+        .logo-illustration {
+            text-align: center;
+        }
+
+        .logo-illustration img {
+            max-width: 250px;
+            width: 100%;
+            height: auto;
+        }
+
+        .mission-values-grid {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        
+        .card {
+            background-color: var(--color-background-card);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-
 
     <header class="navbar detail-navbar">
         <div class="logo-container">
@@ -27,18 +68,16 @@
         </nav>
         
         <div class="auth-actions user-actions">
-            <button class="icon-button"><i class="fa-solid fa-house"></i></button>
+            <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
             <button class="btn-primary">Iniciar Sesión</button>
         </div>
     </header>
-
 
     <main class="main-content about-main">
         <div class="background-overlay about-bg" style="filter: brightness(0.8);"></div>
 
         <div class="about-container">
             
-
             <section class="history-section">
                 <div class="card mission-card">
                     <h2>Nuestra Historia</h2>
@@ -48,43 +87,38 @@
                 </div>
                 
                 <div class="logo-illustration">
-
                     <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora">
-                    <p class="slogan">Historias que te hacen volar</p>
+                    <p class="slogan" style="font-style: italic; color: #5d4037; margin-top: 10px;">Historias que te hacen volar</p>
                 </div>
             </section>
-            
 
             <section class="mission-values-grid">
-
                 <div class="card mission-card">
                     <h2>Misión</h2>
                     <p>Conectar a cada lector con la obra ideal, a través de la tecnología más eficiente.</p>
                     <p>Utilizamos la ingeniería de sistemas para optimizar la búsqueda, la navegación y la gestión del catálogo, haciendo de la lectura una experiencia sin fricciones.</p>
                 </div>
 
-
                 <div class="card values-card">
                     <h2>Nuestros Valores</h2>
-                    <ol>
-                        <li>**Innovación Técnica:** Aplicar las mejores prácticas de la ingeniería de software para una plataforma robusta, rápida y segura.</li>
-                        <li>**Calidad Curada:** Valorar el contenido de alta calidad, desde la ficción hasta los textos académicos especializados.</li>
-                        <li>**Transparencia:** Ser claros con nuestros usuarios sobre cómo funciona la plataforma y cómo gestionamos los datos, fomentando la confianza.</li>
+                    <ol style="padding-left: 20px;">
+                        <li><strong>Innovación Técnica:</strong> Aplicar las mejores prácticas de la ingeniería de software para una plataforma robusta, rápida y segura.</li>
+                        <li><strong>Calidad Curada:</strong> Valorar el contenido de alta calidad, desde la ficción hasta los textos académicos especializados.</li>
+                        <li><strong>Transparencia:</strong> Ser claros con nuestros usuarios sobre cómo funciona la plataforma y cómo gestionamos los datos, fomentando la confianza.</li>
                     </ol>
                 </div>
             </section>
 
-            <section class="card mission-card">
+            <section class="card mission-card" style="margin-top: 40px;">
                 <h2>El Equipo</h2>
                 <p>Detrás de La Lechuza Lectora, estamos tres estudiantes de Ingeniería en Sistemas Computacionales que unimos nuestra pasión por la tecnología con el amor por la literatura. Nuestro objetivo es simple: construir la plataforma de lectura más eficiente e inteligente.</p>
 
                 <h3>Un mensaje del equipo:</h3>
-                <p>"Como futuros ingenieros, sabemos que el código debe ser tan robusto como una buena encuadernación. Estamos construyendo este sitio web no solo como un proyecto, sino como la librería que siempre quisimos tener, donde la tecnología sirve a la inagotable sed de conocimiento."</p>
+                <p style="font-style: italic; border-left: 4px solid #fbc02d; padding-left: 15px;">"Como futuros ingenieros, sabemos que el código debe ser tan robusto como una buena encuadernación. Estamos construyendo este sitio web no solo como un proyecto, sino como la librería que siempre quisimos tener, donde la tecnología sirve a la inagotable sed de conocimiento."</p>
             </section>
 
         </div>
     </main>
-
 
     <footer class="site-footer">
         <div class="social-links">
@@ -94,7 +128,7 @@
             <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
     </footer>
 
