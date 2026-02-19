@@ -9,7 +9,7 @@ const getCorrectPath = () => {
 const pathPrefix = getCorrectPath();
 
 const misLibrosReales = [
-    { id: 1, titulo: "Sister brothers", autor: "Roald Dahl", precio: 399, img: `${pathPrefix}Imagenes/Libro1.png` },
+    { id: 1, titulo: "Sister brothers", autor: "Roald Dahl", precio: 3, img: `${pathPrefix}Imagenes/Libro1.png` },
     { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 356, img: `${pathPrefix}Imagenes/Libro2.png` },
     { id: 3, titulo: "Diario de ana frank", autor: "Stephen King", precio: 456, img: `${pathPrefix}Imagenes/Libro3.png` },
     { id: 4, titulo: "Julio verde", autor: "Adam Nevill", precio: 764, img: `${pathPrefix}Imagenes/Libro4.png` },
