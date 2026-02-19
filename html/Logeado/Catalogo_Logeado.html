@@ -120,16 +120,18 @@
         const avatarBtn = document.getElementById('avatar-btn');
         const dropdownMenu = document.getElementById('avatar-dropdown');
 
-        avatarBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
-        });
+        if (avatarBtn && dropdownMenu) {
+            avatarBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
 
-        window.addEventListener('click', function() {
-            if (dropdownMenu.classList.contains('show')) {
-                dropdownMenu.classList.remove('show');
-            }
-        });
+            window.addEventListener('click', function() {
+                if (dropdownMenu.classList.contains('show')) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        }
 
         
         const searchInput = document.getElementById('main-search');
@@ -143,6 +145,29 @@
                 });
             });
         }
+
+    
+        window.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('products-container');
+            if (container) {
+                const misLibros = JSON.parse(localStorage.getItem('misLibros')) || [];
+                misLibros.forEach(libro => {
+                    const card = document.createElement('div');
+                    card.className = 'book-product-card';
+                    card.innerHTML = `
+                        <img src="${libro.imagen}" alt="${libro.titulo}">
+                        <h3 class="book-title-grid">${libro.titulo}</h3>
+                        <p class="book-author-grid">${libro.autor || 'Autor desconocido'}</p>
+                        <span class="book-price-grid">$${libro.precio}</span>
+                        <div class="product-actions">
+                            <button class="btn-add-to-cart">Añadir</button>
+                            <button class="btn-buy-now">Comprar</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        });
     </script>
 </body>
 </html>
