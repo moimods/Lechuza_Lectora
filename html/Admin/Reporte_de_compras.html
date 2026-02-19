@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        
         .key-metrics-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -27,17 +26,10 @@
             text-align: center;
         }
         .metric-card i {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             margin-bottom: 10px;
             color: var(--color-primary);
         }
-        .metric-card .corner-icon {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            opacity: 0.5;
-        }
-    
         .report-data-table {
             width: 100%;
             border-collapse: collapse;
@@ -51,6 +43,17 @@
         .chart-container {
             height: 300px;
             width: 100%;
+        }
+        .charts-and-table-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -82,16 +85,14 @@
                     <strong>$1,250,000</strong>
                 </div>
                 <div class="metric-card">
-                    <i class="fa-solid fa-arrow-up green-arrow"></i>
+                    <i class="fa-solid fa-chart-line" style="color: #388e3c;"></i>
                     <p>CRECIMIENTO ACUMULADO</p>
                     <strong>+18%</strong>
-                    <i class="fa-solid fa-chart-line corner-icon"></i>
                 </div>
                 <div class="metric-card">
                     <i class="fa-solid fa-calendar-alt" style="color: #2196f3;"></i>
                     <p>MES CON MAYORES VENTAS</p>
                     <strong>Febrero ($85,000)</strong>
-                    <i class="fa-solid fa-arrow-down red-arrow corner-icon"></i>
                 </div>
             </div>
 
@@ -110,7 +111,7 @@
                     </div>
                 </div>
                 
-                <div class="data-table-card distribution-table" style="grid-column: span 2;">
+                <div class="data-table-card distribution-table" style="grid-column: span 2; background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
                     <h2>Distribución de Ventas por Trimestre</h2>
                     <table class="report-data-table">
                         <thead>
@@ -126,19 +127,19 @@
                                 <td>Enero</td>
                                 <td>$90,000</td>
                                 <td>$95,000</td>
-                                <td>T1 <span class="green-arrow">▲+10%</span></td>
+                                <td>T1 <span class="green-arrow" style="color: green;">▲+10%</span></td>
                             </tr>
                             <tr>
                                 <td>Febrero</td>
                                 <td>$102,000</td>
                                 <td>$85,000</td>
-                                <td>T2 <span class="red-arrow">▼-5%</span></td>
+                                <td>T2 <span class="red-arrow" style="color: red;">▼-5%</span></td>
                             </tr>
                             <tr>
                                 <td>Marzo</td>
                                 <td>$124,000</td>
                                 <td>$130,000</td>
-                                <td>T3 <span class="green-arrow">▲+20%</span></td>
+                                <td>T3 <span class="green-arrow" style="color: green;">▲+20%</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -152,7 +153,6 @@
     </footer>
 
     <script>
-    
         const ctxVentas = document.getElementById('ventasMesChart').getContext('2d');
         new Chart(ctxVentas, {
             type: 'bar',
@@ -176,7 +176,9 @@
                     label: 'Crecimiento %',
                     data: [10, -5, 20],
                     borderColor: '#fbc02d',
-                    fill: false
+                    backgroundColor: 'rgba(251, 192, 45, 0.2)',
+                    fill: true,
+                    tension: 0.4
                 }]
             },
             options: { responsive: true, maintainAspectRatio: false }
