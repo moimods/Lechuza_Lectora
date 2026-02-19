@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información Personal - La Lechuza Lectora</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../../Estilos/Estilo1.css">
+    <script src="../../JS/UserDropdown.js" defer></script>
+</head>
+<body>
+    
+    <header class="navbar detail-navbar">
+        <div class="logo-container">
+            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <span class="site-name">LA LECHUZA LECTORA</span>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="Acerca_de.html">Acerca de</a>
+            <a href="Contacto.html">Contacto</a>
+            <a href="Ayuda.html">Ayuda</a>
+            <a href="Catalogo_Logeado.html">Catálogo</a>
+        </nav>
+        
+        <div class="auth-actions user-actions">
+            <button class="icon-button" onclick="window.location.href='perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+            <div class="avatar-dropdown-container">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
+            </div>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <div class="background-overlay" style="filter: brightness(0.8);"></div> 
+        
+        <div class="profile-main-wrapper">
+            <h1 class="profile-title-custom">Información Personal</h1>
+
+            <div class="info-container" style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;">
+                
+                <section class="info-group" style="margin-bottom: 30px;">
+                    <h2 style="color: #5d4037; border-bottom: 2px solid #fdf5e6; padding-bottom: 10px; margin-bottom: 20px;">Datos de Identidad</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem;">NOMBRE COMPLETO</label>
+                            <p style="font-size: 1.1rem; color: #333;">Fernando Machorro</p>
+                        </div>
+                        <div>
+                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem;">CURP / ID FISCAL</label>
+                            <p style="font-size: 1.1rem; color: #333;">MAVFXXXXXXHXXXXXX</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="info-group" style="margin-bottom: 30px;">
+                    <h2 style="color: #5d4037; border-bottom: 2px solid #fdf5e6; padding-bottom: 10px; margin-bottom: 20px;">Datos de Contacto</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem;">CORREO ELECTRÓNICO</label>
+                            <p style="font-size: 1.1rem; color: #333;">machorro29salvidar@gmail.com</p>
+                        </div>
+                        <div>
+                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem;">TELÉFONO CELULAR</label>
+                            <p style="font-size: 1.1rem; color: #333;">+52 123 456 7890</p>
+                        </div>
+                    </div>
+                </section>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="btn-secondary" onclick="window.location.href='Editar_Perfil.html'" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        <i class="fas fa-user-edit"></i> Actualizar mis datos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="copyright" style="text-align: center; padding: 20px; color: #5d4037;">
+            © Todos los derechos reservados 2026. La Lechuza Lectora ©
+        </div>
+    </footer>
+
+</body>
+</html>
