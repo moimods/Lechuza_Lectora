@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Contacto</title>
-    <link rel="icon" type="image/x-icon" href="../Imagenes/logo.png">
+    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
-    <script src="../JS/Boton_Ini.js"></script>
-    <script src="../../JS/UserDropdown.js"></script>
+    <script src="../../JS/Boton_Ini.js" defer></script>
+    <script src="../../JS/UserDropdown.js" defer></script>
+    <script src="../../JS/cartManager.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
 
- <header class="navbar detail-navbar">
+    <header class="navbar detail-navbar">
         <div class="logo-container">
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
@@ -25,22 +26,24 @@
             <a href="Catalogo_Logeado.html">Catálogo</a>
         </nav>
         
-         <div class="auth-actions user-actions">
-            <a href="#" class="icon-link"><i class="fa-solid fa-cart-shopping"></i></a>
-            <a href="#" class="icon-link"><i class="fa-solid fa-bell"></i></a>
+        <div class="auth-actions user-actions">
+            <a href="carrito.html" class="icon-link cart-button" id="cart-icon-btn">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="cart-badge" id="cart-count">0</span>
+            </a>
+            
+            <a href="perfil.html" class="icon-link"><i class="fa-solid fa-bell"></i></a>
+            
             <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/avatar.png" alt="Avatar Usuario" class="avatar" id="avatar-btn">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover;">
                 
-
                 <div class="dropdown-menu" id="avatar-dropdown">
-
                     <a href="perfil.html" id="profile-link">Mi Perfil</a>
-
-                    <a href="#" id="logout-btn">Cerrar Sesión</a>
+                    <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
                 </div>
             </div>
+        </div>
     </header>
-
 
     <main class="main-content contact-main">
         <div class="background-overlay contact-bg" style="filter: brightness(0.8);"></div>
@@ -50,10 +53,8 @@
             <p class="page-subtitle">Hablemos de libros. Si tienes preguntas, sugerencias o requieres soporte, utiliza el formulario de contacto o consulta nuestros canales en redes sociales.</p>
 
             <div class="contact-grid">
-                
-
                 <div class="contact-form-wrapper">
-                    <img src="../Imagenes/logo.png" alt="Logo Grande de Fondo" class="large-logo-bg">
+                    <img src="../../Imagenes/logo.png" alt="Logo Grande de Fondo" class="large-logo-bg">
 
                     <form class="contact-form">
                         <label for="nombre">Nombre</label>
@@ -62,7 +63,7 @@
                         <label for="apellidos">Apellidos</label>
                         <input type="text" id="apellidos" placeholder="Ej. Martínez Castro">
 
-                        <label for="email">Correo Electronico</label>
+                        <label for="email">Correo Electrónico</label>
                         <input type="email" id="email" placeholder="example@example.com">
 
                         <label for="mensaje">Mensaje</label>
@@ -71,7 +72,6 @@
                         <button type="submit" class="btn-send">Enviar</button>
                     </form>
                 </div>
-                
 
                 <div class="social-info-card">
                     <h2>Nuestras Redes Sociales</h2>
@@ -91,7 +91,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="site-footer">
         <div class="social-links">
             <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
@@ -100,7 +99,7 @@
             <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
     </footer>
 </body>
