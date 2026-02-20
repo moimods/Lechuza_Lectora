@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Catálogo (Sesión Iniciada)</title>
@@ -17,24 +16,31 @@
 <body>
 
 <header class="navbar detail-navbar">
-    <div class="logo-container">
+    <div class="logo-container" onclick="window.location.href='perfil.html'" style="cursor: pointer;">
         <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo">
         <span class="site-name">LA LECHUZA LECTORA</span>
     </div>
 
     <div class="search-bar detail-search">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="main-search" placeholder="Buscar Libros, Autores, Editoriales y más...">
+        <input type="text" id="main-search" placeholder="Buscar Libros, Autores, Editoriales...">
     </div>
-<nav class="nav-links">
-        <a href="../Acerca de.html">Acerca de</a>
-        <a href="../Contacto.html">Contacto</a>
-        <a href="../Ayuda.html">Ayuda</a>
-        <a href="#" class="active-link">Catálogo</a>
+
+    <nav class="nav-links">
+        <button class="hamburger-btn" id="hamburger-btn">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="menu-items" id="menu-items">
+            <a href="Acerca_de_Logeado.html">Acerca de</a>
+            <a href="Contacto_Logeado.html">Contacto</a>
+            <a href="Ayuda_Logeado.html">Ayuda</a>
+            <a href="#" class="active-link">Catálogo</a>
+        </div>
     </nav>
 
     <div class="auth-actions user-actions">
-        <button class="icon-button" onclick="window.location.href='../../index.html'">
+        <button class="icon-button" onclick="window.location.href='perfil.html'">
             <i class="fa-solid fa-house"></i>
         </button>
 
@@ -44,7 +50,7 @@
         </button>
 
         <div class="avatar-dropdown-container">
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover;">
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
             <div class="dropdown-menu" id="avatar-dropdown">
                 <a href="perfil.html" id="profile-link">Mi Perfil</a>
                 <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
@@ -76,11 +82,6 @@
                     <label><input type="checkbox" data-filter="Novela"> Novela Contemporánea</label>
                 </div>
             </div>
-
-            <div class="filter-section">
-                <h3>Filtros Activos</h3>
-                <div class="filter-tags" id="active-filters-tags"></div>
-            </div>
         </aside>
 
         <section class="product-grid" id="products-container"></section>
@@ -101,17 +102,17 @@
         <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
     </div>
     <div class="copyright">
-        © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
+        © Todos los derechos reservados 2026. La Lechuza Lectora ©
     </div>
 </footer>
 
 <script>
+// Lógica de búsqueda
 const searchInput = document.getElementById('main-search');
 if (searchInput) {
     searchInput.addEventListener('keyup', () => {
         const term = searchInput.value.toLowerCase();
         const books = document.querySelectorAll('.book-product-card');
-
         books.forEach(book => {
             const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
             book.style.display = title.includes(term) ? "flex" : "none";
@@ -119,6 +120,17 @@ if (searchInput) {
     });
 }
 
+// Lógica Menú Hamburguesa
+const btnHamburguesa = document.getElementById('hamburger-btn');
+const menuDesplegable = document.getElementById('menu-items');
+if (btnHamburguesa && menuDesplegable) {
+    btnHamburguesa.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menuDesplegable.classList.toggle('show-menu');
+    });
+}
+
+// Carga de productos desde LocalStorage
 window.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('products-container');
     if (container) {
@@ -127,7 +139,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'book-product-card';
             card.innerHTML = `
-                <img src="${libro.imagen}" alt="${libro.titulo}">
+                <img src="${libro.imagen}" alt="${libro.titulo}" style="border-radius: 8px;">
                 <h3 class="book-title-grid">${libro.titulo}</h3>
                 <p class="book-author-grid">${libro.autor || 'Autor desconocido'}</p>
                 <span class="book-price-grid">$${libro.precio}</span>
