@@ -10,7 +10,7 @@
     <script src="../../JS/cartManager.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* AJUSTES RESPONSIVOS */
+        
         @media (max-width: 768px) {
             .help-container {
                 width: 95% !important;
@@ -34,12 +34,12 @@
             }
         }
 
-        /* Estabilización del menú desplegable */
+        
         .dropdown-menu {
             display: none; 
             position: absolute;
             right: 0;
-            top: 50px; /* Ajustado para que no tape el avatar */
+            top: 50px; 
             background: white;
             min-width: 170px;
             box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
@@ -49,7 +49,7 @@
             border: 1px solid #ddd;
         }
         
-        /* Estilo para que se muestre cuando se activa */
+        
         .dropdown-menu.show {
             display: block;
         }
@@ -183,18 +183,18 @@
     </footer>
 
     <script>
-        // Lógica mejorada para abrir/cerrar el menú
+        
         const avatarBtn = document.getElementById('avatar-btn');
         const dropdownMenu = document.getElementById('avatar-dropdown');
 
         if (avatarBtn && dropdownMenu) {
             avatarBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                // Alternamos la clase 'show' para visibilidad
+                
                 dropdownMenu.classList.toggle('show');
             });
 
-            // Cerrar el menú si se hace clic fuera de él
+            
             document.addEventListener('click', function(event) {
                 if (!avatarBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
                     dropdownMenu.classList.remove('show');
