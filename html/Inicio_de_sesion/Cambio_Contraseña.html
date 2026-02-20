@@ -7,69 +7,116 @@
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <script src="../../JS/Cambio_Contraseña.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Ajustes de responsividad específicos para móviles */
+        @media (max-width: 768px) {
+            .form-card.change-password-card {
+                width: 90% !important;
+                padding: 20px !important;
+                margin: 20px auto;
+            }
+
+            .form-title {
+                font-size: 1.5rem !important;
+                margin-bottom: 15px !important;
+            }
+
+            .action-buttons-group {
+                flex-direction: column; /* Apila los botones en móvil para facilitar el clic */
+                gap: 10px;
+            }
+
+            .btn-action {
+                width: 100% !important;
+                padding: 12px !important; /* Más grandes para pantallas táctiles */
+            }
+
+            #password-requirements {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Estilo para la capa de fondo */
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
 </head>
 <body class="form-page">
 
     <main class="main-content form-main">
-        <div class="background-overlay" style="filter: brightness(0.6);"></div>
+        <div class="background-overlay"></div>
 
         <div class="form-card change-password-card">
-            <h1 class="form-title">Nueva Contraseña</h1>
+            <h1 class="form-title" style="color: #5d4037; text-align: center;">Nueva Contraseña</h1>
             
             <form id="password-form" class="recovery-form">
                 <div class="input-group">
                     <label for="new-password">Nueva Contraseña:</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="new-password" maxlength="10" required>
-                        <i class="fa-solid fa-eye password-toggle" data-target="new-password"></i>
+                    <div class="password-wrapper" style="position: relative;">
+                        <input type="password" id="new-password" maxlength="10" required 
+                               style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                        <i class="fa-solid fa-eye password-toggle" data-target="new-password" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                     </div>
                 </div>
 
-                <div id="password-requirements">
-                    <ul>
-                        <li id="req-length"><i class="fa-solid fa-times"></i> Mínimo 6 y máximo 10 caracteres.</li>
-                        <li id="req-number"><i class="fa-solid fa-times"></i> Al menos 1 número (0-9).</li>
-                        <li id="req-special"><i class="fa-solid fa-times"></i> Al menos 1 caracter especial (!@#$%^&*).</li>
-                        <li id="req-common"><i class="fa-solid fa-times"></i> No puede ser una contraseña común (ej. 123456).</li>
+                <div id="password-requirements" style="margin-top: 15px;">
+                    <ul style="list-style: none; padding: 0;">
+                        <li id="req-length" style="color: #d32f2f; margin-bottom: 5px;"><i class="fa-solid fa-circle-xmark"></i> 6 a 10 caracteres</li>
+                        <li id="req-number" style="color: #d32f2f; margin-bottom: 5px;"><i class="fa-solid fa-circle-xmark"></i> Al menos 1 número</li>
+                        <li id="req-special" style="color: #d32f2f; margin-bottom: 5px;"><i class="fa-solid fa-circle-xmark"></i> 1 caracter especial</li>
                     </ul>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" style="margin-top: 15px;">
                     <label for="confirm-password">Confirmar Contraseña:</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="confirm-password" maxlength="10" required>
-                        <i class="fa-solid fa-eye password-toggle" data-target="confirm-password"></i>
+                    <div class="password-wrapper" style="position: relative;">
+                        <input type="password" id="confirm-password" maxlength="10" required 
+                               style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                        <i class="fa-solid fa-eye password-toggle" data-target="confirm-password" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                     </div>
                 </div>
 
-                <div id="match-validation">
-                    <ul style="list-style: none; padding: 0; margin: 0;">
-                        <li id="req-match"><i class="fa-solid fa-times"></i> Las contraseñas coinciden.</li>
+                <div id="match-validation" style="margin-top: 10px;">
+                    <ul style="list-style: none; padding: 0;">
+                        <li id="req-match" style="color: #d32f2f;"><i class="fa-solid fa-circle-xmark"></i> Las contraseñas coinciden</li>
                     </ul>
                 </div>
             </form>
 
-            <div class="action-buttons-group">
-                <button type="submit" form="password-form" id="btn-aceptar" class="btn-action btn-primary">Aceptar</button>
+            <div class="action-buttons-group" style="display: flex; gap: 15px; margin-top: 25px;">
+                <button type="submit" form="password-form" id="btn-aceptar" class="btn-primary" 
+                        style="flex: 1; padding: 10px; cursor: pointer; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold;">
+                    Aceptar
+                </button>
                 
-                <button type="button" id="btn-regresar" class="btn-action btn-dark-action" onclick="window.location.href='../Logeado/perfil.html'">
+                <button type="button" id="btn-regresar" class="btn-cancel" onclick="window.location.href='perfil.html'" 
+                        style="flex: 1; padding: 10px; cursor: pointer; border-radius: 5px; border: none; background-color: #555; color: white; font-weight: bold;">
                     <i class="fa-solid fa-arrow-left"></i> Volver
                 </button>
             </div>
         </div>
     </main>
 
-    <footer>
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+    <footer class="site-footer" style="background: rgba(44, 44, 44, 0.9); color: white; text-align: center; padding: 20px; margin-top: auto;">
+        <div class="social-links" style="margin-bottom: 10px;">
+            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-youtube"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
+            © 2026 La Lechuza Lectora
         </div>
     </footer>
-    
 </body>
 </html>

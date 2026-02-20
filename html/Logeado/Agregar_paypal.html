@@ -1,50 +1,102 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Pagar con PayPal</title>
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* AJUSTES RESPONSIVOS PARA MÓVIL (Android/iPhone) */
+        @media (max-width: 768px) {
+            .form-card.form-login {
+                width: 90% !important;
+                padding: 30px 20px !important;
+                margin: 20px auto;
+            }
+
+            .paypal-logo {
+                max-width: 150px !important; /* Ajuste de logo para pantallas pequeñas */
+            }
+
+            input[type="email"], 
+            input[type="password"] {
+                padding: 14px !important; /* Mayor área táctil */
+                font-size: 16px !important; /* Evita zoom automático en iOS */
+            }
+
+            .btn-primary {
+                width: 100% !important;
+                padding: 15px !important;
+                font-size: 1.1rem !important;
+            }
+        }
+
+        /* Estabilización del fondo de marca */
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        .paypal-logo {
+            display: block;
+            margin: 0 auto 15px;
+            max-width: 200px;
+        }
+
+        .form-card p {
+            text-align: center;
+            color: #0070ba;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body class="form-page">
 
-    <header class="navbar-minimal">
-        <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
-            <span class="site-name">LA LECHUZA LECTORA</span>
+    <header class="navbar-minimal" style="padding: 15px; background: rgba(240, 231, 203, 0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo" style="height: 35px; margin-right: 10px;"> 
+            <span class="site-name" style="font-weight: bold; color: #5d4037;">LA LECHUZA LECTORA</span>
         </div>
     </header>
 
     <main class="main-content form-main">
-        <div class="background-overlay" style="filter: brightness(0.6);"></div>
+        <div class="background-overlay"></div>
 
-        <div class="form-card form-login">
+        <div class="form-card form-login" style="background: #ffffff; border-radius: 12px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 400px; margin: 0 auto;">
             <img src="../../Imagenes/logo-paypal.png" alt="Logo de PayPal" class="paypal-logo">
             <p>Pagar con PayPal</p>
 
             <form>
-                <label for="correo">Correo:</label>
-                <input type="email" id="correo" name="correo" required>
+                <div class="input-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="correo" style="display: block; font-weight: bold; color: #333; margin-bottom: 5px;">Correo:</label>
+                    <input type="email" id="correo" name="correo" required style="width: 100%; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+                </div>
 
-                <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" name="contrasena" required>
+                <div class="input-group" style="margin-bottom: 20px; text-align: left;">
+                    <label for="contrasena" style="display: block; font-weight: bold; color: #333; margin-bottom: 5px;">Contraseña:</label>
+                    <input type="password" id="contrasena" name="contrasena" required style="width: 100%; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+                </div>
 
-                <button type="submit" class="btn-primary">Iniciar Sesion</button>
+                <button type="submit" class="btn-primary" style="background: #0070ba; color: white; border: none; padding: 12px; border-radius: 25px; font-weight: bold; cursor: pointer; transition: background 0.3s;">
+                    Iniciar Sesión
+                </button>
             </form>
+            
+            <div style="margin-top: 15px; text-align: center;">
+                <button type="button" onclick="window.history.back()" style="background: none; border: none; color: #666; cursor: pointer; text-decoration: underline; font-size: 0.9em;">Cancelar y volver</button>
+            </div>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; font-size: 0.8em; margin-top: auto;">
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © 2026 La Lechuza Lectora ©
         </div>
     </footer>
 

@@ -1,15 +1,82 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Información Personal - La Lechuza Lectora</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <script src="../../JS/UserDropdown.js" defer></script>
+    <style>
+        /* AJUSTES RESPONSIVOS CRÍTICOS */
+        @media (max-width: 768px) {
+            .profile-main-wrapper {
+                margin-top: 20px !important;
+                padding: 10px !important;
+            }
+
+            .info-container {
+                width: 95% !important;
+                padding: 25px 20px !important;
+            }
+
+            .profile-title-custom {
+                font-size: 1.8rem !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* Convertimos los grids de 2 columnas a 1 sola columna en móviles */
+            .info-group div {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+
+            .btn-secondary {
+                width: 100% !important; /* Botón a lo ancho en móvil para mejor toque */
+                padding: 14px !important;
+                text-align: center;
+            }
+
+            .info-group h2 {
+                font-size: 1.2rem !important;
+            }
+        }
+
+        /* Estabilización del menú desplegable del avatar */
+        .dropdown-menu {
+            display: none; 
+            position: absolute;
+            right: 0;
+            top: 55px; 
+            background: white;
+            min-width: 170px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+            z-index: 9999 !important; 
+            border-radius: 8px;
+            padding: 10px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .dropdown-menu a {
+            color: #5d4037 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #5d4037;
+        }
+    </style>
 </head>
-<body>
+<body class="form-page">
     
     <header class="navbar detail-navbar">
         <div class="logo-container">
@@ -26,17 +93,21 @@
         
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-            <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
+            <div class="avatar-dropdown-container" style="position: relative;">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
+                <div class="dropdown-menu" id="avatar-dropdown">
+                    <a href="perfil.html" id="profile-link"><i class="fa-solid fa-user"></i> Mi Perfil</a>
+                    <a href="../../index.html" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                </div>
             </div>
         </div>
     </header>
     
     <main class="main-content">
-        <div class="background-overlay" style="filter: brightness(0.8);"></div> 
+        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
         
-        <div class="profile-main-wrapper">
-            <h1 class="profile-title-custom">Información Personal</h1>
+        <div class="profile-main-wrapper" style="position: relative; z-index: 5; margin-top: 50px;">
+            <h1 class="profile-title-custom" style="color: #5d4037; text-align: center; margin-bottom: 30px;">Información Personal</h1>
 
             <div class="info-container" style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;">
                 
@@ -44,12 +115,12 @@
                     <h2 style="color: #5d4037; border-bottom: 2px solid #fdf5e6; padding-bottom: 10px; margin-bottom: 20px;">Datos de Identidad</h2>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div>
-                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem;">NOMBRE COMPLETO</label>
-                            <p style="font-size: 1.1rem; color: #333;">Fernando Machorro</p>
+                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem; text-transform: uppercase;">Nombre Completo</label>
+                            <p style="font-size: 1.1rem; color: #333; margin: 5px 0;">Fernando Machorro</p>
                         </div>
                         <div>
-                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem;">CURP / ID FISCAL</label>
-                            <p style="font-size: 1.1rem; color: #333;">MAVFXXXXXXHXXXXXX</p>
+                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem; text-transform: uppercase;">CURP / ID FISCAL</label>
+                            <p style="font-size: 1.1rem; color: #333; margin: 5px 0;">MAVFXXXXXXHXXXXXX</p>
                         </div>
                     </div>
                 </section>
@@ -58,18 +129,18 @@
                     <h2 style="color: #5d4037; border-bottom: 2px solid #fdf5e6; padding-bottom: 10px; margin-bottom: 20px;">Datos de Contacto</h2>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div>
-                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem;">CORREO ELECTRÓNICO</label>
-                            <p style="font-size: 1.1rem; color: #333;">machorro29salvidar@gmail.com</p>
+                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem; text-transform: uppercase;">Correo Electrónico</label>
+                            <p style="font-size: 1.1rem; color: #333; margin: 5px 0; word-break: break-all;">machorro29salvidar@gmail.com</p>
                         </div>
                         <div>
-                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem;">TELÉFONO CELULAR</label>
-                            <p style="font-size: 1.1rem; color: #333;">+52 123 456 7890</p>
+                            <label style="font-weight: bold; color: #888; display: block; font-size: 0.85rem; text-transform: uppercase;">Teléfono Celular</label>
+                            <p style="font-size: 1.1rem; color: #333; margin: 5px 0;">+52 55 2401 4382</p>
                         </div>
                     </div>
                 </section>
 
-                <div style="text-align: right; margin-top: 20px;">
-                    <button class="btn-secondary" onclick="window.location.href='Editar_Perfil.html'" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                <div style="text-align: right; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                    <button class="btn-secondary" onclick="window.location.href='Editar_Perfil.html'" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 10px;">
                         <i class="fas fa-user-edit"></i> Actualizar mis datos
                     </button>
                 </div>
@@ -77,11 +148,28 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="copyright" style="text-align: center; padding: 20px; color: #5d4037;">
+    <footer class="site-footer" style="text-align: center; padding: 20px; margin-top: auto;">
+        <div class="copyright" style="color: #5d4037; font-size: 0.85em;">
             © Todos los derechos reservados 2026. La Lechuza Lectora ©
         </div>
     </footer>
 
+    <script>
+        // Función de seguridad para el menú del avatar
+        function forceToggleMenu() {
+            const menu = document.getElementById('avatar-dropdown');
+            if (menu) {
+                const isHidden = window.getComputedStyle(menu).display === 'none';
+                menu.style.display = isHidden ? 'block' : 'none';
+            }
+        }
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('avatar-dropdown');
+            const btn = document.getElementById('avatar-btn');
+            if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

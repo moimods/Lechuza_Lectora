@@ -3,50 +3,62 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Acerca de</title>
     <link rel="icon" type="image/x-icon" href="../Imagenes/logo.png">
     <link rel="stylesheet" href="../Estilos/Estilo1.css">
-    <script src="../JS/Boton_Inicio_Sesion_html.js"></script>
-    <script src="../JS/Boton_Ini.js"></script>
+    <script src="../JS/Boton_Inicio_Sesion_html.js" defer></script>
+    <script src="../JS/Boton_Ini.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        
-        .about-container p, 
-        .mission-card p, 
-        .values-card li {
+        /* AJUSTES RESPONSIVOS CRÍTICOS */
+        @media (max-width: 768px) {
+            .about-container {
+                width: 95% !important;
+                padding: 20px 15px !important;
+                margin: 20px auto !important;
+            }
+
+            .history-section {
+                grid-template-columns: 1fr !important; /* Apila historia e imagen */
+                text-align: center;
+                gap: 20px !important;
+            }
+
+            .mission-values-grid {
+                grid-template-columns: 1fr !important; /* Apila Misión y Valores */
+                gap: 20px !important;
+            }
+
+            .logo-illustration img {
+                max-width: 180px !important; /* Reduce logo para ahorrar espacio */
+            }
+
+            .navbar {
+                flex-direction: column !important;
+                height: auto !important;
+                padding: 10px !important;
+            }
+
+            .nav-links {
+                display: none; /* Oculto para simplificar en móvil */
+            }
+
+            .auth-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: center;
+                gap: 15px;
+            }
+        }
+
+        .about-container p {
             text-align: justify; 
             line-height: 1.6;
             margin-bottom: 15px;
         }
 
-        .history-section {
-            display: grid;
-            grid-template-columns: 2fr 1fr; 
-            gap: 40px;
-            align-items: center;
-        }
-
-        .logo-illustration {
-            text-align: center;
-        }
-
-        .logo-illustration img {
-            max-width: 250px;
-            width: 100%;
-            height: auto;
-        }
-
-        .mission-values-grid {
-            margin-top: 40px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        
         .card {
-            background-color: var(--color-background-card);
+            background-color: white;
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -70,21 +82,20 @@
         
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary">Iniciar Sesión</button>
+            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Iniciar Sesión</button>
         </div>
     </header>
 
     <main class="main-content about-main">
-        <div class="background-overlay about-bg" style="filter: brightness(0.8);"></div>
+        <div class="background-overlay about-bg" style="filter: brightness(0.8); background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
 
-        <div class="about-container">
+        <div class="about-container" style="background: rgba(240, 231, 203, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; z-index: 5; margin: 40px auto; max-width: 1100px;">
             
-            <section class="history-section">
-                <div class="card mission-card">
-                    <h2>Nuestra Historia</h2>
-                    <p>La Lechuza Lectora no nació en una librería, sino entre líneas de código y sesiones nocturnas de estudio en la carrera de Ingeniería en Sistemas Computacionales. Los estudiantes Alan, Fernando y Oscar se enfrentaron a una frustración común: las plataformas de libros existentes eran lentas, difíciles de navegar y no daban espacio a la literatura técnica o a los autores independientes.</p>
-                    <p>Decidimos que si no podíamos encontrar la librería digital perfecta, la construiríamos nosotros mismos. El nombre, "La Lechuza Lectora", se adoptó como símbolo de la **sabiduría técnica y literaria** que buscábamos fusionar.</p>
-                    <p>Nuestro proyecto de tesis se convirtió en nuestra misión: utilizar nuestra experiencia en desarrollo de sistemas, bases de datos y diseño UX/UI para crear una plataforma que fuera tan eficiente en su backend como placentera en su frontend. Hoy, cada clic en La Lechuza Lectora es un testimonio de que la pasión por los libros y la ingeniería pueden crear algo extraordinario.</p>
+            <section class="history-section" style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: center;">
+                <div class="card">
+                    <h2 style="color: #5d4037; margin-bottom: 20px;">Nuestra Historia</h2>
+                    <p>La Lechuza Lectora nació entre líneas de código y sesiones nocturnas de estudio en la carrera de Ingeniería en Sistemas Computacionales. Los estudiantes Alan, Fernando y Oscar decidimos construir la librería digital que siempre quisimos tener.</p>
+                    <p>El nombre representa la fusión entre la <strong>sabiduría técnica y literaria</strong> que buscamos en cada proyecto.</p>
                 </div>
                 
                 <div class="logo-illustration">
@@ -93,45 +104,32 @@
                 </div>
             </section>
 
-            <section class="mission-values-grid">
-                <div class="card mission-card">
-                    <h2>Misión</h2>
-                    <p>Conectar a cada lector con la obra ideal, a través de la tecnología más eficiente.</p>
-                    <p>Utilizamos la ingeniería de sistemas para optimizar la búsqueda, la navegación y la gestión del catálogo, haciendo de la lectura una experiencia sin fricciones.</p>
+            <section class="mission-values-grid" style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="card">
+                    <h2 style="color: #5d4037;">Misión</h2>
+                    <p>Conectar a cada lector con la obra ideal a través de la tecnología más eficiente, optimizando la gestión del catálogo mediante ingeniería de software de alta calidad.</p>
                 </div>
 
-                <div class="card values-card">
-                    <h2>Nuestros Valores</h2>
-                    <ol style="padding-left: 20px;">
-                        <li><strong>Innovación Técnica:</strong> Aplicar las mejores prácticas de la ingeniería de software para una plataforma robusta, rápida y segura.</li>
-                        <li><strong>Calidad Curada:</strong> Valorar el contenido de alta calidad, desde la ficción hasta los textos académicos especializados.</li>
-                        <li><strong>Transparencia:</strong> Ser claros con nuestros usuarios sobre cómo funciona la plataforma y cómo gestionamos los datos, fomentando la confianza.</li>
-                    </ol>
+                <div class="card">
+                    <h2 style="color: #5d4037;">Nuestros Valores</h2>
+                    <ul style="padding-left: 20px; list-style: square;">
+                        <li><strong>Innovación Técnica:</strong> Plataformas robustas y seguras.</li>
+                        <li><strong>Calidad Curada:</strong> Selección impecable de contenido.</li>
+                        <li><strong>Transparencia:</strong> Claridad absoluta en el manejo de datos.</li>
+                    </ul>
                 </div>
             </section>
 
-            <section class="card mission-card" style="margin-top: 40px;">
-                <h2>El Equipo</h2>
-                <p>Detrás de La Lechuza Lectora, estamos tres estudiantes de Ingeniería en Sistemas Computacionales que unimos nuestra pasión por la tecnología con el amor por la literatura. Nuestro objetivo es simple: construir la plataforma de lectura más eficiente e inteligente.</p>
-
-                <h3>Un mensaje del equipo:</h3>
-                <p style="font-style: italic; border-left: 4px solid #fbc02d; padding-left: 15px;">"Como futuros ingenieros, sabemos que el código debe ser tan robusto como una buena encuadernación. Estamos construyendo este sitio web no solo como un proyecto, sino como la librería que siempre quisimos tener, donde la tecnología sirve a la inagotable sed de conocimiento."</p>
+            <section class="card" style="margin-top: 40px; border-left: 5px solid #fbc02d;">
+                <h2 style="color: #5d4037;">El Equipo</h2>
+                <p>Somos tres estudiantes de Ingeniería en Sistemas Computacionales que unimos nuestra pasión por la tecnología con el amor por la literatura.</p>
+                <p style="font-style: italic; background: #fffdf5; padding: 15px; border-radius: 5px;">"Construimos este sitio como la librería que siempre quisimos tener, donde la tecnología sirve a la inagotable sed de conocimiento."</p>
             </section>
-
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
-        <div class="copyright">
-            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
-        </div>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
+        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
-
 </body>
 </html>

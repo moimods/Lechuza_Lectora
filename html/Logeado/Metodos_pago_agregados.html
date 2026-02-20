@@ -3,49 +3,128 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Lechuza Lectora - Métodos de Pago Agregados</title>
+    <title>La Lechuza Lectora - Métodos de Pago</title>
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* AJUSTES RESPONSIVOS CRÍTICOS */
+        @media (max-width: 768px) {
+            .form-card.payment-method-card {
+                width: 95% !important;
+                padding: 25px 15px !important;
+                margin: 20px auto;
+            }
+
+            .payment-option {
+                padding: 15px !important;
+                margin-bottom: 12px !important;
+                display: flex !important;
+                align-items: center !important;
+            }
+
+            .icon-box {
+                width: 50px !important;
+                height: 50px !important;
+                margin-right: 15px !important;
+                font-size: 1.2rem !important;
+            }
+
+            .payment-info p {
+                font-size: 0.95rem !important;
+            }
+
+            .btn-confirm-selection {
+                width: 100% !important;
+                padding: 14px !important;
+                font-size: 1.1rem !important;
+                margin-top: 20px !important;
+            }
+        }
+
+        /* Estabilización del fondo */
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* Efecto de selección visual */
+        .payment-option {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option.selected {
+            border-color: #fbc02d;
+            background-color: #fffdf5;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .payment-info p {
+            margin: 0;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
 </head>
 <body class="form-page">
 
-    <header class="navbar-minimal">
-        <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
-            <span class="site-name">LA LECHUZA LECTORA</span>
+    <header class="navbar-minimal" style="padding: 15px; background: rgba(240, 231, 203, 0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer; display: flex; align-items: center;">
+            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo" style="height: 35px; margin-right: 10px;"> 
+            <span class="site-name" style="font-weight: bold; color: #5d4037;">LA LECHUZA LECTORA</span>
         </div>
     </header>
 
     <main class="main-content form-main">
-        <div class="background-overlay" style="filter: brightness(0.6);"></div>
+        <div class="background-overlay"></div>
 
-        <div class="form-card payment-method-card">
-            <h1>Metodo de pago</h1>
+        <div class="form-card payment-method-card" style="background: rgba(245, 245, 245, 0.95); border-radius: 12px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 450px; margin: 0 auto; text-align: center;">
+            <h1 style="color: #5d4037; margin-bottom: 25px; font-size: 1.8rem;">Método de Pago</h1>
 
             <div class="payment-option selected">
-                <div class="icon-box paypal-icon-box">
+                <div class="icon-box paypal-icon-box" style="background: #0070ba; color: white; width: 45px; height: 45px; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
                     <i class="fa-brands fa-paypal"></i> 
                 </div>
-                <div class="payment-info">
+                <div class="payment-info" style="text-align: left;">
                     <p>popeyye23r@gmail.com</p>
                 </div>
             </div>
 
-            <div class="payment-option selected">
-                <div class="icon-box card-icon-box">
+            <div class="payment-option">
+                <div class="icon-box card-icon-box" style="background: #444; color: white; width: 45px; height: 45px; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
                     <i class="fa-solid fa-credit-card"></i> 
                 </div>
-                <div class="payment-info">
+                <div class="payment-info" style="text-align: left;">
                     <p>•••• 5732</p>
                 </div>
             </div>
 
-            <button class="btn-confirm-selection">Confirmar Pago</button> 
+            <button class="btn-confirm-selection" style="width: 100%; background: #5d4037; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.3s;">
+                Confirmar Pago
+            </button> 
+
+            <button type="button" onclick="window.history.back()" style="background: none; border: none; color: #666; cursor: pointer; text-decoration: underline; margin-top: 15px; font-size: 0.9rem;">
+                Volver
+            </button>
         </div>
     </main>
 
-    <footer class="site-footer">...</footer>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; font-size: 0.8em; margin-top: auto;">
+        <div class="copyright">
+            © Todos los derechos reservados 2026. La Lechuza Lectora ©
+        </div>
+    </footer>
 
 </body>
 </html>

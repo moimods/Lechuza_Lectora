@@ -3,127 +3,156 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Registro</title>
     <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="../../Js/captcha.js" defer></script>
+    <style>
+        /* AJUSTES RESPONSIVOS CRÍTICOS */
+        @media (max-width: 1024px) {
+            .registration-grid {
+                grid-template-columns: 1fr 1fr !important; /* Dos columnas en tablets */
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-card.registration-card {
+                width: 95% !important;
+                padding: 20px !important;
+                margin-top: 10px;
+            }
+
+            .registration-grid {
+                grid-template-columns: 1fr !important; /* Una sola columna en celulares */
+            }
+
+            .section-group {
+                padding: 15px !important;
+            }
+
+            .form-actions-bottom {
+                flex-direction: column; /* Botones verticales en móvil */
+                gap: 10px;
+            }
+
+            .btn-register, .btn-cancel {
+                width: 100% !important;
+                padding: 12px !important;
+            }
+
+            .modal-content {
+                width: 90% !important;
+                padding: 20px !important;
+            }
+        }
+
+        /* Estabilización del fondo */
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        .password-wrapper { position: relative; }
+        .password-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #5d4037; }
+    </style>
 </head>
 <body class="form-page">
 
     <main class="main-content form-main">
-        <div class="background-overlay" style="filter: brightness(0.6);"></div>
+        <div class="background-overlay"></div>
 
-        <div class="form-card registration-card">
-            <h1>Formulario de Registro</h1>
+        <div class="form-card registration-card" style="max-width: 1100px; background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; margin: 20px auto;">
+            <h1 style="color: #5d4037; text-align: center; margin-bottom: 30px;">Formulario de Registro</h1>
 
-            <form class="registration-grid" id="registrationForm"> 
-                <div class="section-group personal-data">
-                    <h2>Datos Personales</h2>
-                    <div class="input-group"><label for="nombres">Nombres:</label><input type="text" id="nombres" required></div>
-                    <div class="input-group"><label for="apellido1">Primer apellido:</label><input type="text" id="apellido1" required></div>
-                    <div class="input-group"><label for="apellido2">Segundo apellido:</label><input type="text" id="apellido2"></div>
-                    <div class="input-group"><label for="fecha_nacimiento">Fecha de nacimiento:</label><input type="date" id="fecha_nacimiento" required></div>
+            <form class="registration-grid" id="registrationForm" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;"> 
+                <div class="section-group" style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+                    <h2 style="font-size: 1.2em; color: #5d4037; border-bottom: 2px solid #fbc02d; padding-bottom: 5px; margin-bottom: 15px;">Datos Personales</h2>
+                    <div class="input-group"><label>Nombres:</label><input type="text" id="nombres" required style="width:100%; padding:8px; margin-bottom:10px;"></div>
+                    <div class="input-group"><label>Primer apellido:</label><input type="text" id="apellido1" required style="width:100%; padding:8px; margin-bottom:10px;"></div>
+                    <div class="input-group"><label>Segundo apellido:</label><input type="text" id="apellido2" style="width:100%; padding:8px; margin-bottom:10px;"></div>
+                    <div class="input-group"><label>Fecha de nacimiento:</label><input type="date" id="fecha_nacimiento" required style="width:100%; padding:8px;"></div>
                 </div>
 
-                <div class="section-group contact-data">
-                    <h2>Información de Cuenta</h2>
-                    <div class="input-group"><label for="nickname">Apodo (Nickname):</label><input type="text" id="nickname"></div>
-                    <div class="input-group"><label for="telefono">Numero telefónico:</label><input type="tel" id="telefono" required></div>
-                    <div class="input-group"><label for="domicilio">Domicilio:</label><input type="text" id="domicilio" required></div>
-                    <div class="input-group"><label for="email">Correo electrónico:</label><input type="email" id="email" required></div>
+                <div class="section-group" style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+                    <h2 style="font-size: 1.2em; color: #5d4037; border-bottom: 2px solid #fbc02d; padding-bottom: 5px; margin-bottom: 15px;">Información de Cuenta</h2>
+                    <div class="input-group"><label>Apodo:</label><input type="text" id="nickname" style="width:100%; padding:8px; margin-bottom:10px;"></div>
+                    <div class="input-group"><label>Teléfono:</label><input type="tel" id="telefono" required style="width:100%; padding:8px; margin-bottom:10px;"></div>
+                    <div class="input-group"><label>Domicilio:</label><input type="text" id="domicilio" required style="width:100%; padding:8px; margin-bottom:10px;"></div>
+                    <div class="input-group"><label>Email:</label><input type="email" id="email" required style="width:100%; padding:8px;"></div>
                 </div>
                 
-                <div class="section-group password-data">
-                    <h2>Seguridad</h2>
+                <div class="section-group" style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+                    <h2 style="font-size: 1.2em; color: #5d4037; border-bottom: 2px solid #fbc02d; padding-bottom: 5px; margin-bottom: 15px;">Seguridad</h2>
                     <div class="input-group">
-                        <label for="password">Contraseña:</label>
+                        <label>Contraseña:</label>
                         <div class="password-wrapper">
-                            <input type="password" id="password" maxlength="10" required>
+                            <input type="password" id="password" maxlength="10" required style="width:100%; padding:8px; margin-bottom:10px;">
                             <i class="fa-solid fa-eye password-toggle" onclick="togglePass('password')"></i>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label for="confirm_password">Confirmar contraseña:</label>
+                        <label>Confirmar:</label>
                         <div class="password-wrapper">
-                            <input type="password" id="confirm_password" maxlength="10" required>
+                            <input type="password" id="confirm_password" maxlength="10" required style="width:100%; padding:8px; margin-bottom:10px;">
                             <i class="fa-solid fa-eye password-toggle" onclick="togglePass('confirm_password')"></i>
                         </div>
                     </div>
                     
-                    <div class="password-validation-area">
-                        <ul id="password-requirements" style="font-size: 0.8em; list-style: none; padding: 0;">
-                            <li id="reg-req-match"><i class="fa-solid fa-circle-info"></i> Las contraseñas deben coincidir.</li>
-                        </ul>
-                    </div>
-
-                    <div class="captcha-group">
-                        <div class="captcha-display-wrapper">
-                            <span id="captcha-display" class="captcha-display" style="background: #ddd; padding: 5px 15px; font-weight: bold; letter-spacing: 5px;">JUPRO</span> 
-                            <i id="captcha-refresh" class="fa-solid fa-sync-alt" style="cursor: pointer; margin-left: 10px;"></i>
+                    <div class="captcha-group" style="text-align: center; margin-top: 10px;">
+                        <div class="captcha-display-wrapper" style="margin-bottom: 10px;">
+                            <span id="captcha-display" style="background: #eee; padding: 5px 15px; font-weight: bold; letter-spacing: 5px; border: 1px dashed #999;">JUPRO</span> 
+                            <i id="captcha-refresh" class="fa-solid fa-sync-alt" style="cursor: pointer; margin-left: 10px; color: #5d4037;"></i>
                         </div>
-                        <label for="captcha-input">Introducir captcha:</label>
-                        <input type="text" id="captcha-input" required> 
+                        <input type="text" id="captcha-input" placeholder="Captcha" required style="width:100%; padding:8px;"> 
                     </div>
                 </div>
             </form>
 
-            <div class="form-actions-bottom">
-                <button type="submit" form="registrationForm" class="btn-register">Registrarse</button>
-                <button type="button" class="btn-cancel" onclick="window.location.href='Inicio_sesion.html'">Cancelar</button>
+            <div class="form-actions-bottom" style="display: flex; justify-content: space-between; margin-top: 30px;">
+                <button type="submit" form="registrationForm" class="btn-primary" style="background: #5d4037; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Registrarse</button>
+                <button type="button" class="btn-cancel" onclick="window.location.href='Inicio_sesion.html'" style="background: #555; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Cancelar</button>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="copyright">
-            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
-        </div>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
+        <div class="copyright">© 2026 La Lechuza Lectora</div>
     </footer>
     
-    <div id="success-modal" class="modal-backdrop" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="modal-content" style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
-            <i class="fa-solid fa-circle-check" style="font-size: 50px; color: green;"></i>
-            <h2>¡Registro Exitoso!</h2>
-            <p>Tu cuenta ha sido creada. Ahora puedes iniciar sesión.</p>
-            <button id="btn-modal-accept" class="btn-primary" style="padding: 10px 20px; cursor:pointer;">Aceptar</button>
+    <div id="success-modal" class="modal-backdrop">
+        <div class="modal-content" style="background: white; padding: 30px; border-radius: 10px; text-align: center; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <i class="fa-solid fa-circle-check" style="font-size: 60px; color: #388e3c; margin-bottom: 15px;"></i>
+            <h2 style="color: #5d4037;">¡Registro Exitoso!</h2>
+            <p style="margin-bottom: 20px;">Tu cuenta ha sido creada correctamente.</p>
+            <button id="btn-modal-accept" class="btn-primary" style="background: #5d4037; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Aceptar</button>
         </div>
     </div>
 
     <script>
-        // Función para ver/ocultar contraseña
         function togglePass(id) {
             const input = document.getElementById(id);
             input.type = input.type === "password" ? "text" : "password";
         }
 
-        // Manejo del formulario
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const pass = document.getElementById('password').value;
             const confirm = document.getElementById('confirm_password').value;
             const captcha = document.getElementById('captcha-input').value.toUpperCase();
 
-            // Validación simple de contraseñas
-            if (pass !== confirm) {
-                alert("Las contraseñas no coinciden.");
-                return;
-            }
+            if (pass !== confirm) { alert("Las contraseñas no coinciden."); return; }
+            if (captcha !== "JUPRO") { alert("Captcha incorrecto."); return; }
 
-            // Simulación de validación de Captcha
-            if (captcha !== "JUPRO") {
-                alert("Captcha incorrecto. Intenta de nuevo.");
-                return;
-            }
-
-            // Mostrar Modal de Éxito
             document.getElementById('success-modal').style.display = 'flex';
         });
 
-        // Al dar clic en Aceptar en el modal, redirigir al Login
         document.getElementById('btn-modal-accept').addEventListener('click', function() {
             window.location.href = 'Inicio_sesion.html';
         });

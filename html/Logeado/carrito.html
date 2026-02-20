@@ -14,12 +14,61 @@
     <script src="../../JS/paypalIntegration.js" defer></script>
     
     <style>
-        
+        /* AJUSTES RESPONSIVOS CRÍTICOS */
+        @media (max-width: 1024px) {
+            .cart-container {
+                flex-direction: column !important;
+                align-items: center;
+                width: 95% !important;
+            }
+
+            .cart-summary-wrapper {
+                width: 100% !important;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px !important;
+                flex-direction: column;
+            }
+
+            .nav-links {
+                display: none; /* Se oculta para el menú hamburguesa o simplificación móvil */
+            }
+
+            .cart-title {
+                font-size: 1.5rem !important;
+                text-align: center;
+            }
+
+            .cart-items-list {
+                padding: 15px !important;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .cart-item img {
+                margin: 0 auto !important;
+            }
+
+            .btn-secondary {
+                padding: 12px !important;
+                font-size: 1rem;
+            }
+        }
+
+        /* Menú de seguridad del avatar */
         .dropdown-menu {
             display: none; 
             position: absolute;
             right: 0;
-            top: 50px; 
+            top: 55px; 
             background: white;
             min-width: 170px;
             box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
@@ -39,10 +88,6 @@
             text-align: left;
         }
 
-        .dropdown-menu a:hover {
-            background-color: #fdf5e6;
-        }
-
         .avatar {
             border-radius: 50%;
             width: 40px;
@@ -53,7 +98,7 @@
         }
     </style>
 </head>
-<body>
+<body class="form-page">
 
     <header class="navbar user-navbar">
         <div class="logo-container">
@@ -88,10 +133,10 @@
     <main class="main-content cart-main">
         <div class="background-overlay" style="filter: brightness(0.8);"></div>
 
-        <div class="cart-container">
-            <div class="cart-items-list">
-                <h1 class="cart-title">Productos de tu carrito</h1>
-                <p class="cart-subtitle">Las mejores ofertas literarias en La Lechuza Lectora</p>
+        <div class="cart-container" style="display: flex; gap: 30px; margin-top: 40px; justify-content: center; align-items: flex-start; position: relative; z-index: 5;">
+            <div class="cart-items-list" style="background: rgba(240, 231, 203, 0.95); padding: 30px; border-radius: 10px; flex: 2; max-width: 800px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                <h1 class="cart-title" style="color: #5d4037; margin-bottom: 10px;">Productos de tu carrito</h1>
+                <p class="cart-subtitle" style="color: #8d6e63; margin-bottom: 25px;">Las mejores ofertas literarias en La Lechuza Lectora</p>
 
                 <div id="cart-items-container"></div>
                 
@@ -100,41 +145,34 @@
                 </div>
             </div>
 
-            <div class="cart-summary-wrapper">
-                <div class="cart-summary">
-                    <div class="summary-line">
+            <div class="cart-summary-wrapper" style="flex: 1; min-width: 300px; max-width: 400px;">
+                <div class="cart-summary" style="background: #2c2c2c; color: white; padding: 25px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                    <div class="summary-line" style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                         <p>Productos totales (<span id="total-items-display">0</span>)</p>
                         <strong id="subtotal-display">$0.00</strong>
                     </div>
-                    <div class="summary-line">
+                    <div class="summary-line" style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                         <p>Costo de Envío</p>
                         <strong id="shipping-display">Gratis</strong>
                     </div>
-                    <div class="summary-line total-line">
+                    <hr style="border: 0; border-top: 1px solid #444; margin-bottom: 15px;">
+                    <div class="summary-line total-line" style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold;">
                         <p>Total a pagar</p>
-                        <strong id="total-display">$0.00</strong>
+                        <strong id="total-display" style="color: #fbc02d;">$0.00</strong>
                     </div>
 
-                    <div class="payment-methods" style="margin-top: 20px;">
+                    <div class="payment-methods" style="margin-top: 25px;">
                         <div id="paypal-button-container"></div>
                     </div>
 
-                    <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'" style="width: 100%; margin-top: 15px; border: 1px solid #5d4037; padding: 10px; cursor: pointer;">Seguir comprando</button>
+                    <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'" style="width: 100%; margin-top: 15px; border: 1px solid #fbc02d; color: #fbc02d; background: transparent; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">Seguir comprando</button>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
-        <div class="copyright">
-            © Todos los derechos reservados 2026. La Lechuza Lectora ©
-        </div>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; margin-top: auto;">
+        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
     <script>
@@ -146,7 +184,6 @@
             }
         }
 
-        // Cerrar al hacer clic fuera
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('avatar-dropdown');
             const btn = document.getElementById('avatar-btn');

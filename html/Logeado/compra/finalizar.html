@@ -1,71 +1,132 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - Paso 4</title>
     <link rel="stylesheet" href="../../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Ajustes de responsividad para el paso final */
+        @media (max-width: 768px) {
+            .checkout-container {
+                width: 95% !important;
+                padding: 20px 15px !important;
+                margin: 20px auto !important;
+            }
+
+            .checkout-title {
+                font-size: 1.4rem !important;
+                margin-bottom: 20px !important;
+            }
+
+            .final-summary-area {
+                padding: 15px !important;
+            }
+
+            .final-section h3 {
+                font-size: 1rem !important;
+            }
+
+            .final-section p {
+                font-size: 0.9rem !important;
+            }
+
+            .final-totals strong {
+                font-size: 1.8rem !important;
+            }
+
+            /* Apilamiento vertical de botones para facilitar el clic */
+            .navigation-actions {
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+
+            .btn-primary, .btn-dark-action {
+                width: 100% !important;
+                padding: 14px !important;
+                font-size: 1rem !important;
+            }
+        }
+
+        /* Fondo consistente */
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* Estilo del modal para móviles */
+        .modal-content {
+            width: 90% !important;
+            max-width: 400px;
+            padding: 25px !important;
+        }
+    </style>
 </head>
 <body class="form-page">
-    <header class="navbar user-navbar">...</header>
+    
     <main class="main-content cart-main">
-        <div class="background-overlay" style="filter: brightness(0.8);"></div>
+        <div class="background-overlay"></div>
 
-        <div class="checkout-container">
-            <h1 class="checkout-title">4. Confirmar y Finalizar Compra</h1>
+        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+            <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 30px;">4. Confirmar y Finalizar Compra</h1>
             
             <div class="checkout-step-content">
+                <h2 style="font-size: 1.3rem; color: #5d4037; margin-bottom: 20px; border-bottom: 2px solid #fbc02d; padding-bottom: 5px;">Resumen Final</h2>
                 
-                <h2>Resumen Final</h2>
-                <div class="final-summary-area">
-                    <div class="final-section">
-                        <h3>Dirección de Envío:</h3>
-                        <p id="final-address">Av. Los Pinos #123, Col. Centro, CDMX, 01000.</p>
+                <div class="final-summary-area" style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 30px;">
+                    <div class="final-section" style="margin-bottom: 20px;">
+                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Dirección de Envío:</h3>
+                        <p id="final-address" style="color: #555; margin: 0;">Av. Los Pinos #123, Col. Centro, CDMX, 01000.</p>
                     </div>
-                    <div class="final-section">
-                        <h3>Método de Pago:</h3>
-                        <p id="final-payment">PayPal (usuario@ejemplo.com)</p>
+                    
+                    <div class="final-section" style="margin-bottom: 20px;">
+                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Método de Pago:</h3>
+                        <p id="final-payment" style="color: #555; margin: 0;">PayPal (usuario@ejemplo.com)</p>
                     </div>
-                    <div class="final-section final-totals">
-                        <h3>Total del Pedido:</h3>
-                        <strong id="final-total">$457.00</strong>
+                    
+                    <div class="final-section final-totals" style="padding-top: 15px; border-top: 2px dashed #eee; text-align: right;">
+                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Total del Pedido:</h3>
+                        <strong id="final-total" style="color: #d32f2f; font-size: 2.2rem; display: block;">$457.00</strong>
                     </div>
                 </div>
                 
-                <div class="navigation-actions">
-                    <button class="btn-dark-action btn-prev-step" data-prev-step="pago">
+                <div class="navigation-actions" style="display: flex; justify-content: space-between; gap: 15px;">
+                    <button class="btn-dark-action btn-prev-step" onclick="window.history.back()" style="background: #555; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                         ← Regresar
                     </button>
 
-                    <button class="btn-primary" id="btn-finalizar-compra">
+                    <button class="btn-primary" id="btn-finalizar-compra" onclick="mostrarExito()" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
                         PAGAR Y FINALIZAR COMPRA
                     </button>
                 </div>
             </div>
         </div>
 
-
-        <div id="compra-success-modal" class="modal-backdrop">
-            <div class="modal-content">
-                <h2>¡Compra Finalizada!</h2>
-                <p>Tu pedido ha sido procesado con éxito. Recibirás una confirmación por correo.</p>
-                <button id="btn-modal-compra-accept">Continuar</button>
+        <div id="compra-success-modal" class="modal-backdrop" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
+            <div class="modal-content" style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+                <i class="fa-solid fa-circle-check" style="font-size: 50px; color: #388e3c; margin-bottom: 15px;"></i>
+                <h2 style="color: #5d4037;">¡Compra Finalizada!</h2>
+                <p style="color: #666; margin-bottom: 25px;">Tu pedido ha sido procesado con éxito. Recibirás una confirmación por correo.</p>
+                <button id="btn-modal-compra-accept" onclick="window.location.href='../perfil.html'" style="background: #5d4037; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Continuar</button>
             </div>
         </div>
     </main>
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
+
+    <footer class="site-footer" style="text-align: center; padding: 20px; background: rgba(44, 44, 44, 0.9); color: white; margin-top: auto;">
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. La Lechuza Lectora ©
         </div>
     </footer>
-    <script src="../../../Js/checkoutManager.js"></script>
+
+    <script>
+        function mostrarExito() {
+            document.getElementById('compra-success-modal').style.display = 'flex';
+        }
+    </script>
 </body>
 </html>

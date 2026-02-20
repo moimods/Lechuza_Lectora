@@ -1,19 +1,87 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Lechuza Lectora - Inicio (Sesión Iniciada)</title>
+    <title>La Lechuza Lectora - Inicio</title>
     <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css"> 
     <script src="../../JS/UserDropdown.js" defer></script>
     <script src="../../Js/cartManager.js" defer></script>
-    <script src="../../Js/productLoader.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* AJUSTES RESPONSIVOS CRÍTICOS */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column !important;
+                height: auto !important;
+                padding: 10px !important;
+            }
+
+            .search-bar {
+                width: 95% !important;
+                margin: 10px 0 !important;
+                order: 3;
+            }
+
+            .nav-links {
+                display: none; /* Se recomienda menú hamburguesa, aquí se simplifica */
+            }
+
+            .content-container {
+                flex-direction: column !important;
+                padding: 20px 10px !important;
+                text-align: center;
+            }
+
+            .welcome-card {
+                width: 100% !important;
+                margin-bottom: 30px;
+            }
+
+            .featured-book {
+                width: 100% !important;
+            }
+
+            .featured-book img {
+                max-width: 180px !important;
+            }
+
+            .reviews-section {
+                grid-template-columns: 1fr !important; /* Una reseña por fila */
+                padding: 20px 15px !important;
+            }
+        }
+
+        /* Estabilización del dropdown y menú de usuario */
+        .dropdown-menu {
+            display: none; 
+            position: absolute;
+            right: 0;
+            top: 55px; 
+            background: white;
+            min-width: 170px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+            z-index: 9999 !important; 
+            border-radius: 8px;
+            padding: 10px 0;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #5d4037;
+        }
+
+        /* Ajuste carrusel para móviles */
+        .background-carousel figure img {
+            object-fit: cover;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body>
 
@@ -25,7 +93,7 @@
         
         <div class="search-bar">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Buscar Libros, Autores, Editoriales y más...">
+            <input type="text" placeholder="Buscar Libros...">
         </div>
         
         <nav class="nav-links">
@@ -43,19 +111,18 @@
 
             <button class="icon-button" onclick="window.location.href='../../index.html'"><i class="fa-solid fa-house"></i></button>
 
-            <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover;">
-                
+            <div class="avatar-dropdown-container" style="position: relative;">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
                 <div class="dropdown-menu" id="avatar-dropdown">
-                    <a href="perfil.html" id="profile-link">Mi Perfil</a>
-                    <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
+                    <a href="perfil.html" style="padding: 10px 15px; display: block; color: #5d4037; text-decoration: none; font-weight: bold;">Mi Perfil</a>
+                    <a href="../../index.html" style="padding: 10px 15px; display: block; color: #5d4037; text-decoration: none; font-weight: bold;">Cerrar Sesión</a>
                 </div>
             </div>
         </div>
     </header>
 
     <main class="main-content">
-        <div class="background-overlay" style="filter: brightness(0.6) blur(1px);"></div>
+        <div class="background-overlay" style="filter: brightness(0.4) blur(1px);"></div>
 
         <div class="background-carousel">
             <figure>
@@ -67,62 +134,57 @@
             </figure>
         </div>
 
-        <div class="content-container">
-            <div class="welcome-card">
-                <h2>BIENVENIDO!!!</h2>
-                <p>La Lechuza Lectora es tu portal digital para explorar mundos inexplorados y conectar con las grandes mentes de la <strong>literatura</strong>. Creemos en el poder de las historias. Por eso, hemos creado la página web más completa para la venta de libros de gran variedad, desde los más clásicos hasta los más vendidos actualmente. No somos solo una librería, somos una <strong>comunidad</strong> donde cada clic te acerca a tu próxima página favorita!!!.</p>
-                <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'">Ir al Catálogo</button>
+        <div class="content-container" style="display: flex; gap: 40px; align-items: center; position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 60px 20px;">
+            <div class="welcome-card" style="background: rgba(255, 255, 255, 0.92); padding: 35px; border-radius: 15px; flex: 1.5; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                <h2 style="color: #5d4037; margin-bottom: 15px; font-size: 2rem;">BIENVENIDO!!!</h2>
+                <p style="color: #333; line-height: 1.8; font-size: 1.1rem;">La Lechuza Lectora es tu portal digital para explorar mundos inexplorados. Hemos creado la plataforma más completa para conectar a la <strong>comunidad</strong> con los mejores títulos, desde clásicos hasta novedades actuales.</p>
+                <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'" style="margin-top: 25px; background: #5d4037; color: white; border: none; padding: 14px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem;">Explorar Catálogo</button>
             </div>
 
-            <div class="featured-book">
-                <span class="bestseller-tag">FROM THE NO. 1 BESTSELLING AUTHOR</span>
-                <img src="../../Imagenes/Mr-Mercedes-Stephen-King-animated-book-cover.gif" alt="Portada del libro Mr Mercedes de Stephen King">
+            <div class="featured-book" style="flex: 1; text-align: center;">
+                <span class="bestseller-tag" style="background: #fbc02d; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; color: #5d4037; display: inline-block; margin-bottom: 15px;">MÁS VENDIDO</span>
+                <img src="../../Imagenes/Mr-Mercedes-Stephen-King-animated-book-cover.gif" alt="Portada Mr Mercedes" style="max-width: 280px; width: 100%; border-radius: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.6);">
             </div>
-            
-            <div class="reviews-section">
-                <div class="review-card">
-                    <div class="rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
-                    </div>
-                    <h3>Venta de Libros a Buen precio</h3>
-                    <p>La mejor Página para realizar compras y con envío gratis!!!</p>
-                    <div class="reviewer-info">
-                        <img src="../../Imagenes/Diana.png" alt="Foto de Diana Diaz">
-                        <div>
-                            <strong>Diana Diaz</strong>
-                            <span>28/09/25</span>
-                        </div>
-                    </div>
-                </div>
+        </div>
 
-                <div class="review-card">
-                    <div class="rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <h3>Excelente Servicio</h3>
-                    <p>Mi pedido llego en menos de 3 días!!!</p>
-                    <div class="reviewer-info">
-                        <img src="../../Imagenes/Alberto.png" alt="Foto de Alberto Mijangos">
-                        <div>
-                            <strong>Alberto Mijangos</strong>
-                            <span>06/04/25</span>
-                        </div>
-                    </div>
+        <div class="reviews-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 50px 20px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 10;">
+            <div class="review-card" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+                <div class="rating" style="color: #fbc02d; margin-bottom: 12px; font-size: 1.1rem;">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
                 </div>
+                <h3 style="color: #5d4037; margin-bottom: 10px;">Venta de Libros a Buen precio</h3>
+                <p style="color: #555; font-style: italic; line-height: 1.5;">"La mejor página para realizar compras y con envío gratis!!!"</p>
+            </div>
+
+            <div class="review-card" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+                <div class="rating" style="color: #fbc02d; margin-bottom: 12px; font-size: 1.1rem;">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <h3 style="color: #5d4037; margin-bottom: 10px;">Excelente Servicio</h3>
+                <p style="color: #555; font-style: italic; line-height: 1.5;">"Mi pedido llegó en menos de 3 días!!!"</p>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
-        <div class="copyright">
-            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
-        </div>
+    <footer class="site-footer" style="text-align: center; padding: 30px; background: rgba(44, 44, 44, 0.95); color: white;">
+        <div class="copyright">© 2026 La Lechuza Lectora • Todos los derechos reservados</div>
     </footer>
+
+    <script>
+        function forceToggleMenu() {
+            const menu = document.getElementById('avatar-dropdown');
+            if (menu) {
+                const isHidden = window.getComputedStyle(menu).display === 'none';
+                menu.style.display = isHidden ? 'block' : 'none';
+            }
+        }
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('avatar-dropdown');
+            const btn = document.getElementById('avatar-btn');
+            if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

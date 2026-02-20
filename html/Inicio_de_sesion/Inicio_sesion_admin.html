@@ -7,53 +7,94 @@
     <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Ajustes específicos para dispositivos móviles */
+        @media (max-width: 768px) {
+            .form-card.admin-login-card {
+                width: 90% !important; /* Aprovecha el espacio lateral en celulares */
+                padding: 25px 20px !important;
+                margin: 20px auto;
+            }
+
+            .main-logo {
+                width: 80px !important;
+                height: 80px !important;
+            }
+
+            .form-card h2 {
+                font-size: 1.3rem !important;
+            }
+
+            .btn-primary {
+                padding: 12px !important; /* Botón más grande para el pulgar */
+                font-size: 1rem;
+            }
+        }
+
+        /* Estilo del fondo consistente con el login de usuario */
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
 </head>
 <body class="form-page">
     <main class="main-content form-main">
-        <div class="background-overlay" style="filter: brightness(0.6);"></div>
+        <div class="background-overlay"></div>
 
         <div class="form-card login-card admin-login-card">
             <div class="center-logo-box">
-                <img src="../../Imagenes/logo.png" alt="Logo Central" class="main-logo">
-                <h2 style="color: #5d4037; margin-top: 10px;">Acceso Panel Control</h2>
+                <img src="../../Imagenes/logo.png" alt="Logo Central" class="main-logo" style="width: 100px; height: 100px; object-fit: contain;">
+                <h2 style="color: #5d4037; margin-top: 10px; font-weight: bold;">Acceso Panel Control</h2>
             </div>
             
-            <form class="login-form" id="adminLoginForm">
-                <label for="correo">Administrador:</label>
-                <input type="email" id="correo" placeholder="Cualquier correo">
+            <form class="login-form" id="adminLoginForm" style="margin-top: 20px;">
+                <label for="correo" style="display: block; text-align: left; font-weight: bold; color: #5d4037;">Administrador:</label>
+                <input type="email" id="correo" placeholder="Cualquier correo" required 
+                       style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;">
 
-                <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" placeholder="Cualquier contraseña">
+                <label for="contrasena" style="display: block; text-align: left; font-weight: bold; color: #5d4037;">Contraseña:</label>
+                <input type="password" id="contrasena" placeholder="Cualquier contraseña" required 
+                       style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc;">
 
-                <button type="submit" class="btn-primary">Entrar al Panel</button>
+                <button type="submit" class="btn-primary" 
+                        style="width: 100%; padding: 10px; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold; cursor: pointer;">
+                    Entrar al Panel
+                </button>
             </form>
 
-            <button class="btn-forgot-password admin-forgot">¿Olvidó la contraseña?</button>
-            <a href="../../index.html" style="display: block; text-align: center; margin-top: 15px; font-size: 0.9em; color: #5d4037;">Volver al Inicio</a>
+            <button class="btn-forgot-password admin-forgot" style="background: none; border: none; color: #5d4037; text-decoration: underline; margin-top: 15px; cursor: pointer; font-size: 0.9em;">
+                ¿Olvidó la contraseña?
+            </button>
+            
+            <a href="../../index.html" style="display: block; text-align: center; margin-top: 15px; font-size: 0.9em; color: #5d4037; font-weight: bold; text-decoration: none;">
+                <i class="fa-solid fa-house"></i> Volver al Inicio
+            </a>
         </div>
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; font-size: 0.85em;">
         <div class="copyright">
-            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. La Lechuza Lectora ©
         </div>
     </footer>
 
-   <script>
-    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-        e.preventDefault(); 
-        
-        // LA RUTA CORRECTA SEGÚN TU ESTRUCTURA:
-        // Subimos un nivel (../) para salir de 'Inicio_de_sesion'
-        // Entramos a la carpeta 'Admin'
-        // Abrimos el archivo 'panel_de_admin.html'
-        const targetPath = "../Admin/panel_de_admin.html";
-        
-        console.log("Redirigiendo a:", targetPath);
-        
-        // Ejecutamos la navegación
-        window.location.href = targetPath;
-    });
-</script>
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            // Ruta corregida para entrar al panel administrativo
+            const targetPath = "../Admin/panel_de_admin.html";
+            console.log("Redirigiendo a:", targetPath);
+            window.location.href = targetPath;
+        });
+    </script>
 </body>
 </html>

@@ -12,48 +12,103 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <script src="../../JS/Redireccionamiento_login.js" defer></script> 
+    <style>
+        /* Ajustes responsivos para Iniciar Sesión */
+        @media (max-width: 768px) {
+            .form-card.login-card {
+                width: 90% !important; /* Más ancho en celulares para facilitar lectura */
+                padding: 30px 20px !important;
+                margin: 20px auto;
+            }
+
+            .main-logo {
+                width: 80px !important; /* Logo ligeramente más pequeño para ganar espacio */
+                height: auto;
+            }
+
+            .login-action-buttons {
+                flex-direction: column; /* Apila Iniciar y Cancelar para mejor uso táctil */
+                gap: 10px;
+            }
+
+            .login-action-buttons button {
+                width: 100% !important;
+                padding: 12px !important;
+            }
+
+            .login-actions {
+                flex-direction: column; /* Apila los links inferiores */
+                align-items: center;
+                gap: 15px;
+            }
+
+            .btn-create-account, .btn-forgot-password {
+                font-size: 0.95rem !important; /* Texto un poco más grande para facilitar el toque */
+            }
+        }
+
+        /* Estabilización del fondo para dispositivos móviles */
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
 </head>
 <body class="form-page">
 
     <main class="main-content form-main">
-        <div class="background-overlay" style="background: url('../../Imagenes/Carrusel/5.jpg') no-repeat center center/cover; filter: brightness(0.6); position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1;"></div>
+        <div class="background-overlay"></div>
 
         <div class="form-card login-card">
             <div class="center-logo-box">
-                <img src="../../Imagenes/logo.png" alt="Logo Central" class="main-logo">
+                <img src="../../Imagenes/logo.png" alt="Logo Central" class="main-logo" style="width: 100px; height: auto;">
             </div>
             
-            <form class="login-form" id="form-login-usuario">
-                <label for="correo">Correo:</label>
-                <input type="email" id="correo" placeholder="ejemplo@correo.com" required>
+            <form class="login-form" id="form-login-usuario" style="margin-top: 20px;">
+                <label for="correo" style="display: block; text-align: left; font-weight: bold; color: #5d4037;">Correo:</label>
+                <input type="email" id="correo" placeholder="ejemplo@correo.com" required 
+                       style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;">
 
-                <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" placeholder="********" required>
+                <label for="contrasena" style="display: block; text-align: left; font-weight: bold; color: #5d4037;">Contraseña:</label>
+                <input type="password" id="contrasena" placeholder="********" required 
+                       style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
 
-                <div class="login-action-buttons">
-                    <button type="submit" class="btn-primary">Iniciar sesión</button>
-                    <button type="button" class="btn-cancel" onclick="window.location.href='../../index.html'">Cancelar</button>
+                <div class="login-action-buttons" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn-primary" style="flex: 1; padding: 10px; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold; cursor: pointer;">Iniciar sesión</button>
+                    <button type="button" class="btn-cancel" onclick="window.location.href='../../index.html'" 
+                            style="flex: 1; padding: 10px; border-radius: 5px; border: none; background-color: #555; color: white; font-weight: bold; cursor: pointer;">Cancelar</button>
                 </div>
             </form>
 
-            <a class="btn-admin-switch" href="Inicio_sesion_admin.html" style="display: block; text-align: center; margin-top: 15px; color: #5d4037; font-weight: bold;">Acceso Administrativo</a>
+            <a class="btn-admin-switch" href="Inicio_sesion_admin.html" 
+               style="display: block; text-align: center; margin-top: 15px; color: #5d4037; font-weight: bold; text-decoration: underline;">
+                Acceso Administrativo
+            </a>
             
-            <div class="login-actions" style="display: flex; justify-content: space-between; margin-top: 20px;">
-                <button type="button" class="btn-create-account" onclick="window.location.href='Registro.html'">Crear cuenta</button>
-                <button type="button" class="btn-forgot-password" onclick="window.location.href='Recuperacion.html'">¿Olvidó la contraseña?</button>
+            <div class="login-actions" style="display: flex; justify-content: space-between; margin-top: 25px;">
+                <button type="button" class="btn-create-account" onclick="window.location.href='Registro.html'" 
+                        style="background: none; border: none; color: #5d4037; font-weight: bold; cursor: pointer; text-decoration: none;">Crear cuenta</button>
+                <button type="button" class="btn-forgot-password" onclick="window.location.href='Recuperacion.html'" 
+                        style="background: none; border: none; color: #5d4037; font-weight: bold; cursor: pointer; text-decoration: none;">¿Olvidó la contraseña?</button>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; font-size: 0.85em;">
+        <div class="social-links" style="margin-bottom: 10px;">
+            <a href="#" style="margin: 0 10px; font-size: 1.2rem; color: #5d4037;"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" style="margin: 0 10px; font-size: 1.2rem; color: #5d4037;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" style="margin: 0 10px; font-size: 1.2rem; color: #5d4037;"><i class="fa-brands fa-youtube"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. La Lechuza Lectora ©
         </div>
     </footer>
 </body>

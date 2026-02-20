@@ -3,9 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Catálogo</title>
-
     <link rel="stylesheet" href="../Estilos/Estilo1.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
@@ -13,6 +11,99 @@
     <script src="../JS/filterSidebar.js" defer></script>
     <script src="../JS/Boton_Ini.js" defer></script>
     <script src="../JS/Boton_Inicio_Sesion_html.js" defer></script>
+    
+    <style>
+        /* AJUSTES RESPONSIVOS INTEGRADOS */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column !important;
+                height: auto !important;
+                padding: 10px !important;
+            }
+
+            .search-bar.detail-search {
+                width: 100% !important;
+                margin: 10px 0 !important;
+                order: 3;
+            }
+
+            .nav-links {
+                display: none; /* Simplificado para móviles */
+            }
+
+            .auth-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 15px;
+                margin-bottom: 5px;
+            }
+
+            .catalog-container {
+                display: block !important; /* Desactiva el grid de dos columnas */
+                padding: 10px !important;
+            }
+
+            .filter-sidebar {
+                display: none; /* Se oculta por defecto en móviles */
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 80%;
+                height: 100%;
+                background: white;
+                z-index: 1000;
+                padding: 20px;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+                overflow-y: auto;
+            }
+
+            .filter-sidebar.active {
+                display: block; /* Se activa con el botón de filtros */
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+                gap: 15px !important;
+            }
+
+            .btn-filter-toggle {
+                display: block !important; /* Aparece solo en móvil */
+                width: 100%;
+                background: #5d4037;
+                color: white;
+                border: none;
+                padding: 12px;
+                border-radius: 5px;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+
+            .book-product-card img {
+                height: 160px !important;
+            }
+        }
+
+        /* Estilo base de los libros */
+        .book-product-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,7 +115,7 @@
         
         <div class="search-bar detail-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="main-search" placeholder="Buscar Libros, Autores, Editoriales y más...">
+            <input type="text" id="main-search" placeholder="Buscar Libros...">
         </div>
         
         <nav class="nav-links">
@@ -36,114 +127,98 @@
         
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" id="btn-login-redirect">Iniciar Sesión</button>
+            <button class="btn-primary" id="btn-login-redirect" onclick="window.location.href='Inicio_de_sesion/Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Iniciar Sesión</button>
         </div>
     </header>
 
     <main class="main-content catalog-main">
-        <div class="background-overlay" style="filter: brightness(0.8);"></div>
+        <div class="background-overlay"></div>
         
-        <button id="filter-toggle" class="btn-filter-toggle">
-            <i class="fa-solid fa-filter"></i> Filtros
+        <button id="filter-toggle" class="btn-filter-toggle" style="display: none;">
+            <i class="fa-solid fa-filter"></i> Filtrar Libros
         </button>
 
-        <div class="catalog-container">
+        <div class="catalog-container" style="display: grid; grid-template-columns: 250px 1fr; gap: 20px; padding: 20px;">
             <aside class="filter-sidebar" id="filter-sidebar">
-                <div class="sidebar-header">
-                    <h2>Filtros</h2>
-                    <button id="sidebar-close-btn" class="btn-close-sidebar">
-                        <i class="fa-solid fa-times"></i>
-                    </button>
+                <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; margin-bottom: 15px;">
+                    <h2 style="color: #5d4037;">Filtros</h2>
+                    <button id="sidebar-close-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-times"></i></button>
                 </div>
                 
                 <div class="filter-section filter-genres">
-                    <h3>Género Principal</h3>
-                    <div class="filter-options">
+                    <h3 style="color: #5d4037; margin-bottom: 10px;">Géneros</h3>
+                    <div class="filter-options" style="display: flex; flex-direction: column; gap: 8px;">
                         <label><input type="checkbox" data-filter="Terror"> Terror</label>
-                        <label><input type="checkbox" data-filter="Novela"> Novela Contemporánea</label>
+                        <label><input type="checkbox" data-filter="Novela"> Novela</label>
                         <label><input type="checkbox" data-filter="CienciaFiccion"> Ciencia Ficción</label>
-                        <label><input type="checkbox" data-filter="Fantasia"> Fantasía Épica</label>
-                        <label><input type="checkbox" data-filter="Biografia"> Biografía</label>
-                        <label><input type="checkbox" data-filter="Historia"> Histórico</label>
-                        <label><input type="checkbox" data-filter="Romance"> Romance</label>
-                        <label><input type="checkbox" data-filter="Thriller"> Thriller</label>
-                        <label><input type="checkbox" data-filter="Misterio"> Misterio</label>
-                        <label><input type="checkbox" data-filter="Poesia"> Poesía</label>
-                        <label><input type="checkbox" data-filter="Infantil"> Infantil</label>
-                        <label><input type="checkbox" data-filter="Juvenil"> Juvenil</label>
-                        <label><input type="checkbox" data-filter="Autoayuda"> Autoayuda</label>
-                        <label><input type="checkbox" data-filter="Arte"> Arte y Diseño</label>
-                        <label><input type="checkbox" data-filter="Tecnico"> Técnico/Académico</label>
-                        <label><input type="checkbox" data-filter="Ensayo"> Ensayo</label>
+                        <label><input type="checkbox" data-filter="Fantasia"> Fantasía</label>
                     </div>
-                </div>
-
-                <div class="filter-section">
-                    <h3>Filtros Activos</h3>
-                    <div class="filter-tags" id="active-filters-tags"></div>
                 </div>
             </aside>
             
-            <section class="product-grid" id="products-container">
+            <section class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
                 </section>
         </div>
         
-        <div class="carousel-nav catalog-pagination">
-            <button id="prev-page-btn">← Previous</button> 
-            <div class="pagination"></div>
-            <button id="next-page-btn">Next →</button>
+        <div class="carousel-nav catalog-pagination" style="text-align: center; padding: 40px;">
+            <button id="prev-page-btn" style="padding: 10px; border-radius: 5px; border: 1px solid #5d4037; cursor: pointer;">← Anterior</button> 
+            <span class="pagination"></span>
+            <button id="next-page-btn" style="padding: 10px; border-radius: 5px; border: 1px solid #5d4037; cursor: pointer;">Siguiente →</button>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="https://x.com" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-            <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
-        <div class="copyright">
-            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
-        </div>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
+        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
     <script>
-        
+        // Lógica de búsqueda
         const searchInput = document.getElementById('main-search');
         searchInput.addEventListener('keyup', () => {
             const term = searchInput.value.toLowerCase();
             const books = document.querySelectorAll('.book-product-card');
-
             books.forEach(book => {
                 const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
-    
                 book.style.display = title.includes(term) ? "flex" : "none";
             });
         });
 
-    
+        // Toggle de filtros en móvil
+        document.getElementById('filter-toggle').addEventListener('click', () => {
+            document.getElementById('filter-sidebar').classList.add('active');
+        });
+
+        document.getElementById('sidebar-close-btn').addEventListener('click', () => {
+            document.getElementById('filter-sidebar').classList.remove('active');
+        });
+
+        // Redirección al login en acciones
         document.addEventListener('click', function(e) {
             if (e.target && (e.target.innerText === 'Añadir' || e.target.innerText === 'Comprar')) {
                 window.location.href = "Inicio_de_sesion/Inicio_sesion.html";
             }
         });
 
-        
+        // Simulación de carga
         window.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('products-container');
-            const misLibros = JSON.parse(localStorage.getItem('misLibros')) || [];
+            const demoBooks = [
+                {titulo: "El Resplandor", autor: "Stephen King", precio: "350", imagen: "../Imagenes/Libros/1.jpg"},
+                {titulo: "Dune", autor: "Frank Herbert", precio: "420", imagen: "../Imagenes/Libros/2.jpg"},
+                {titulo: "It", autor: "Stephen King", precio: "380", imagen: "../Imagenes/Libros/3.jpg"}
+            ];
 
-            misLibros.forEach(libro => {
+            demoBooks.forEach(libro => {
                 const card = document.createElement('div');
                 card.className = 'book-product-card';
                 card.innerHTML = `
-                    <img src="${libro.imagen}" alt="${libro.titulo}">
-                    <h3 class="book-title-grid">${libro.titulo}</h3>
-                    <p class="book-author-grid">${libro.autor}</p>
-                    <span class="book-price-grid">$${libro.precio}</span>
-                    <div class="product-actions">
-                        <button class="btn-add-to-cart">Añadir</button>
-                        <button class="btn-buy-now">Comprar</button>
+                    <img src="${libro.imagen}" alt="${libro.titulo}" style="width:100%; height:200px; object-fit:contain;">
+                    <h3 class="book-title-grid" style="font-size:1rem; margin:10px 0;">${libro.titulo}</h3>
+                    <p style="font-size:0.8rem; color:#666;">${libro.autor}</p>
+                    <span style="font-weight:bold; color:#d32f2f; display:block; margin:10px 0;">$${libro.precio}</span>
+                    <div class="product-actions" style="display:flex; gap:5px;">
+                        <button class="btn-add-to-cart" style="flex:1; background:#5d4037; color:white; border:none; padding:8px; border-radius:4px;">Añadir</button>
+                        <button class="btn-buy-now" style="flex:1; background:#fbc02d; color:#5d4037; border:none; padding:8px; border-radius:4px; font-weight:bold;">Comprar</button>
                     </div>
                 `;
                 container.appendChild(card);

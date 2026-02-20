@@ -1,15 +1,83 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Perfil - La Lechuza Lectora</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <script src="../../JS/UserDropdown.js" defer></script>
+    <style>
+        /* AJUSTES RESPONSIVOS CRÍTICOS */
+        @media (max-width: 768px) {
+            .profile-main-wrapper {
+                margin-top: 20px !important;
+                padding: 10px !important;
+            }
+
+            .edit-profile-container {
+                width: 95% !important;
+                padding: 20px 15px !important;
+            }
+
+            .profile-title-custom {
+                font-size: 1.8rem !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* Botones apilados verticalmente en móvil */
+            .edit-profile-container form div:last-child {
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+
+            button[type="submit"], 
+            button[type="button"] {
+                width: 100% !important;
+                padding: 14px !important;
+                font-size: 1rem !important;
+            }
+
+            input {
+                font-size: 16px !important; /* Evita el zoom automático en Safari/iPhone */
+            }
+        }
+
+        /* Estabilización del menú desplegable del avatar */
+        .dropdown-menu {
+            display: none; 
+            position: absolute;
+            right: 0;
+            top: 55px; 
+            background: white;
+            min-width: 170px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+            z-index: 9999 !important; 
+            border-radius: 8px;
+            padding: 10px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .dropdown-menu a {
+            color: #5d4037 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #5d4037;
+        }
+    </style>
 </head>
-<body>
+<body class="form-page">
     
     <header class="navbar detail-navbar">
         <div class="logo-container">
@@ -26,66 +94,85 @@
         
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-            <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
+            <div class="avatar-dropdown-container" style="position: relative;">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
+                <div class="dropdown-menu" id="avatar-dropdown">
+                    <a href="perfil.html" id="profile-link"><i class="fa-solid fa-user"></i> Mi Perfil</a>
+                    <a href="../../index.html" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                </div>
             </div>
         </div>
     </header>
     
     <main class="main-content">
-        <div class="background-overlay" style="filter: brightness(0.8);"></div> 
+        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
         
-        <div class="profile-main-wrapper">
-            <h1 class="profile-title-custom">Editar Mi Información</h1>
+        <div class="profile-main-wrapper" style="position: relative; z-index: 5; margin-top: 50px;">
+            <h1 class="profile-title-custom" style="color: #5d4037; text-align: center; margin-bottom: 30px;">Editar Mi Información</h1>
 
             <div class="edit-profile-container" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto;">
                 <form id="edit-profile-form">
                     <div class="edit-photo-section" style="text-align: center; margin-bottom: 25px;">
                         <img src="../../Imagenes/miku.png.jpg" alt="Avatar actual" id="preview-avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #5d4037;">
-                        <div style="margin-top: 10px;">
-                            <label for="file-upload" class="btn-secondary" style="cursor: pointer; background: #5d4037; color: white; padding: 8px 15px; border-radius: 5px; font-size: 0.9rem;">
+                        <div style="margin-top: 15px;">
+                            <label for="file-upload" style="cursor: pointer; background: #5d4037; color: white; padding: 10px 20px; border-radius: 5px; font-size: 0.9rem; font-weight: bold; display: inline-block;">
                                 <i class="fas fa-camera"></i> Cambiar Foto
                             </label>
                             <input id="file-upload" type="file" style="display:none;" accept="image/*">
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 15px;">
+                    <div class="form-group" style="margin-bottom: 15px; text-align: left;">
                         <label style="display: block; color: #5d4037; font-weight: bold; margin-bottom: 5px;">Nombre Completo</label>
-                        <input type="text" value="Fernando Machorro" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+                        <input type="text" value="Fernando Machorro" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 25px;">
+                    <div class="form-group" style="margin-bottom: 25px; text-align: left;">
                         <label style="display: block; color: #5d4037; font-weight: bold; margin-bottom: 5px;">Correo Electrónico</label>
-                        <input type="email" value="machorro29salvidar@gmail.com" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+                        <input type="email" value="machorro29salvidar@gmail.com" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
                     </div>
 
-                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                        <button type="button" onclick="window.location.href='perfil.html'" style="background: #ccc; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Cancelar</button>
-                        <button type="submit" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Guardar Cambios</button>
+                    <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                        <button type="button" onclick="window.location.href='perfil.html'" style="background: #ccc; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #333;">Cancelar</button>
+                        <button type="submit" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">Guardar Cambios</button>
                     </div>
                 </form>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="copyright" style="text-align: center; padding: 20px; color: #5d4037;">
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; margin-top: auto;">
+        <div class="copyright">
             © Todos los derechos reservados 2026. La Lechuza Lectora ©
         </div>
     </footer>
 
     <script>
-    
+        // Previsualización de imagen
         document.getElementById('file-upload').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function() {
                 document.getElementById('preview-avatar').src = reader.result;
             }
-            reader.readAsDataURL(e.target.files[0]);
+            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
         });
 
-    
+        // Menú del avatar
+        function forceToggleMenu() {
+            const menu = document.getElementById('avatar-dropdown');
+            if (menu) {
+                const isHidden = window.getComputedStyle(menu).display === 'none';
+                menu.style.display = isHidden ? 'block' : 'none';
+            }
+        }
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('avatar-dropdown');
+            const btn = document.getElementById('avatar-btn');
+            if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
         document.getElementById('edit-profile-form').addEventListener('submit', function(e) {
             e.preventDefault();
             alert('¡Información actualizada correctamente!');

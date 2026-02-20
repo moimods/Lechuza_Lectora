@@ -1,59 +1,92 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resumen de Compra - Paso 1</title>
     <link rel="stylesheet" href="../../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Ajustes de responsividad específicos */
+        @media (max-width: 768px) {
+            .checkout-container {
+                width: 95% !important;
+                padding: 15px !important;
+                margin: 20px auto !important;
+            }
+
+            .checkout-grid {
+                grid-template-columns: 1fr !important; /* Una sola columna en móvil */
+                gap: 20px !important;
+            }
+
+            .checkout-summary-card {
+                order: 2; /* Los totales bajan después de la lista en móvil */
+            }
+
+            .product-list-wrapper {
+                order: 1;
+            }
+
+            .btn-next-step, .btn-cancel-checkout {
+                width: 100% !important; /* Botones a lo ancho para mejor toque */
+                padding: 12px !important;
+                margin-top: 10px !important;
+            }
+        }
+
+        /* Estabilización del fondo */
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+    </style>
 </head>
 <body class="form-page">
 
     <header class="navbar user-navbar">
-
-    </header>
+        </header>
 
     <main class="main-content cart-main">
-        <div class="background-overlay" style="filter: brightness(0.8);"></div>
+        <div class="background-overlay"></div>
 
-        <div class="checkout-container">
-            <h1 class="checkout-title">1. Resumen de tu Pedido</h1>
+        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+            <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 30px;">1. Resumen de tu Pedido</h1>
             
-            <div class="checkout-grid">
+            <div class="checkout-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
                 
-
                 <div class="product-list-wrapper">
-                    <h2>Artículos en tu Carrito</h2>
-
-                    <div id="checkout-product-list">
-
-                    </div>
+                    <h2 style="font-size: 1.3rem; color: #5d4037; margin-bottom: 20px; border-bottom: 2px solid #fbc02d; padding-bottom: 5px;">Artículos en tu Carrito</h2>
+                    <div id="checkout-product-list" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+                        </div>
                 </div>
 
-
-                <div class="checkout-summary-card">
-                    <h2>Totales</h2>
-                    <div class="summary-details">
-                        <div class="summary-line">
+                <div class="checkout-summary-card" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: fit-content;">
+                    <h2 style="font-size: 1.3rem; color: #5d4037; margin-bottom: 20px;">Totales</h2>
+                    <div class="summary-details" style="color: #333;">
+                        <div class="summary-line" style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <p>Subtotal de productos:</p>
                             <span id="subtotal-display">$0.00</span>
                         </div>
-                        <div class="summary-line">
+                        <div class="summary-line" style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <p>Costo de Envío:</p>
                             <span id="shipping-display">Gratis</span>
                         </div>
-                        <hr>
-                        <div class="summary-line total-line">
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                        <div class="summary-line total-line" style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem;">
                             <p>Total Final:</p>
-                            <strong id="total-display">$0.00</strong>
+                            <strong id="total-display" style="color: #d32f2f;">$0.00</strong>
                         </div>
                     </div>
                     
-                    <button class="btn-primary btn-next-step" data-next-step="direccion">
+                    <button class="btn-primary btn-next-step" onclick="window.location.href='Domicilio.html'" style="width: 100%; background: #5d4037; color: white; border: none; padding: 12px; margin-top: 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">
                         Continuar a Dirección
                     </button>
-                    <button class="btn-secondary btn-cancel-checkout">
+                    <button class="btn-secondary btn-cancel-checkout" onclick="window.location.href='../Logeado/Catalogo_Logeado.html'" style="width: 100%; background: transparent; color: #555; border: 1px solid #555; padding: 10px; margin-top: 10px; border-radius: 5px; cursor: pointer;">
                         Cancelar Compra
                     </button>
                 </div>
@@ -61,17 +94,17 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+    <footer class="site-footer" style="text-align: center; padding: 20px; background: rgba(44, 44, 44, 0.9); color: white; margin-top: auto;">
+        <div class="social-links" style="margin-bottom: 10px;">
+            <a href="#" style="color: white; margin: 0 10px;"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" style="color: white; margin: 0 10px;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" style="color: white; margin: 0 10px;"><i class="fa-brands fa-youtube"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © 2026 La Lechuza Lectora ©
         </div>
     </footer>
+    
     <script src="../../../Js/cartManager.js"></script>
     <script src="../../../Js/checkoutManager.js"></script>
 </body>

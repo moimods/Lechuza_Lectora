@@ -3,13 +3,84 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Ayuda</title>
     <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <script src="../../JS/UserDropdown.js" defer></script>
     <script src="../../JS/cartManager.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* AJUSTES RESPONSIVOS */
+        @media (max-width: 768px) {
+            .help-container {
+                width: 95% !important;
+                padding: 25px 15px !important;
+                margin: 20px auto !important;
+            }
+
+            .help-title {
+                font-size: 1.6rem !important;
+                text-align: center;
+            }
+
+            .help-module {
+                flex-direction: row !important;
+                padding: 20px 15px !important;
+                align-items: center !important;
+            }
+
+            .help-module i:first-child {
+                font-size: 1.5rem !important;
+                margin-right: 15px !important;
+            }
+
+            .module-text h3 {
+                font-size: 1rem !important;
+            }
+
+            .module-text p {
+                font-size: 0.85rem !important;
+                display: block !important;
+            }
+
+            .fa-angle-right {
+                display: none; /* Ocultamos la flecha en móvil para ganar espacio */
+            }
+        }
+
+        /* Estabilización del menú desplegable */
+        .dropdown-menu {
+            display: none; 
+            position: absolute;
+            right: 0;
+            top: 55px; 
+            background: white;
+            min-width: 170px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+            z-index: 9999 !important; 
+            border-radius: 8px;
+            padding: 10px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .dropdown-menu a {
+            color: #5d4037 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #5d4037;
+        }
+    </style>
 </head>
 <body>
 
@@ -34,12 +105,12 @@
                 <span class="cart-badge" id="cart-count">0</span>
             </a>
             
-            <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="cursor: pointer; object-fit: cover; border-radius: 50%;">
+            <div class="avatar-dropdown-container" style="position: relative;">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
                 
                 <div class="dropdown-menu" id="avatar-dropdown">
-                    <a href="perfil.html" id="profile-link">Mi Perfil</a>
-                    <a href="../../index.html" id="logout-btn">Cerrar Sesión</a>
+                    <a href="perfil.html" id="profile-link"><i class="fa-solid fa-user"></i> Mi Perfil</a>
+                    <a href="../../index.html" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
@@ -48,69 +119,83 @@
     <main class="main-content help-main">
         <div class="background-overlay help-bg" style="filter: brightness(0.8);"></div>
 
-        <div class="help-container">
-            <h1 class="help-title">¿Con qué podemos ayudarte?</h1>
+        <div class="help-container" style="background: rgba(240, 231, 203, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin: 40px auto; max-width: 800px; position: relative; z-index: 5;">
+            <h1 class="help-title" style="color: #5d4037; margin-bottom: 25px;">¿Con qué podemos ayudarte?</h1>
             
-            <div class="help-search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar en Ayuda">
+            <div class="help-search-bar" style="background: white; padding: 12px; border-radius: 25px; display: flex; align-items: center; border: 1px solid #ccc; margin-bottom: 30px;">
+                <i class="fa-solid fa-magnifying-glass" style="color: #999; margin-right: 10px;"></i>
+                <input type="text" placeholder="Buscar en Ayuda" style="border: none; outline: none; width: 100%; font-size: 1rem;">
             </div>
 
-            <div class="help-modules-grid">
-                <a href="#" class="help-module">
-                    <i class="fa-solid fa-file-invoice-dollar" style="color: #d32f2f;"></i>
-                    <div class="module-text">
-                        <h3>Administrar y cancelar compras</h3>
-                        <p>Pagar, seguir envíos, modificar o cancelar compras.</p>
+            <div class="help-modules-grid" style="display: flex; flex-direction: column; gap: 15px;">
+                <a href="#" class="help-module" style="background: white; padding: 15px 25px; border-radius: 10px; display: flex; align-items: center; text-decoration: none; border: 1px solid #ddd; transition: 0.3s;">
+                    <i class="fa-solid fa-file-invoice-dollar" style="color: #d32f2f; font-size: 1.8rem; margin-right: 20px;"></i>
+                    <div class="module-text" style="flex-grow: 1;">
+                        <h3 style="color: #5d4037; margin-bottom: 3px;">Administrar y cancelar compras</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin: 0;">Pagar, seguir envíos o cancelar compras.</p>
                     </div>
-                    <i class="fa-solid fa-angle-right"></i>
+                    <i class="fa-solid fa-angle-right" style="color: #ccc;"></i>
                 </a>
 
-                <a href="#" class="help-module">
-                    <i class="fa-solid fa-undo-alt" style="color: #fbc02d;"></i>
-                    <div class="module-text">
-                        <h3>Devoluciones y reembolsos</h3>
-                        <p>Consultar por reintegros de dinero o devolver un producto.</p>
+                <a href="#" class="help-module" style="background: white; padding: 15px 25px; border-radius: 10px; display: flex; align-items: center; text-decoration: none; border: 1px solid #ddd; transition: 0.3s;">
+                    <i class="fa-solid fa-undo-alt" style="color: #fbc02d; font-size: 1.8rem; margin-right: 20px;"></i>
+                    <div class="module-text" style="flex-grow: 1;">
+                        <h3 style="color: #5d4037; margin-bottom: 3px;">Devoluciones y reembolsos</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin: 0;">Consultar por reintegros o devoluciones.</p>
                     </div>
-                    <i class="fa-solid fa-angle-right"></i>
+                    <i class="fa-solid fa-angle-right" style="color: #ccc;"></i>
                 </a>
 
-                <a href="perfil.html" class="help-module">
-                    <i class="fa-solid fa-user-circle" style="color: #5d4037;"></i>
-                    <div class="module-text">
-                        <h3>Perfil</h3>
-                        <p>Configuración de cuenta y datos personales.</p>
+                <a href="perfil.html" class="help-module" style="background: white; padding: 15px 25px; border-radius: 10px; display: flex; align-items: center; text-decoration: none; border: 1px solid #ddd; transition: 0.3s;">
+                    <i class="fa-solid fa-user-circle" style="color: #5d4037; font-size: 1.8rem; margin-right: 20px;"></i>
+                    <div class="module-text" style="flex-grow: 1;">
+                        <h3 style="color: #5d4037; margin-bottom: 3px;">Perfil</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin: 0;">Configuración de cuenta y datos personales.</p>
                     </div>
-                    <i class="fa-solid fa-angle-right"></i>
+                    <i class="fa-solid fa-angle-right" style="color: #ccc;"></i>
                 </a>
 
-                <a href="#" class="help-module">
-                    <i class="fa-solid fa-key" style="color: #5d4037;"></i>
-                    <div class="module-text">
-                        <h3>Seguridad y acceso</h3>
-                        <p>Problemas con contraseñas o acceso a la cuenta.</p>
+                <a href="#" class="help-module" style="background: white; padding: 15px 25px; border-radius: 10px; display: flex; align-items: center; text-decoration: none; border: 1px solid #ddd; transition: 0.3s;">
+                    <i class="fa-solid fa-key" style="color: #5d4037; font-size: 1.8rem; margin-right: 20px;"></i>
+                    <div class="module-text" style="flex-grow: 1;">
+                        <h3 style="color: #5d4037; margin-bottom: 3px;">Seguridad y acceso</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin: 0;">Problemas con contraseñas o acceso.</p>
                     </div>
-                    <i class="fa-solid fa-angle-right"></i>
+                    <i class="fa-solid fa-angle-right" style="color: #ccc;"></i>
                 </a>
             </div>
 
-            <div class="contact-prompt" style="text-align: center; margin-top: 40px;">
-                <h2>¿Necesitas más ayuda?</h2>
-                <button class="btn-primary" onclick="window.location.href='Contacto.html'" style="padding: 10px 20px; cursor: pointer;">Contáctanos</button>
+            <div class="contact-prompt" style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc;">
+                <h2 style="color: #5d4037; margin-bottom: 15px;">¿Necesitas más ayuda?</h2>
+                <button class="btn-primary" onclick="window.location.href='Contacto.html'" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">Contáctanos</button>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="social-links">
-            <a href="https://x.com" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-            <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; margin-top: auto;">
+        <div class="social-links" style="margin-bottom: 10px;">
+            <a href="https://x.com" target="_blank" style="margin: 0 10px;"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://instagram.com" target="_blank" style="margin: 0 10px;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://youtube.com" target="_blank" style="margin: 0 10px;"><i class="fa-brands fa-youtube"></i></a>
         </div>
-        <div class="copyright">
-            © Todos los derechos reservados 2026. La Lechuza Lectora ©
-        </div>
+        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
+
+    <script>
+        function forceToggleMenu() {
+            const menu = document.getElementById('avatar-dropdown');
+            if (menu) {
+                const isHidden = window.getComputedStyle(menu).display === 'none';
+                menu.style.display = isHidden ? 'block' : 'none';
+            }
+        }
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('avatar-dropdown');
+            const btn = document.getElementById('avatar-btn');
+            if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
