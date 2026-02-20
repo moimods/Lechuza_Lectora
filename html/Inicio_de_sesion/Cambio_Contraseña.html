@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Nueva Contraseña</title>
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
-    <script src="../../JS/Cambio_Contraseña.js"></script>
+    <script src="../../JS/Cambio_Contraseña.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body class="form-page">
@@ -17,8 +17,6 @@
             <h1 class="form-title">Nueva Contraseña</h1>
             
             <form id="password-form" class="recovery-form">
-                
-
                 <div class="input-group">
                     <label for="new-password">Nueva Contraseña:</label>
                     <div class="password-wrapper">
@@ -26,7 +24,6 @@
                         <i class="fa-solid fa-eye password-toggle" data-target="new-password"></i>
                     </div>
                 </div>
-
 
                 <div id="password-requirements">
                     <ul>
@@ -36,7 +33,6 @@
                         <li id="req-common"><i class="fa-solid fa-times"></i> No puede ser una contraseña común (ej. 123456).</li>
                     </ul>
                 </div>
-                
 
                 <div class="input-group">
                     <label for="confirm-password">Confirmar Contraseña:</label>
@@ -45,19 +41,19 @@
                         <i class="fa-solid fa-eye password-toggle" data-target="confirm-password"></i>
                     </div>
                 </div>
-                
 
                 <div id="match-validation">
                     <ul style="list-style: none; padding: 0; margin: 0;">
                         <li id="req-match"><i class="fa-solid fa-times"></i> Las contraseñas coinciden.</li>
                     </ul>
                 </div>
-
             </form>
 
             <div class="action-buttons-group">
                 <button type="submit" form="password-form" id="btn-aceptar" class="btn-action btn-primary">Aceptar</button>
-                <button type="button" id="btn-regresar" class="btn-action btn-dark-action">Regresar</button>
+                <button type="button" id="btn-regresar" class="btn-action btn-dark-action" onclick="window.location.href='perfil.html'">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </button>
             </div>
         </div>
     </main>
@@ -70,7 +66,7 @@
             <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <div class="copyright">
-            © Todos los derechos reservados 2025. Diseñado por La Lechuza Lectora ©
+            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
     </footer>
     
