@@ -10,35 +10,75 @@
     <script src="../../JS/UserDropdown.js" defer></script>
     <script src="../../JS/Boton_ini.js" defer></script>
     <style>
+        /* --- ESTILOS DEL MENÚ HAMBURGUESA --- */
+        .hamburger-btn {
+            display: none; /* Oculto en PC */
+            background: none;
+            border: none;
+            color: #5d4037;
+            font-size: 1.8rem;
+            cursor: pointer;
+            order: 2;
+        }
+
         /* AJUSTES RESPONSIVOS CRÍTICOS */
         @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                height: auto !important;
+                padding: 10px 20px !important;
+            }
+
+            .hamburger-btn {
+                display: block; /* Visible en móviles */
+            }
+
+            .logo-container { order: 1; }
+            .auth-actions { order: 3; width: auto !important; margin: 0 !important; gap: 15px; }
+
+            /* Menú de navegación móvil */
+            .nav-links {
+                display: none; 
+                flex-direction: column;
+                width: 100%;
+                order: 4;
+                background: rgba(244, 236, 226, 0.98);
+                padding: 15px 0;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                margin-top: 10px;
+                border-radius: 0 0 10px 10px;
+            }
+
+            .nav-links.active {
+                display: flex !important;
+            }
+
+            .nav-links a {
+                padding: 12px;
+                width: 100%;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+
+            /* Ajustes de contenido */
             .about-container {
                 width: 95% !important;
-                padding: 20px 15px !important;
+                padding: 25px 15px !important;
                 margin: 20px auto !important;
             }
 
-            .history-section {
-                grid-template-columns: 1fr !important; /* Apila historia e imagen */
+            .history-section, .mission-values-grid {
+                grid-template-columns: 1fr !important;
                 text-align: center;
                 gap: 20px !important;
             }
 
-            .mission-values-grid {
-                grid-template-columns: 1fr !important; /* Apila Misión y Valores */
-                gap: 20px !important;
-            }
-
-            .logo-illustration img {
-                max-width: 180px !important; /* Reduce logo para ahorrar espacio en iPhone */
-            }
-
-            .site-name {
-                font-size: 0.9em !important; /* Ajusta nombre del sitio en el header móvil */
-            }
+            .logo-illustration img { max-width: 150px !important; }
+            .site-name { font-size: 0.85em !important; }
         }
 
-        /* Estabilización del menú desplegable del avatar */
+        /* Estabilización del dropdown de usuario */
         .dropdown-menu {
             display: none; 
             position: absolute;
@@ -52,6 +92,8 @@
             padding: 10px 0;
             border: 1px solid #ddd;
         }
+
+        .dropdown-menu.show { display: block; }
         
         .dropdown-menu a {
             color: #5d4037 !important;
@@ -71,10 +113,13 @@
             border: 2px solid #5d4037;
         }
 
-        .about-container p {
-            text-align: justify; 
-            line-height: 1.6;
-            margin-bottom: 15px;
+        .about-container p { text-align: justify; line-height: 1.6; margin-bottom: 15px; }
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
         }
     </style>
 </head>
@@ -85,8 +130,12 @@
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
+
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         
-        <nav class="nav-links">
+        <nav class="nav-links" id="mobile-nav">
             <a href="#" class="active-link">Acerca de</a>
             <a href="Contacto.html">Contacto</a>
             <a href="Ayuda.html">Ayuda</a>
@@ -99,7 +148,6 @@
 
             <div class="avatar-dropdown-container" style="position: relative;">
                 <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
-                
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="perfil.html" id="profile-link"><i class="fa-solid fa-user"></i> Mi Perfil</a>
                     <a href="../../index.html" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
@@ -109,18 +157,18 @@
     </header>
 
     <main class="main-content about-main">
-        <div class="background-overlay about-bg" style="filter: brightness(0.8);"></div>
+        <div class="background-overlay"></div>
 
         <div class="about-container" style="background: rgba(240, 231, 203, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; z-index: 5; margin: 40px auto; max-width: 1200px;">
             <section class="history-section" style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: center;">
                 <div class="card mission-card">
                     <h2 style="color: #5d4037; margin-bottom: 20px;">Nuestra Historia</h2>
-                    <p>La Lechuza Lectora no nació en una librería, sino entre líneas de código y sesiones nocturnas de estudio en la carrera de Ingeniería en Sistemas Computacionales. Los estudiantes Alan, Fernando y Oscar decidimos construir la librería digital que siempre quisimos tener.</p>
-                    <p>El nombre representa la fusión entre la <strong>sabiduría técnica y literaria</strong> que buscamos en cada proyecto.</p>
+                    <p>La Lechuza Lectora nació entre líneas de código y sesiones nocturnas de estudio. Los estudiantes Alan, Fernando y Oscar decidimos construir la librería digital que siempre quisimos tener.</p>
+                    <p>El nombre representa la fusión entre la <strong>sabiduría técnica y literaria</strong>.</p>
                 </div>
                 
                 <div class="logo-illustration">
-                    <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" style="width: 100%; max-width: 250px; height: auto;">
+                    <img src="../../Imagenes/logo.png" alt="Logo" style="width: 100%; max-width: 250px;">
                     <p class="slogan" style="text-align: center; font-style: italic; color: #5d4037; margin-top: 10px;">Historias que te hacen volar</p>
                 </div>
             </section>
@@ -128,15 +176,15 @@
             <section class="mission-values-grid" style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                 <div class="card mission-card" style="background: white; padding: 25px; border-radius: 10px; border-left: 5px solid #fbc02d;">
                     <h2 style="color: #5d4037;">Misión</h2>
-                    <p>Conectar a cada lector con la obra ideal a través de la tecnología más eficiente, optimizando la gestión del catálogo mediante ingeniería de software de alta calidad.</p>
+                    <p>Conectar a cada lector con la obra ideal a través de la tecnología más eficiente y una experiencia de usuario placentera.</p>
                 </div>
 
                 <div class="card values-card" style="background: white; padding: 25px; border-radius: 10px; border-left: 5px solid #fbc02d;">
                     <h2 style="color: #5d4037;">Nuestros Valores</h2>
                     <ul style="padding-left: 20px; list-style: square;">
-                        <li><strong>Innovación Técnica:</strong> Plataformas robustas y seguras.</li>
-                        <li><strong>Calidad Curada:</strong> Selección impecable de contenido.</li>
-                        <li><strong>Transparencia:</strong> Claridad absoluta en el manejo de datos.</li>
+                        <li><strong>Innovación:</strong> Mejores prácticas de software.</li>
+                        <li><strong>Calidad:</strong> Contenido curado con pasión.</li>
+                        <li><strong>Confianza:</strong> Transparencia total con el usuario.</li>
                     </ul>
                 </div>
             </section>
@@ -144,30 +192,33 @@
     </main>
 
     <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; margin-top: auto;">
-        <div class="social-links" style="margin-bottom: 10px;">
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-youtube"></i></a>
-        </div>
         <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
     <script>
-        // Función de seguridad para el menú del avatar
-        function forceToggleMenu() {
-            const menu = document.getElementById('avatar-dropdown');
-            if (menu) {
-                const isHidden = window.getComputedStyle(menu).display === 'none';
-                menu.style.display = isHidden ? 'block' : 'none';
-            }
+        // FUNCIÓN MENÚ HAMBURGUESA
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobile-nav');
+            nav.classList.toggle('active');
         }
 
-        // Cerrar al hacer clic fuera
+        // Función avatar dropdown
+        function forceToggleMenu() {
+            const menu = document.getElementById('avatar-dropdown');
+            if (menu) { menu.classList.toggle('show'); }
+        }
+
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('avatar-dropdown');
             const btn = document.getElementById('avatar-btn');
+            const nav = document.getElementById('mobile-nav');
+            const hamburger = document.getElementById('hamburger-btn');
+
             if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
-                menu.style.display = 'none';
+                menu.classList.remove('show');
+            }
+            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+                nav.classList.remove('active');
             }
         });
     </script>

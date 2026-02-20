@@ -11,23 +11,53 @@
     <script src="../JS/Boton_Inicio_Sesion_html.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        /* ESTILOS DEL MENÚ HAMBURGUESA */
+        .hamburger-btn {
+            display: none; /* Oculto en PC */
+            background: none;
+            border: none;
+            color: #5d4037;
+            font-size: 1.8rem;
+            cursor: pointer;
+            order: 2;
+        }
+
         /* AJUSTES RESPONSIVOS CRÍTICOS */
         @media (max-width: 768px) {
             .navbar {
-                flex-direction: column !important;
+                flex-wrap: wrap;
+                justify-content: space-between;
                 height: auto !important;
-                padding: 10px !important;
+                padding: 10px 20px !important;
             }
+
+            .hamburger-btn {
+                display: block; /* Aparece en móvil */
+            }
+
+            .logo-container { order: 1; }
+            .auth-actions { order: 3; width: auto !important; margin: 0 !important; }
 
             .nav-links {
-                display: none; /* Simplificación para móviles */
+                display: none; /* Se oculta para el menú hamburguesa */
+                flex-direction: column;
+                width: 100%;
+                order: 4;
+                background: rgba(244, 236, 226, 0.98);
+                padding: 15px 0;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                margin-top: 10px;
             }
 
-            .auth-actions {
-                margin-top: 10px;
+            .nav-links.active {
+                display: flex !important;
+            }
+
+            .nav-links a {
+                padding: 12px;
                 width: 100%;
-                justify-content: center;
-                gap: 10px;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
             }
 
             .help-container {
@@ -54,22 +84,12 @@
                 min-width: 30px;
             }
 
-            .module-text h3 {
-                font-size: 1rem !important;
-                margin-bottom: 2px !important;
-            }
-
-            .module-text p {
-                font-size: 0.85rem !important;
-            }
-
-            .fa-angle-right {
-                font-size: 0.8rem;
-                color: #ccc;
-            }
+            .module-text h3 { font-size: 1rem !important; }
+            .module-text p { font-size: 0.85rem !important; }
+            .fa-angle-right { font-size: 0.8rem; color: #ccc; }
         }
 
-        /* Estabilización del fondo */
+        /* Estabilización del fondo y tarjetas */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
                         url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
@@ -90,11 +110,6 @@
             transition: transform 0.2s;
         }
 
-        .help-module:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
         .icon-red { color: #d32f2f; }
         .icon-yellow { color: #fbc02d; }
         .icon-orange { color: #f57c00; }
@@ -108,8 +123,12 @@
             <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
+
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         
-        <nav class="nav-links">
+        <nav class="nav-links" id="mobile-nav">
             <a href="Acerca_de.html">Acerca de</a>
             <a href="Contacto.html">Contacto</a>
             <a href="#" class="active-link">Ayuda</a>
@@ -118,7 +137,7 @@
         
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Iniciar Sesión</button>
+            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
         </div>
     </header>
 
@@ -137,8 +156,8 @@
                 <a href="#" class="help-module" style="padding: 20px;">
                     <i class="fa-solid fa-file-invoice-dollar icon-red" style="font-size: 1.8rem; margin-right: 20px;"></i>
                     <div class="module-text" style="flex-grow: 1;">
-                        <h3 style="color: #5d4037; margin: 0;">Administrar y cancelar compras</h3>
-                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Pagar, seguir envíos o cancelar compras.</p>
+                        <h3 style="color: #5d4037; margin: 0;">Compras</h3>
+                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Seguir envíos o cancelar compras.</p>
                     </div>
                     <i class="fa-solid fa-angle-right"></i>
                 </a>
@@ -146,17 +165,8 @@
                 <a href="#" class="help-module" style="padding: 20px;">
                     <i class="fa-solid fa-undo-alt icon-yellow" style="font-size: 1.8rem; margin-right: 20px;"></i>
                     <div class="module-text" style="flex-grow: 1;">
-                        <h3 style="color: #5d4037; margin: 0;">Devoluciones y reembolsos</h3>
-                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Devolver un producto o consultar por reintegros.</p>
-                    </div>
-                    <i class="fa-solid fa-angle-right"></i>
-                </a>
-
-                <a href="#" class="help-module" style="padding: 20px;">
-                    <i class="fa-solid fa-question-circle icon-orange" style="font-size: 1.8rem; margin-right: 20px;"></i>
-                    <div class="module-text" style="flex-grow: 1;">
-                        <h3 style="color: #5d4037; margin: 0;">Preguntas frecuentes</h3>
-                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Resolución de dudas comunes sobre el servicio.</p>
+                        <h3 style="color: #5d4037; margin: 0;">Reembolsos</h3>
+                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Devolver un producto.</p>
                     </div>
                     <i class="fa-solid fa-angle-right"></i>
                 </a>
@@ -165,7 +175,7 @@
                     <i class="fa-solid fa-user-circle icon-brown" style="font-size: 1.8rem; margin-right: 20px;"></i>
                     <div class="module-text" style="flex-grow: 1;">
                         <h3 style="color: #5d4037; margin: 0;">Perfil</h3>
-                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Acceso y configuración de tu cuenta.</p>
+                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Configuración de tu cuenta.</p>
                     </div>
                     <i class="fa-solid fa-angle-right"></i>
                 </a>
@@ -178,9 +188,25 @@
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; margin-top: auto;">
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
         <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
+    <script>
+        // FUNCIÓN MENÚ HAMBURGUESA
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobile-nav');
+            nav.classList.toggle('active');
+        }
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('mobile-nav');
+            const hamburger = document.getElementById('hamburger-btn');
+            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+                nav.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

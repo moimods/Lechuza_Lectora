@@ -13,52 +13,80 @@
     <script src="../../JS/cartManager.js" defer></script>
 
     <style>
-        
+        /* --- ESTILOS MENÚ HAMBURGUESA --- */
+        .hamburger-btn {
+            display: none; /* Oculto en PC */
+            background: none;
+            border: none;
+            color: #5d4037;
+            font-size: 1.8rem;
+            cursor: pointer;
+            order: 2;
+        }
+
+        /* AJUSTES RESPONSIVOS CRÍTICOS */
         @media (max-width: 768px) {
             .navbar {
-                flex-direction: column !important;
+                flex-wrap: wrap; /* Permite filas múltiples */
+                justify-content: space-between;
                 height: auto !important;
-                padding: 10px !important;
+                padding: 10px 20px !important;
+            }
+
+            .hamburger-btn {
+                display: block; /* Aparece en móviles */
+            }
+
+            .logo-container { order: 1; }
+            
+            .auth-actions.user-actions { 
+                order: 3; 
+                width: auto !important;
+                margin-left: 0;
+                gap: 10px;
             }
 
             .search-bar.detail-search {
                 width: 100% !important;
                 margin: 10px 0 !important;
-                order: 3; 
+                order: 4; /* Buscador debajo de la cabecera */
             }
 
+            /* Estilo del menú desplegable de navegación */
             .nav-links {
                 display: none; 
-            }
-
-            .auth-actions.user-actions {
+                flex-direction: column;
                 width: 100%;
-                justify-content: space-around;
-                margin-bottom: 5px;
+                order: 5;
+                background: rgba(244, 236, 226, 0.98);
+                padding: 15px 0;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                border-radius: 0 0 10px 10px;
             }
 
+            .nav-links.active {
+                display: flex !important;
+            }
+
+            .nav-links a {
+                padding: 12px;
+                width: 100%;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+
+            /* Reajuste del catálogo en móvil */
             .catalog-container {
-                grid-template-columns: 1fr !important; 
+                grid-template-columns: 1fr !important;
             }
 
             .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
                 gap: 15px !important;
-                padding: 10px !important;
-            }
-
-            .btn-filter-toggle {
-                display: block !important; 
-                width: 100%;
-                margin-bottom: 15px;
-            }
-
-            .book-product-card img {
-                height: 180px !important;
             }
         }
 
-      
+        /* Estabilización del dropdown de usuario */
         .dropdown-menu {
             display: none; 
             position: absolute;
@@ -73,15 +101,7 @@
             border: 1px solid #ddd;
         }
         
-        .dropdown-menu a {
-            color: #5d4037 !important;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            font-weight: bold;
-            font-size: 0.9em;
-            text-align: left;
-        }
+        .dropdown-menu.show { display: block; }
 
         .avatar {
             border-radius: 50%;
@@ -99,11 +119,17 @@
         <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo">
         <span class="site-name">LA LECHUZA LECTORA</span>
     </div>
+
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
     <div class="search-bar detail-search">
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" id="main-search" placeholder="Buscar Libros...">
     </div>
-    <nav class="nav-links">
+
+    <nav class="nav-links" id="mobile-nav">
         <a href="Acerca_de.html">Acerca de</a>
         <a href="Contacto.html">Contacto</a>
         <a href="Ayuda.html">Ayuda</a>
@@ -130,17 +156,17 @@
 </header>
 
 <main class="main-content catalog-main">
-    <div class="background-overlay" style="filter: brightness(0.8);"></div>
+    <div class="background-overlay" style="filter: brightness(0.8); background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
     
-    <button id="filter-toggle" class="btn-filter-toggle" style="background: #5d4037; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin: 10px;">
-        <i class="fa-solid fa-filter"></i> Ver Filtros
+    <button id="filter-toggle" class="btn-filter-toggle" style="background: #5d4037; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; width: calc(100% - 20px);">
+        <i class="fa-solid fa-filter"></i> Ver Filtros de Género
     </button>
 
     <div class="catalog-container" style="display: grid; grid-template-columns: 250px 1fr; gap: 20px; padding: 20px;">
         <aside class="filter-sidebar" id="filter-sidebar">
-            <div class="sidebar-header">
-                <h2>Filtros</h2>
-                <button id="sidebar-close-btn" class="btn-close-sidebar"><i class="fa-solid fa-times"></i></button>
+            <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+                <h2 style="color: #5d4037; margin: 0;">Filtros</h2>
+                <button id="sidebar-close-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="filter-section filter-genres">
                 <h3>Género Principal</h3>
@@ -151,8 +177,8 @@
             </div>
         </aside>
 
-        <section class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;">
-            </section>
+        <section class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px;">
+        </section>
     </div>
 
     <div class="carousel-nav catalog-pagination" style="text-align: center; padding: 30px;">
@@ -167,51 +193,63 @@
 </footer>
 
 <script>
+// FUNCIÓN MENÚ HAMBURGUESA
+function toggleMobileMenu() {
+    const nav = document.getElementById('mobile-nav');
+    nav.classList.toggle('active');
+}
+
 function forceToggleMenu() {
     const menu = document.getElementById('avatar-dropdown');
     if (menu) {
-        const isHidden = window.getComputedStyle(menu).display === 'none';
-        menu.style.display = isHidden ? 'block' : 'none';
+        menu.classList.toggle('show');
     }
 }
 
 document.addEventListener('click', function(event) {
     const menu = document.getElementById('avatar-dropdown');
     const btn = document.getElementById('avatar-btn');
+    const nav = document.getElementById('mobile-nav');
+    const hamburger = document.getElementById('hamburger-btn');
+
+    // Cerrar avatar menu si se hace clic fuera
     if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
-        menu.style.display = 'none';
+        menu.classList.remove('show');
+    }
+
+    // Cerrar hamburguesa si se hace clic fuera
+    if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+        nav.classList.remove('active');
     }
 });
 
-// Lógica de carga de productos del localStorage (Simulación)
+// Simulación de carga de productos
 window.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('products-container');
-    if (container) {
-        const misLibros = JSON.parse(localStorage.getItem('misLibros')) || [
-            {titulo: "El Resplandor", autor: "Stephen King", precio: "350", imagen: "../../Imagenes/Libros/1.jpg"},
-            {titulo: "Cien Años de Soledad", autor: "G. García Márquez", precio: "420", imagen: "../../Imagenes/Libros/2.jpg"}
-        ];
-        misLibros.forEach(libro => {
-            const card = document.createElement('div');
-            card.className = 'book-product-card';
-            card.style.background = "white";
-            card.style.padding = "15px";
-            card.style.borderRadius = "8px";
-            card.style.textAlign = "center";
-            card.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
-            card.innerHTML = `
-                <img src="${libro.imagen}" alt="${libro.titulo}" style="width:100%; height:220px; object-fit:contain; margin-bottom:10px;">
-                <h3 class="book-title-grid" style="font-size:1rem; color:#5d4037; height:40px; overflow:hidden;">${libro.titulo}</h3>
-                <p style="font-size:0.8rem; color:#777;">${libro.autor}</p>
-                <span class="book-price-grid" style="font-weight:bold; color:#d32f2f; display:block; margin:10px 0;">$${libro.precio}</span>
-                <div class="product-actions" style="display:flex; gap:5px;">
-                    <button class="btn-add-to-cart" style="flex:1; background:#5d4037; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer;">Añadir</button>
-                    <button class="btn-buy-now" style="flex:1; background:#fbc02d; color:#5d4037; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">Comprar</button>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
+    const misLibros = [
+        {titulo: "El Resplandor", autor: "Stephen King", precio: "350", imagen: "../../Imagenes/Libros/1.jpg"},
+        {titulo: "Cien Años de Soledad", autor: "G. García Márquez", precio: "420", imagen: "../../Imagenes/Libros/2.jpg"}
+    ];
+    misLibros.forEach(libro => {
+        const card = document.createElement('div');
+        card.className = 'book-product-card';
+        card.style.background = "white";
+        card.style.padding = "15px";
+        card.style.borderRadius = "8px";
+        card.style.textAlign = "center";
+        card.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
+        card.innerHTML = `
+            <img src="${libro.imagen}" alt="${libro.titulo}" style="width:100%; height:200px; object-fit:contain; margin-bottom:10px;">
+            <h3 style="font-size:0.9rem; color:#5d4037; height:35px; overflow:hidden;">${libro.titulo}</h3>
+            <p style="font-size:0.75rem; color:#777;">${libro.autor}</p>
+            <span style="font-weight:bold; color:#d32f2f; display:block; margin:8px 0;">$${libro.precio}</span>
+            <div style="display:flex; gap:5px;">
+                <button style="flex:1; background:#5d4037; color:white; border:none; padding:8px; border-radius:4px; font-size:0.8rem; cursor:pointer;">Añadir</button>
+                <button style="flex:1; background:#fbc02d; color:#5d4037; border:none; padding:8px; border-radius:4px; font-size:0.8rem; cursor:pointer; font-weight:bold;">Comprar</button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
 });
 </script>
 </body>

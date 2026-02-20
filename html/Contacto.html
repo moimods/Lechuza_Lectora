@@ -12,23 +12,53 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        /* ESTILOS DEL MENÚ HAMBURGUESA */
+        .hamburger-btn {
+            display: none; /* Oculto en PC */
+            background: none;
+            border: none;
+            color: #5d4037;
+            font-size: 1.8rem;
+            cursor: pointer;
+            order: 2;
+        }
+
         /* AJUSTES RESPONSIVOS CRÍTICOS */
         @media (max-width: 768px) {
             .navbar {
-                flex-direction: column !important;
+                flex-wrap: wrap;
+                justify-content: space-between;
                 height: auto !important;
-                padding: 10px !important;
+                padding: 10px 20px !important;
             }
+
+            .hamburger-btn {
+                display: block; /* Aparece en móvil */
+            }
+
+            .logo-container { order: 1; }
+            .auth-actions { order: 3; width: auto !important; margin: 0 !important; }
 
             .nav-links {
-                display: none; /* Simplificación para móviles */
+                display: none; /* Se oculta para el menú hamburguesa */
+                flex-direction: column;
+                width: 100%;
+                order: 4;
+                background: rgba(244, 236, 226, 0.98);
+                padding: 15px 0;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                margin-top: 10px;
             }
 
-            .auth-actions {
-                margin-top: 10px;
+            .nav-links.active {
+                display: flex !important;
+            }
+
+            .nav-links a {
+                padding: 12px;
                 width: 100%;
-                justify-content: center;
-                gap: 10px;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
             }
 
             .contact-container {
@@ -38,34 +68,17 @@
             }
 
             .contact-grid {
-                grid-template-columns: 1fr !important; /* Apila formulario e info */
+                grid-template-columns: 1fr !important;
                 gap: 30px !important;
             }
 
-            .location-section {
-                margin: 30px 0 !important;
-                padding: 0 !important;
-            }
-
-            .map-wrapper {
-                height: 300px !important; /* Reducción de altura para móviles */
-            }
-
-            .map-custom-marker {
-                width: 45px !important; /* Marcador más pequeño en móviles */
-            }
-
-            input, textarea {
-                font-size: 16px !important; /* Evita zoom automático en iPhone */
-            }
+            .map-wrapper { height: 300px !important; }
+            .map-custom-marker { width: 45px !important; }
+            input, textarea { font-size: 16px !important; }
         }
 
-        /* Estabilización del Mapa */
-        .map-container-relative {
-            position: relative;
-            width: 100%;
-        }
-
+        /* Estabilización del Mapa y Fondo */
+        .map-container-relative { position: relative; width: 100%; }
         .map-wrapper {
             width: 100%;
             border-radius: 15px;
@@ -74,14 +87,11 @@
             border: 3px solid #5d4037;
         }
 
-        /* Marcador animado */
         .map-custom-marker {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -100%); 
             width: 65px;
-            height: auto;
             z-index: 10;
             pointer-events: none; 
             filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.6));
@@ -111,8 +121,12 @@
                 <span class="site-name">LA LECHUZA LECTORA</span>
             </a>
         </div>
+
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         
-        <nav class="nav-links">
+        <nav class="nav-links" id="mobile-nav">
             <a href="Acerca_de.html">Acerca de</a>
             <a href="#" class="active-link">Contacto</a>
             <a href="Ayuda.html">Ayuda</a>
@@ -121,7 +135,7 @@
         
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Iniciar Sesión</button>
+            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
         </div>
     </header>
 
@@ -130,7 +144,7 @@
 
         <div class="contact-container" style="background: rgba(240, 231, 203, 0.95); border-radius: 12px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin: 40px auto; max-width: 1100px; position: relative; z-index: 5;">
             <h1 class="page-title" style="color: #5d4037; text-align: center; margin-bottom: 10px;">Contáctanos</h1>
-            <p class="page-subtitle" style="text-align: center; color: #8d6e63; margin-bottom: 40px;">¿Preguntas o sugerencias? Escríbenos o visítanos en nuestro campus.</p>
+            <p class="page-subtitle" style="text-align: center; color: #8d6e63; margin-bottom: 40px;">Hablemos de libros. Utiliza el formulario o visítanos.</p>
 
             <div class="contact-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
                 <div class="contact-form-wrapper" style="position: relative; background: white; padding: 25px; border-radius: 10px; border: 1px solid #ddd;">
@@ -138,53 +152,61 @@
                         <label style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Nombre</label>
                         <input type="text" name="nombre" placeholder="Tu nombre" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
                         
-                        <label style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Correo Electrónico</label>
-                        <input type="email" name="email" placeholder="ejemplo@correo.com" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+                        <label style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Correo</label>
+                        <input type="email" name="email" placeholder="correo@ejemplo.com" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
 
                         <label style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Mensaje</label>
                         <textarea name="mensaje" placeholder="¿Cómo podemos ayudarte?" rows="5" required style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px; resize: none;"></textarea>
 
-                        <button type="submit" class="btn-send" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">Enviar Mensaje</button>
+                        <button type="submit" class="btn-send" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">Enviar</button>
                     </form>
                 </div>
 
                 <div class="social-info-card" style="background: white; padding: 25px; border-radius: 10px; border: 1px solid #ddd; height: fit-content;">
                     <h2 style="color: #5d4037; font-size: 1.2rem; margin-bottom: 15px;">Redes Sociales</h2>
-                    <div class="social-icons-contact" style="display: flex; gap: 15px; margin-bottom: 20px;">
-                        <a href="#" style="font-size: 1.5rem; color: #5d4037;"><i class="fa-brands fa-x-twitter"></i></a>
-                        <a href="#" style="font-size: 1.5rem; color: #5d4037;"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" style="font-size: 1.5rem; color: #5d4037;"><i class="fa-brands fa-youtube"></i></a>
+                    <div class="social-icons-contact" style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 1.5rem;">
+                        <a href="#" style="color: #5d4037;"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" style="color: #5d4037;"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" style="color: #5d4037;"><i class="fa-brands fa-youtube"></i></a>
                     </div>
                     <address style="font-style: normal; font-size: 0.9rem; line-height: 1.6; color: #666;">
                         <i class="fa-solid fa-location-dot" style="color: #5d4037;"></i> <strong>Campus Iztapalapa</strong><br>
-                        Av Telecomunicaciones, CDMX.<br><br>
-                        <i class="fa-solid fa-phone" style="color: #5d4037;"></i> 55-24-01-43-82
+                        Av Telecomunicaciones, CDMX.
                     </address>
                 </div>
             </div>
 
             <section class="location-section" style="margin-top: 50px;">
-                <h2 style="text-align: center; color: #5d4037; margin-bottom: 20px;">Nuestra Ubicación</h2>
+                <h2 style="text-align: center; color: #5d4037; margin-bottom: 20px;">Ubicación</h2>
                 <div class="map-container-relative">
                     <img src="../Imagenes/logo.png" alt="Marcador" class="map-custom-marker">
                     <div class="map-wrapper">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.5518210328225!2d-99.0573!3d19.38!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDIyJzQ4LjAiTiA5OcKwMDMnMjYuMyJX!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx" 
-                            width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.5518210328225!2d-99.0573!3d19.38!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDIyJzQ4LjAiTiA5OcKwMDMnMjYuMyJX!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                     </div>
                 </div>
             </section>
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; margin-top: auto;">
-        <div class="copyright">© 2026 La Lechuza Lectora</div>
-    </footer>
-
     <script>
+        // FUNCIÓN MENÚ HAMBURGUESA
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobile-nav');
+            nav.classList.toggle('active');
+        }
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('mobile-nav');
+            const hamburger = document.getElementById('hamburger-btn');
+            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+                nav.classList.remove('active');
+            }
+        });
+
         document.getElementById('form-contacto').onsubmit = function(e) {
             e.preventDefault();
-            alert("¡Mensaje enviado con éxito! La Lechuza te responderá pronto.");
+            alert("¡Mensaje enviado con éxito!");
             this.reset();
         };
     </script>

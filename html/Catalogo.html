@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>La Lechuza Lectora - Catálogo</title>
+
     <link rel="stylesheet" href="../Estilos/Estilo1.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
@@ -13,86 +14,102 @@
     <script src="../JS/Boton_Inicio_Sesion_html.js" defer></script>
     
     <style>
-        /* AJUSTES RESPONSIVOS INTEGRADOS */
+        /* ESTILOS DEL MENÚ HAMBURGUESA */
+        .hamburger-btn {
+            display: none; /* Oculto en PC */
+            background: none;
+            border: none;
+            color: #5d4037;
+            font-size: 1.8rem;
+            cursor: pointer;
+            order: 2;
+        }
+
         @media (max-width: 768px) {
             .navbar {
-                flex-direction: column !important;
-                height: auto !important;
+                flex-wrap: wrap;
+                justify-content: space-between;
                 padding: 10px !important;
+                height: auto !important;
             }
 
+            .hamburger-btn {
+                display: block; /* Aparece en móvil */
+            }
+
+            .logo-container { order: 1; }
+            .auth-actions { order: 3; margin-bottom: 0 !important; width: auto !important; }
+
             .search-bar.detail-search {
+                order: 4;
                 width: 100% !important;
                 margin: 10px 0 !important;
-                order: 3;
             }
 
             .nav-links {
-                display: none; /* Simplificado para móviles */
-            }
-
-            .auth-actions {
+                display: none; 
+                flex-direction: column;
                 width: 100%;
-                justify-content: center;
-                gap: 15px;
-                margin-bottom: 5px;
+                order: 5;
+                background: rgba(244, 236, 226, 0.98);
+                padding: 15px 0;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             }
 
+            .nav-links.active {
+                display: flex !important;
+            }
+
+            .nav-links a {
+                padding: 12px;
+                width: 100%;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+
+            /* AJUSTES DEL CATÁLOGO EN MÓVIL */
             .catalog-container {
-                display: block !important; /* Desactiva el grid de dos columnas */
+                display: block !important;
                 padding: 10px !important;
             }
 
             .filter-sidebar {
-                display: none; /* Se oculta por defecto en móviles */
+                display: none;
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 80%;
-                height: 100%;
+                top: 0; left: 0;
+                width: 80%; height: 100%;
                 background: white;
-                z-index: 1000;
+                z-index: 2000;
                 padding: 20px;
                 box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-                overflow-y: auto;
             }
 
-            .filter-sidebar.active {
-                display: block; /* Se activa con el botón de filtros */
+            .filter-sidebar.active { display: block; }
+
+            .btn-filter-toggle {
+                display: block !important;
+                width: 100%;
+                background: #5d4037;
+                color: white;
+                padding: 12px;
+                border: none;
+                border-radius: 5px;
+                margin-bottom: 15px;
+                font-weight: bold;
             }
 
             .product-grid {
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
                 gap: 15px !important;
             }
-
-            .btn-filter-toggle {
-                display: block !important; /* Aparece solo en móvil */
-                width: 100%;
-                background: #5d4037;
-                color: white;
-                border: none;
-                padding: 12px;
-                border-radius: 5px;
-                font-weight: bold;
-                margin-bottom: 20px;
-            }
-
-            .book-product-card img {
-                height: 160px !important;
-            }
         }
 
-        /* Estilo base de los libros */
         .book-product-card {
             background: white;
             padding: 15px;
             border-radius: 8px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
         }
 
         .background-overlay {
@@ -112,13 +129,17 @@
             <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
+
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         
         <div class="search-bar detail-search">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="main-search" placeholder="Buscar Libros...">
         </div>
         
-        <nav class="nav-links">
+        <nav class="nav-links" id="mobile-nav">
             <a href="Acerca de.html">Acerca de</a>
             <a href="Contacto.html">Contacto</a>
             <a href="Ayuda.html">Ayuda</a>
@@ -127,7 +148,7 @@
         
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" id="btn-login-redirect" onclick="window.location.href='Inicio_de_sesion/Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Iniciar Sesión</button>
+            <button class="btn-primary" id="btn-login-redirect" onclick="window.location.href='Inicio_de_sesion/Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
         </div>
     </header>
 
@@ -135,7 +156,7 @@
         <div class="background-overlay"></div>
         
         <button id="filter-toggle" class="btn-filter-toggle" style="display: none;">
-            <i class="fa-solid fa-filter"></i> Filtrar Libros
+            <i class="fa-solid fa-filter"></i> Filtrar Categorías
         </button>
 
         <div class="catalog-container" style="display: grid; grid-template-columns: 250px 1fr; gap: 20px; padding: 20px;">
@@ -157,7 +178,7 @@
             </aside>
             
             <section class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
-                </section>
+            </section>
         </div>
         
         <div class="carousel-nav catalog-pagination" style="text-align: center; padding: 40px;">
@@ -167,23 +188,27 @@
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
-        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
-    </footer>
-
     <script>
+        // FUNCIÓN MENÚ HAMBURGUESA
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobile-nav');
+            nav.classList.toggle('active');
+        }
+
         // Lógica de búsqueda
         const searchInput = document.getElementById('main-search');
-        searchInput.addEventListener('keyup', () => {
-            const term = searchInput.value.toLowerCase();
-            const books = document.querySelectorAll('.book-product-card');
-            books.forEach(book => {
-                const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
-                book.style.display = title.includes(term) ? "flex" : "none";
+        if(searchInput) {
+            searchInput.addEventListener('keyup', () => {
+                const term = searchInput.value.toLowerCase();
+                const books = document.querySelectorAll('.book-product-card');
+                books.forEach(book => {
+                    const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
+                    book.style.display = title.includes(term) ? "flex" : "none";
+                });
             });
-        });
+        }
 
-        // Toggle de filtros en móvil
+        // Toggle de filtros laterales
         document.getElementById('filter-toggle').addEventListener('click', () => {
             document.getElementById('filter-sidebar').classList.add('active');
         });
@@ -192,14 +217,16 @@
             document.getElementById('filter-sidebar').classList.remove('active');
         });
 
-        // Redirección al login en acciones
-        document.addEventListener('click', function(e) {
-            if (e.target && (e.target.innerText === 'Añadir' || e.target.innerText === 'Comprar')) {
-                window.location.href = "Inicio_de_sesion/Inicio_sesion.html";
+        // Cerrar menús al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('mobile-nav');
+            const hamburger = document.getElementById('hamburger-btn');
+            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+                nav.classList.remove('active');
             }
         });
 
-        // Simulación de carga
+        // Simulación de carga de libros
         window.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('products-container');
             const demoBooks = [
@@ -212,13 +239,13 @@
                 const card = document.createElement('div');
                 card.className = 'book-product-card';
                 card.innerHTML = `
-                    <img src="${libro.imagen}" alt="${libro.titulo}" style="width:100%; height:200px; object-fit:contain;">
-                    <h3 class="book-title-grid" style="font-size:1rem; margin:10px 0;">${libro.titulo}</h3>
-                    <p style="font-size:0.8rem; color:#666;">${libro.autor}</p>
+                    <img src="${libro.imagen}" alt="${libro.titulo}" style="width:100%; height:180px; object-fit:contain;">
+                    <h3 class="book-title-grid" style="font-size:0.9rem; margin:10px 0;">${libro.titulo}</h3>
+                    <p style="font-size:0.75rem; color:#666;">${libro.autor}</p>
                     <span style="font-weight:bold; color:#d32f2f; display:block; margin:10px 0;">$${libro.precio}</span>
                     <div class="product-actions" style="display:flex; gap:5px;">
-                        <button class="btn-add-to-cart" style="flex:1; background:#5d4037; color:white; border:none; padding:8px; border-radius:4px;">Añadir</button>
-                        <button class="btn-buy-now" style="flex:1; background:#fbc02d; color:#5d4037; border:none; padding:8px; border-radius:4px; font-weight:bold;">Comprar</button>
+                        <button class="btn-add-to-cart" style="flex:1; background:#5d4037; color:white; border:none; padding:8px; border-radius:4px; font-size:0.8rem;">Añadir</button>
+                        <button class="btn-buy-now" style="flex:1; background:#fbc02d; color:#5d4037; border:none; padding:8px; border-radius:4px; font-weight:bold; font-size:0.8rem;">Comprar</button>
                     </div>
                 `;
                 container.appendChild(card);

@@ -10,50 +10,83 @@
     <script src="../../Js/cartManager.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* AJUSTES RESPONSIVOS CRÍTICOS */
+       
+        .hamburger-btn {
+            display: none; 
+            background: none;
+            border: none;
+            color: #5d4037;
+            font-size: 1.8rem;
+            cursor: pointer;
+            order: 2; 
+        }
+
         @media (max-width: 768px) {
             .navbar {
-                flex-direction: column !important;
-                height: auto !important;
-                padding: 10px !important;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                padding: 10px 20px !important;
+            }
+
+            .hamburger-btn {
+                display: block; 
+            }
+
+            .logo-container {
+                order: 1;
             }
 
             .search-bar {
-                width: 95% !important;
+                order: 4;
+                width: 100% !important;
                 margin: 10px 0 !important;
-                order: 3;
             }
 
             .nav-links {
-                display: none; /* Se recomienda menú hamburguesa, aquí se simplifica */
+                display: none; 
+                flex-direction: column;
+                width: 100%;
+                order: 5;
+                background: rgba(244, 236, 226, 0.98);
+                padding: 20px 0;
+                border-radius: 0 0 10px 10px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                text-align: center;
             }
 
+            .nav-links.active {
+                display: flex; 
+            }
+
+            .nav-links a {
+                padding: 15px;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+                width: 100%;
+            }
+
+            .auth-actions {
+                order: 3;
+            }
+
+        
             .content-container {
                 flex-direction: column !important;
                 padding: 20px 10px !important;
                 text-align: center;
             }
 
-            .welcome-card {
+            .welcome-card, .featured-book {
                 width: 100% !important;
                 margin-bottom: 30px;
             }
 
-            .featured-book {
-                width: 100% !important;
-            }
-
-            .featured-book img {
-                max-width: 180px !important;
-            }
-
             .reviews-section {
-                grid-template-columns: 1fr !important; /* Una reseña por fila */
+                grid-template-columns: 1fr !important;
                 padding: 20px 15px !important;
             }
         }
 
-        /* Estabilización del dropdown y menú de usuario */
+       
         .dropdown-menu {
             display: none; 
             position: absolute;
@@ -75,12 +108,6 @@
             cursor: pointer;
             border: 2px solid #5d4037;
         }
-
-        /* Ajuste carrusel para móviles */
-        .background-carousel figure img {
-            object-fit: cover;
-            height: 100vh;
-        }
     </style>
 </head>
 <body>
@@ -90,13 +117,17 @@
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
+
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         
         <div class="search-bar">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" placeholder="Buscar Libros...">
         </div>
         
-        <nav class="nav-links">
+        <nav class="nav-links" id="mobile-nav">
             <a href="Acerca de.html">Acerca de</a>
             <a href="Contacto.html">Contacto</a>
             <a href="Ayuda.html">Ayuda</a>
@@ -137,8 +168,8 @@
         <div class="content-container" style="display: flex; gap: 40px; align-items: center; position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 60px 20px;">
             <div class="welcome-card" style="background: rgba(255, 255, 255, 0.92); padding: 35px; border-radius: 15px; flex: 1.5; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
                 <h2 style="color: #5d4037; margin-bottom: 15px; font-size: 2rem;">BIENVENIDO!!!</h2>
-                <p style="color: #333; line-height: 1.8; font-size: 1.1rem;">La Lechuza Lectora es tu portal digital para explorar mundos inexplorados. Hemos creado la plataforma más completa para conectar a la <strong>comunidad</strong> con los mejores títulos, desde clásicos hasta novedades actuales.</p>
-                <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'" style="margin-top: 25px; background: #5d4037; color: white; border: none; padding: 14px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem;">Explorar Catálogo</button>
+                <p style="color: #333; line-height: 1.8; font-size: 1.1rem;">La Lechuza Lectora es tu portal digital para explorar mundos inexplorados.</p>
+                <button class="btn-secondary" onclick="window.location.href='Catalogo_Logeado.html'" style="margin-top: 25px; background: #5d4037; color: white; border: none; padding: 14px 30px; border-radius: 5px; cursor: pointer; font-weight: bold;">Explorar Catálogo</button>
             </div>
 
             <div class="featured-book" style="flex: 1; text-align: center;">
@@ -152,16 +183,8 @@
                 <div class="rating" style="color: #fbc02d; margin-bottom: 12px; font-size: 1.1rem;">
                     <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
                 </div>
-                <h3 style="color: #5d4037; margin-bottom: 10px;">Venta de Libros a Buen precio</h3>
-                <p style="color: #555; font-style: italic; line-height: 1.5;">"La mejor página para realizar compras y con envío gratis!!!"</p>
-            </div>
-
-            <div class="review-card" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
-                <div class="rating" style="color: #fbc02d; margin-bottom: 12px; font-size: 1.1rem;">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-                <h3 style="color: #5d4037; margin-bottom: 10px;">Excelente Servicio</h3>
-                <p style="color: #555; font-style: italic; line-height: 1.5;">"Mi pedido llegó en menos de 3 días!!!"</p>
+                <h3 style="color: #5d4037;">Excelente Servicio</h3>
+                <p style="color: #555; font-style: italic;">"Mi pedido llegó en menos de 3 días!!!"</p>
             </div>
         </div>
     </main>
@@ -171,6 +194,13 @@
     </footer>
 
     <script>
+
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobile-nav');
+            nav.classList.toggle('active');
+        }
+
+ 
         function forceToggleMenu() {
             const menu = document.getElementById('avatar-dropdown');
             if (menu) {
@@ -178,11 +208,21 @@
                 menu.style.display = isHidden ? 'block' : 'none';
             }
         }
+        
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('avatar-dropdown');
             const btn = document.getElementById('avatar-btn');
+            const hamburger = document.getElementById('hamburger-btn');
+            const nav = document.getElementById('mobile-nav');
+
+       
             if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
                 menu.style.display = 'none';
+            }
+
+       
+            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+                nav.classList.remove('active');
             }
         });
     </script>

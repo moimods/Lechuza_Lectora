@@ -10,8 +10,56 @@
     <script src="../JS/Boton_Ini.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        /* ESTILOS DEL MENÚ HAMBURGUESA */
+        .hamburger-btn {
+            display: none; /* Oculto en PC */
+            background: none;
+            border: none;
+            color: #5d4037;
+            font-size: 1.8rem;
+            cursor: pointer;
+            order: 2;
+        }
+
         /* AJUSTES RESPONSIVOS CRÍTICOS */
         @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                height: auto !important;
+                padding: 10px 20px !important;
+            }
+
+            .hamburger-btn {
+                display: block; /* Aparece en móvil */
+            }
+
+            .logo-container { order: 1; }
+            .auth-actions { order: 3; width: auto !important; margin: 0 !important; }
+
+            .nav-links {
+                display: none; /* Se oculta para el menú hamburguesa */
+                flex-direction: column;
+                width: 100%;
+                order: 4;
+                background: rgba(244, 236, 226, 0.98);
+                padding: 15px 0;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                margin-top: 10px;
+                border-radius: 0 0 10px 10px;
+            }
+
+            .nav-links.active {
+                display: flex !important;
+            }
+
+            .nav-links a {
+                padding: 12px;
+                width: 100%;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+
             .about-container {
                 width: 95% !important;
                 padding: 20px 15px !important;
@@ -19,35 +67,18 @@
             }
 
             .history-section {
-                grid-template-columns: 1fr !important; /* Apila historia e imagen */
+                grid-template-columns: 1fr !important;
                 text-align: center;
                 gap: 20px !important;
             }
 
             .mission-values-grid {
-                grid-template-columns: 1fr !important; /* Apila Misión y Valores */
+                grid-template-columns: 1fr !important;
                 gap: 20px !important;
             }
 
             .logo-illustration img {
-                max-width: 180px !important; /* Reduce logo para ahorrar espacio */
-            }
-
-            .navbar {
-                flex-direction: column !important;
-                height: auto !important;
-                padding: 10px !important;
-            }
-
-            .nav-links {
-                display: none; /* Oculto para simplificar en móvil */
-            }
-
-            .auth-actions {
-                margin-top: 10px;
-                width: 100%;
-                justify-content: center;
-                gap: 15px;
+                max-width: 150px !important;
             }
         }
 
@@ -63,6 +94,14 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
+
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
@@ -72,8 +111,12 @@
             <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
+
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         
-        <nav class="nav-links">
+        <nav class="nav-links" id="mobile-nav">
             <a href="#" class="active-link">Acerca de</a>
             <a href="../html/Contacto.html">Contacto</a>
             <a href="../html/Ayuda.html">Ayuda</a>
@@ -82,20 +125,20 @@
         
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Iniciar Sesión</button>
+            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
         </div>
     </header>
 
     <main class="main-content about-main">
-        <div class="background-overlay about-bg" style="filter: brightness(0.8); background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+        <div class="background-overlay about-bg"></div>
 
         <div class="about-container" style="background: rgba(240, 231, 203, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; z-index: 5; margin: 40px auto; max-width: 1100px;">
             
             <section class="history-section" style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: center;">
                 <div class="card">
                     <h2 style="color: #5d4037; margin-bottom: 20px;">Nuestra Historia</h2>
-                    <p>La Lechuza Lectora nació entre líneas de código y sesiones nocturnas de estudio en la carrera de Ingeniería en Sistemas Computacionales. Los estudiantes Alan, Fernando y Oscar decidimos construir la librería digital que siempre quisimos tener.</p>
-                    <p>El nombre representa la fusión entre la <strong>sabiduría técnica y literaria</strong> que buscamos en cada proyecto.</p>
+                    <p>La Lechuza Lectora nació entre líneas de código y sesiones nocturnas de estudio. Los estudiantes Alan, Fernando y Oscar decidimos construir la librería digital que siempre quisimos tener.</p>
+                    <p>El nombre representa la fusión entre la <strong>sabiduría técnica y literaria</strong>.</p>
                 </div>
                 
                 <div class="logo-illustration">
@@ -107,29 +150,46 @@
             <section class="mission-values-grid" style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                 <div class="card">
                     <h2 style="color: #5d4037;">Misión</h2>
-                    <p>Conectar a cada lector con la obra ideal a través de la tecnología más eficiente, optimizando la gestión del catálogo mediante ingeniería de software de alta calidad.</p>
+                    <p>Conectar a cada lector con la obra ideal a través de la tecnología más eficiente, optimizando la gestión mediante ingeniería de software.</p>
                 </div>
 
                 <div class="card">
                     <h2 style="color: #5d4037;">Nuestros Valores</h2>
                     <ul style="padding-left: 20px; list-style: square;">
-                        <li><strong>Innovación Técnica:</strong> Plataformas robustas y seguras.</li>
-                        <li><strong>Calidad Curada:</strong> Selección impecable de contenido.</li>
-                        <li><strong>Transparencia:</strong> Claridad absoluta en el manejo de datos.</li>
+                        <li><strong>Innovación:</strong> Plataformas seguras.</li>
+                        <li><strong>Calidad:</strong> Selección impecable.</li>
+                        <li><strong>Transparencia:</strong> Confianza total.</li>
                     </ul>
                 </div>
             </section>
 
             <section class="card" style="margin-top: 40px; border-left: 5px solid #fbc02d;">
                 <h2 style="color: #5d4037;">El Equipo</h2>
-                <p>Somos tres estudiantes de Ingeniería en Sistemas Computacionales que unimos nuestra pasión por la tecnología con el amor por la literatura.</p>
-                <p style="font-style: italic; background: #fffdf5; padding: 15px; border-radius: 5px;">"Construimos este sitio como la librería que siempre quisimos tener, donde la tecnología sirve a la inagotable sed de conocimiento."</p>
+                <p>Somos estudiantes de Ingeniería en Sistemas que unimos tecnología y literatura.</p>
+                <p style="font-style: italic; background: #fffdf5; padding: 15px; border-radius: 5px;">"La tecnología sirve a la inagotable sed de conocimiento."</p>
             </section>
         </div>
     </main>
 
     <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
-        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
+        <div class="copyright">© 2026 La Lechuza Lectora</div>
     </footer>
+
+    <script>
+        // FUNCIÓN MENÚ HAMBURGUESA
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobile-nav');
+            nav.classList.toggle('active');
+        }
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('mobile-nav');
+            const hamburger = document.getElementById('hamburger-btn');
+            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+                nav.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
