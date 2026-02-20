@@ -6493,3 +6493,16 @@ input, button {
     -webkit-appearance: none;
     border-radius: 5px;
 }
+
+
+.dropdown-menu {
+    display: none; 
+    position: absolute;
+    background-color: white;
+    z-index: 1000;
+}
+
+
+.dropdown-menu.show {
+    display: block !important;
+}
