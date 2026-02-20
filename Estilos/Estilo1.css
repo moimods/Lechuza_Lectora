@@ -6485,3 +6485,11 @@ a { text-decoration: none; color: inherit; }
         grid-template-columns: 1fr; 
     }
 }
+img {
+    max-width: 100%;
+    height: auto;
+}
+input, button {
+    -webkit-appearance: none;
+    border-radius: 5px;
+}
