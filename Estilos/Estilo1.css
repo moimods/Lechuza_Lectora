@@ -6458,105 +6458,55 @@ a { text-decoration: none; color: inherit; }
 .btn-payment:hover {
     filter: brightness(0.9);
 }
-@media (max-width: 480px) {
 
-    body {
-        font-size: 14px;
-    }
-
-    .profile-title-custom {
-        font-size: 1.6em;
-    }
-
-    .profile-header-card {
-        padding: 15px;
-        gap: 10px;
-    }
-
-    .profile-avatar-custom {
-        width: 90px;
-        height: 90px;
-    }
-
-    .catalog-container {
-        grid-template-columns: 1fr;
-        padding: 10px;
-    }
-
-    .book-product-card {
-        width: 100%;
-    }
-
-    .checkout-container {
-        width: 95%;
-        padding: 15px;
-    }
-
-    .cart-item {
-        grid-template-columns: 60px 1fr;
-        grid-template-rows: auto auto;
-    }
-
-    .cart-item img {
-        width: 60px;
-        height: 90px;
-    }
-
-    .item-price {
-        grid-column: 2;
-        margin-top: 5px;
-    }
+.container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 100%;
 }
-@media (max-width: 768px) {
 
-    .catalog-container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-        padding: 10px;
-    }
+.row { display: flex; flex-wrap: wrap; gap: 16px; }
+.col { flex: 1 1 0; min-width: 220px; }
 
-    .profile-actions-grid-custom {
-        grid-template-columns: 1fr;
-    }
+img, video, svg, iframe { max-width: 100%; height: auto; display: block; }
+.logo, .avatar { width: auto; max-height: 48px; height: auto; }
 
-    .checkout-grid {
-        grid-template-columns: 1fr;
-    }
+.navbar { padding: 10px 20px; flex-wrap: wrap; }
+.nav-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.search-bar { flex: 1 1 300px; max-width: 500px; margin: 10px 0; }
+.content-container { padding: 60px 20px; grid-template-columns: 2fr 1fr; gap: 30px; }
 
-    .admin-profile-navbar {
-        padding: 10px 15px;
-    }
-
-    .navbar .logo {
-        height: 30px;
-    }
-}
 @media (max-width: 1024px) {
-
-    .catalog-container {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .profile-main-wrapper {
-        width: 95%;
-    }
-
-    .checkout-container {
-        width: 95%;
-    }
+    .navbar { padding: 10px 16px; }
+    .site-name { font-size: 1em; }
+    .search-bar { max-width: 380px; }
+    .content-container { padding: 50px 18px; }
 }
-@media (min-width: 1400px) {
 
-    .catalog-container {
-        grid-template-columns: repeat(5, 1fr);
-        max-width: 1600px;
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        position: relative;
     }
-
-    .profile-main-wrapper {
-        max-width: 1200px;
-    }
-
-    .checkout-container {
-        max-width: 1200px;
-    }
+    .search-bar { order: 3; width: 100%; max-width: none; }
+    .nav-links { order: 2; width: 100%; justify-content: flex-start; overflow-x: auto; }
+    .auth-actions { order: 1; width: 100%; display: flex; justify-content: flex-end; }
+    .content-container { grid-template-columns: 1fr; padding: 24px 14px; gap: 20px; }
+    .reviews-section { flex-direction: column; gap: 15px; }
+    .welcome-card, .featured-book, .review-card { width: 100%; }
 }
+
+@media (max-width: 480px) {
+    body { font-size: 15px; }
+    .site-name { font-size: 0.98em; }
+    .logo { max-height: 36px; }
+    .btn-primary, .btn-secondary, .btn-confirm { padding: 8px 12px; font-size: 0.95em; }
+    .welcome-card h2 { font-size: 1.4em; }
+    .form-card { padding: 18px; max-width: 96%; }
+}
+.form-card input, .form-card button, .form-card select, .form-card textarea { width: 100%; box-sizing: border-box; }
