@@ -15,15 +15,28 @@
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
+        <nav class="nav-links">
+            <button class="hamburger-btn" id="hamburger-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="menu-items" id="menu-items">
+                <a href="Inventario.html">Inventario</a>
+                <a href="Reportes.html">Reportes</a>
+                <a href="Pedidos.html">Pedidos</a>
+                <a href="../../index.html">Cerrar Sesión</a>
+            </div>
+        </nav>
+
         <div class="auth-actions user-actions">
-            <i class="fa-solid fa-house"></i>
-            <span>Admin</span>
+            <button class="icon-button" onclick="window.location.href='../../index.html'"><i class="fa-solid fa-house"></i></button>
+            <span class="admin-label">Admin</span>
             <img src="../../Imagenes/avatar.png" alt="Avatar Usuario" class="avatar">
         </div>
     </header>
 
     <main class="main-content dashboard-main">
-        <div class="background-overlay dashboard-bg"></div>
+        <div class="background-overlay dashboard-bg" style="filter: brightness(0.6);"></div>
 
         <div class="dashboard-container">
             <h1 class="dashboard-title">Dashboard Inventario</h1>
@@ -57,23 +70,47 @@
                 
                 <div class="info-card alerts-card">
                     <h2>Alertas de Inventario</h2>
-                    <table class="alerts-table">
-                        <thead>
-                            <tr><th>ID Libro</th><th>Editorial</th><th>En stock</th><th>Reordenar</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>LB5784</td><td>Gandhi</td><td>15</td><td>50</td></tr>
-                            <tr><td>LB4745</td><td>Gandhi</td><td>10</td><td>50</td></tr>
-                            <tr><td>LB7245</td><td>Gandhi</td><td>20</td><td>30</td></tr>
-                            <tr><td>LBB945</td><td>Gandhi</td><td>0</td><td>50</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="alerts-table">
+                            <thead>
+                                <tr><th>ID Libro</th><th>Editorial</th><th>En stock</th><th>Reordenar</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>LB5784</td><td>Gandhi</td><td>15</td><td>50</td></tr>
+                                <tr><td>LB4745</td><td>Gandhi</td><td>10</td><td>50</td></tr>
+                                <tr><td>LB7245</td><td>Gandhi</td><td>20</td><td>30</td></tr>
+                                <tr><td>LBB945</td><td>Gandhi</td><td>0</td><td>50</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">...</footer>
+    <footer class="site-footer">
+        <div class="copyright">
+            © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
+        </div>
+    </footer>
+
+    <script>
+        const btnHamburguesa = document.getElementById('hamburger-btn');
+        const menuDesplegable = document.getElementById('menu-items');
+
+        if (btnHamburguesa && menuDesplegable) {
+            btnHamburguesa.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menuDesplegable.classList.toggle('show-menu');
+            });
+        }
+
+        document.addEventListener('click', () => {
+            if (menuDesplegable && menuDesplegable.classList.contains('show-menu')) {
+                menuDesplegable.classList.remove('show-menu');
+            }
+        });
+    </script>
 
 </body>
 </html>

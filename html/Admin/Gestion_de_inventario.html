@@ -15,17 +15,30 @@
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
+        <nav class="nav-links">
+            <button class="hamburger-btn" id="hamburger-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="menu-items" id="menu-items">
+                <a href="panel_de_admin.html">Panel Principal</a>
+                <a href="recibir_inventario.html">Recibir Stock</a>
+                <a href="reportes.html">Reportes</a>
+                <a href="../../index.html">Cerrar Sesión</a>
+            </div>
+        </nav>
+
         <div class="auth-actions user-actions">
-            <a href="panel_de_admin.html" style="text-decoration: none; color: inherit; cursor: pointer;">
+            <a href="panel_de_admin.html" class="home-icon">
                 <i class="fa-solid fa-house"></i>
             </a>
-            <span>Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover;">
+            <span class="admin-label">Admin</span>
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover; border-radius: 50%;">
         </div>
     </header>
 
     <main class="main-content inventory-main">
-        <div class="background-overlay dashboard-bg"></div>
+        <div class="background-overlay dashboard-bg" style="filter: brightness(0.6);"></div>
 
         <div class="inventory-container">
             <div class="inventory-header">
@@ -33,16 +46,16 @@
                 <h1 class="dashboard-title">Gestión de Inventario</h1>
             </div>
 
-            <div class="inventory-table-wrapper">
+            <div class="inventory-table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                 <table class="inventory-table">
                     <thead>
                         <tr>
                             <th><input type="checkbox" aria-label="Seleccionar todos"></th>
                             <th>Fecha</th>
-                            <th>Ubicación en Almacen</th>
-                            <th>Ubicación en aparador</th>
-                            <th>Costo Compra</th>
-                            <th>Costo Venta</th>
+                            <th>Almacen</th>
+                            <th>Aparador</th>
+                            <th>Compra</th>
+                            <th>Venta</th>
                             <th>Status</th>
                             <th>Acción</th>
                         </tr>
@@ -51,8 +64,8 @@
                         <tr>
                             <td><input type="checkbox"></td>
                             <td>15/02/2026</td>
-                            <td>Pasillo A - Estante 4</td>
-                            <td>Sección Terror</td>
+                            <td>Pasillo A - E4</td>
+                            <td>Terror</td>
                             <td>$150.00</td>
                             <td>$399.00</td>
                             <td><span class="status-tag available">Disponible</span></td>
@@ -61,7 +74,7 @@
                         <tr>
                             <td><input type="checkbox"></td>
                             <td>16/02/2026</td>
-                            <td>Pasillo C - Estante 2</td>
+                            <td>Pasillo C - E2</td>
                             <td>Novedades</td>
                             <td>$210.00</td>
                             <td>$456.00</td>
@@ -71,20 +84,10 @@
                         <tr>
                             <td><input type="checkbox"></td>
                             <td>17/02/2026</td>
-                            <td>Pasillo B - Estante 1</td>
+                            <td>Pasillo B - E1</td>
                             <td>Clásicos</td>
                             <td>$300.00</td>
                             <td>$764.00</td>
-                            <td><span class="status-tag available">Disponible</span></td>
-                            <td><button class="btn-edit">Editar</button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>18/02/2026</td>
-                            <td>Pasillo A - Estante 5</td>
-                            <td>Sección Juvenil</td>
-                            <td>$120.00</td>
-                            <td>$356.00</td>
                             <td><span class="status-tag available">Disponible</span></td>
                             <td><button class="btn-edit">Editar</button></td>
                         </tr>
@@ -94,13 +97,13 @@
 
             <div class="inventory-footer">
                 <div class="pagination-nav">
-                    <span>← Previous</span>
+                    <span>←</span>
                     <div class="pagination">
-                        <span>1</span><span>2</span><span>3</span>...<span>67</span><span>68</span>
+                        <span>1</span><span>2</span><span>3</span>
                     </div>
-                    <span>Next →</span>
+                    <span>→</span>
                 </div>
-                <button class="btn-print">Imprimir Reporte</button>
+                <button class="btn-print">Imprimir</button>
             </div>
         </div>
     </main>
@@ -108,6 +111,24 @@
     <footer class="site-footer">
         © Todos los derechos reservados 2026. La Lechuza Lectora
     </footer>
+
+    <script>
+        const btnHamburguesa = document.getElementById('hamburger-btn');
+        const menuDesplegable = document.getElementById('menu-items');
+
+        if (btnHamburguesa && menuDesplegable) {
+            btnHamburguesa.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menuDesplegable.classList.toggle('show-menu');
+            });
+        }
+
+        document.addEventListener('click', () => {
+            if (menuDesplegable && menuDesplegable.classList.contains('show-menu')) {
+                menuDesplegable.classList.remove('show-menu');
+            }
+        });
+    </script>
 
 </body>
 </html>
