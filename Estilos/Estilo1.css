@@ -6458,3 +6458,30 @@ a { text-decoration: none; color: inherit; }
 .btn-payment:hover {
     filter: brightness(0.9);
 }
+
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column; 
+        height: auto;
+        padding: 10px;
+    }
+
+    .nav-links {
+        display: none; 
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px;
+    }
+
+    .profile-main-wrapper {
+        width: 95%;
+        margin: 10px auto;
+    }
+
+    .profile-actions-grid-custom {
+        grid-template-columns: 1fr; 
+    }
+}
