@@ -13,25 +13,35 @@
     
     <script src="../../JS/Redireccionamiento_login.js" defer></script> 
     <style>
-        /* Estilo para el botón de regresar flotante dentro de la tarjeta */
+        
+        .login-card {
+            position: relative; 
+        }
+
         .btn-back-home {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            background: none;
-            border: none;
+            top: 20px;
+            left: 20px;
+            background-color: #fdf5e6;
+            border: 2px solid #5d4037;
             color: #5d4037;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: transform 0.2s;
+            z-index: 100; 
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .btn-back-home:hover {
+            background-color: #5d4037;
+            color: #fdf5e6;
             transform: scale(1.1);
-        }
-
-        .login-card {
-            position: relative; 
         }
     </style>
 </head>
@@ -42,7 +52,7 @@
 
         <div class="form-card login-card">
             <button class="btn-back-home" onclick="window.location.href='../../index.html'" title="Regresar al Inicio">
-                <i class="fa-solid fa-circle-arrow-left"></i>
+                <i class="fa-solid fa-arrow-left"></i>
             </button>
 
             <div class="center-logo-box">
