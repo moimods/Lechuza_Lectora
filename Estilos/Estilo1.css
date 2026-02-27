@@ -6305,19 +6305,176 @@ a { text-decoration: none; color: inherit; }
     border-radius: 5px;
     cursor: pointer;
 }
+.form-container,
+.inventory-container {
+    width: 95%;
+    max-width: 1200px;
+    margin: auto;
+}
 
+/* ================================
+   MEJORAS RESPONSIVAS OPTIMIZADAS
+   ================================ */
+
+/* --- DESKTOP GRANDE --- */
+@media (max-width: 1200px) {
+
+    .catalog-container {
+        padding: 0 20px;
+    }
+
+    .profile-header-card {
+        gap: 18px;
+    }
+
+    .checkout-container {
+        width: 95%;
+    }
+}
+
+/* --- LAPTOP --- */
+@media (max-width: 992px) {
+
+    .registration-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .password-data,
+    #password-requirements,
+    #match-validation {
+        grid-column: 1 / -1;
+        grid-row: auto;
+    }
+
+    .profile-header-card {
+        flex-wrap: wrap;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .cart-item {
+        grid-template-columns: 70px 1fr;
+        gap: 10px;
+    }
+
+    .item-price {
+        grid-column: 2;
+        margin-top: 5px;
+    }
+}
+
+/* --- TABLET --- */
 @media (max-width: 768px) {
+
+    .catalog-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .carousel-nav.catalog-pagination {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .profile-header-card {
+        padding: 20px;
+    }
+
+    .profile-avatar-custom {
+        width: 90px;
+        height: 90px;
+    }
+
     .checkout-grid {
+        gap: 20px;
+    }
+
+    .cart-item {
+        grid-template-columns: 60px 1fr;
+    }
+
+    .item-details h2 {
+        font-size: 1em;
+    }
+
+    .item-price {
+        font-size: 1.1em;
+    }
+}
+
+/* --- MOVIL GRANDE --- */
+@media (max-width: 576px) {
+
+    .registration-grid {
         grid-template-columns: 1fr;
     }
-    .checkout-summary-card {
-        order: -1;
-        margin-bottom: 20px;
+
+    .form-card.registration-card {
+        padding: 20px;
     }
+
+    .profile-title-custom {
+        font-size: 1.6em;
+    }
+
+    .profile-header-card {
+        gap: 12px;
+    }
+
+    .checkout-container {
+        padding: 20px;
+    }
+
+    .checkout-title {
+        font-size: 1.5em;
+    }
+
     .navigation-actions {
+        gap: 10px;
+    }
+
+    .cart-item img {
+        width: 60px;
+        height: 90px;
+    }
+}
+
+/* --- MOVIL PEQUEÑO --- */
+@media (max-width: 420px) {
+
+    .profile-header-card {
+        padding: 15px;
+    }
+
+    .profile-avatar-custom {
+        width: 70px;
+        height: 70px;
+    }
+
+    .profile-text-custom h2 {
+        font-size: 1.3em;
+    }
+
+    .action-module-lg {
+        padding: 18px 12px;
+        min-height: auto;
+    }
+
+    .cart-item {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .item-price {
+        align-self: center;
+        margin-top: 10px;
+    }
+
+    .product-actions {
         flex-direction: column;
     }
 }
+<<<<<<< HEAD
 
 .admin-profile-navbar {
     padding: 10px 40px;
@@ -6506,3 +6663,5 @@ input, button {
 .dropdown-menu.show {
     display: block !important;
 }
+=======
+>>>>>>> dec7c20b0a22c916913a10d4daa5f4647220e270
