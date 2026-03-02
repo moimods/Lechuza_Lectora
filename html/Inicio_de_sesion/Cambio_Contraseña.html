@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Nueva Contraseña</title>
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
-    <script src="../../JS/Cambio_Contraseña.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         /* Ajustes de responsividad específicos para móviles */
@@ -15,39 +14,24 @@
                 padding: 20px !important;
                 margin: 20px auto;
             }
-
-            .form-title {
-                font-size: 1.5rem !important;
-                margin-bottom: 15px !important;
-            }
-
-            .action-buttons-group {
-                flex-direction: column; /* Apila los botones en móvil para facilitar el clic */
-                gap: 10px;
-            }
-
-            .btn-action {
-                width: 100% !important;
-                padding: 12px !important; /* Más grandes para pantallas táctiles */
-            }
-
-            #password-requirements {
-                font-size: 0.8rem;
-            }
+            .form-title { font-size: 1.5rem !important; margin-bottom: 15px !important; }
+            .action-buttons-group { flex-direction: column; gap: 10px; }
+            .btn-primary, .btn-cancel { width: 100% !important; padding: 12px !important; }
         }
 
-        /* Estilo para la capa de fondo */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
         }
+
+        /* Estados de validación */
+        .valid { color: #2e7d32 !important; } /* Verde */
+        .invalid { color: #d32f2f !important; } /* Rojo */
+        
+        input { box-sizing: border-box; }
     </style>
 </head>
 <body class="form-page">
@@ -55,68 +39,114 @@
     <main class="main-content form-main">
         <div class="background-overlay"></div>
 
-        <div class="form-card change-password-card">
-            <h1 class="form-title" style="color: #5d4037; text-align: center;">Nueva Contraseña</h1>
+        <div class="form-card change-password-card" style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <h1 class="form-title" style="color: #5d4037; text-align: center; font-weight: bold;">Nueva Contraseña</h1>
             
             <form id="password-form" class="recovery-form">
                 <div class="input-group">
-                    <label for="new-password">Nueva Contraseña:</label>
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #5d4037;">Nueva Contraseña:</label>
                     <div class="password-wrapper" style="position: relative;">
                         <input type="password" id="new-password" maxlength="10" required 
                                style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                        <i class="fa-solid fa-eye password-toggle" data-target="new-password" 
-                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                        <i class="fa-solid fa-eye password-toggle" onclick="togglePassword('new-password', this)"
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666;"></i>
                     </div>
                 </div>
 
-                <div id="password-requirements" style="margin-top: 15px;">
+                <div id="password-requirements" style="margin-top: 15px; font-size: 0.85em;">
                     <ul style="list-style: none; padding: 0;">
-                        <li id="req-length" style="color: #d32f2f; margin-bottom: 5px;"><i class="fa-solid fa-circle-xmark"></i> 6 a 10 caracteres</li>
-                        <li id="req-number" style="color: #d32f2f; margin-bottom: 5px;"><i class="fa-solid fa-circle-xmark"></i> Al menos 1 número</li>
-                        <li id="req-special" style="color: #d32f2f; margin-bottom: 5px;"><i class="fa-solid fa-circle-xmark"></i> 1 caracter especial</li>
+                        <li id="req-length" class="invalid"><i class="fa-solid fa-circle-dot"></i> 6 a 10 caracteres</li>
+                        <li id="req-number" class="invalid"><i class="fa-solid fa-circle-dot"></i> Al menos 1 número</li>
+                        <li id="req-special" class="invalid"><i class="fa-solid fa-circle-dot"></i> 1 caracter especial (@$!%*?)</li>
                     </ul>
                 </div>
 
                 <div class="input-group" style="margin-top: 15px;">
-                    <label for="confirm-password">Confirmar Contraseña:</label>
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #5d4037;">Confirmar Contraseña:</label>
                     <div class="password-wrapper" style="position: relative;">
                         <input type="password" id="confirm-password" maxlength="10" required 
                                style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                        <i class="fa-solid fa-eye password-toggle" data-target="confirm-password" 
-                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                        <i class="fa-solid fa-eye password-toggle" onclick="togglePassword('confirm-password', this)"
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666;"></i>
                     </div>
                 </div>
 
-                <div id="match-validation" style="margin-top: 10px;">
+                <div id="match-validation" style="margin-top: 10px; font-size: 0.85em;">
                     <ul style="list-style: none; padding: 0;">
-                        <li id="req-match" style="color: #d32f2f;"><i class="fa-solid fa-circle-xmark"></i> Las contraseñas coinciden</li>
+                        <li id="req-match" class="invalid"><i class="fa-solid fa-circle-dot"></i> Las contraseñas coinciden</li>
                     </ul>
                 </div>
             </form>
 
             <div class="action-buttons-group" style="display: flex; gap: 15px; margin-top: 25px;">
                 <button type="submit" form="password-form" id="btn-aceptar" class="btn-primary" 
-                        style="flex: 1; padding: 10px; cursor: pointer; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold;">
-                    Aceptar
+                        style="flex: 1; padding: 12px; cursor: pointer; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold;">
+                    Actualizar
                 </button>
-                
-                <button type="button" id="btn-regresar" class="btn-cancel" onclick="window.location.href='perfil.html'" 
-                        style="flex: 1; padding: 10px; cursor: pointer; border-radius: 5px; border: none; background-color: #555; color: white; font-weight: bold;">
-                    <i class="fa-solid fa-arrow-left"></i> Volver
+                <button type="button" class="btn-cancel" onclick="window.history.back()" 
+                        style="flex: 1; padding: 12px; cursor: pointer; border-radius: 5px; border: none; background-color: #555; color: white; font-weight: bold;">
+                    Cancelar
                 </button>
             </div>
         </div>
     </main>
 
     <footer class="site-footer" style="background: rgba(44, 44, 44, 0.9); color: white; text-align: center; padding: 20px; margin-top: auto;">
-        <div class="social-links" style="margin-bottom: 10px;">
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-youtube"></i></a>
-        </div>
-        <div class="copyright">
-            © 2026 La Lechuza Lectora
-        </div>
+        <div class="copyright"> © 2026 La Lechuza Lectora </div>
     </footer>
+
+    <script>
+        // Función para mostrar/ocultar contraseña
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+
+        const newPass = document.getElementById('new-password');
+        const confPass = document.getElementById('confirm-password');
+
+        // Función de validación en tiempo real
+        function validate() {
+            const val = newPass.value;
+            
+            // 1. Longitud
+            const isLengthValid = val.length >= 6 && val.length <= 10;
+            document.getElementById('req-length').className = isLengthValid ? 'valid' : 'invalid';
+
+            // 2. Número
+            const hasNumber = /\d/.test(val);
+            document.getElementById('req-number').className = hasNumber ? 'valid' : 'invalid';
+
+            // 3. Carácter especial
+            const hasSpecial = /[@$!%*?&]/.test(val);
+            document.getElementById('req-special').className = hasSpecial ? 'valid' : 'invalid';
+
+            // 4. Coincidencia
+            const matches = val === confPass.value && val !== "";
+            document.getElementById('req-match').className = matches ? 'valid' : 'invalid';
+
+            return isLengthValid && hasNumber && hasSpecial && matches;
+        }
+
+        newPass.addEventListener('input', validate);
+        confPass.addEventListener('input', validate);
+
+        // Envío del formulario
+        document.getElementById('password-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validate()) {
+                alert("¡Contraseña actualizada con éxito!");
+                window.location.href = 'Inicio_sesion.html';
+            } else {
+                alert("Por favor, cumple con todos los requisitos de seguridad.");
+            }
+        });
+    </script>
 </body>
 </html>

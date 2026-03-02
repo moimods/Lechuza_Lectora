@@ -19,7 +19,6 @@
                 font-size: 1.5rem !important;
             }
 
-            /* Hacemos que las opciones de pago sean botones grandes */
             .payment-option {
                 padding: 15px !important;
                 margin-bottom: 12px !important;
@@ -33,7 +32,6 @@
                 margin: 0 10px !important;
             }
 
-            /* Apilamiento de botones de acción para facilitar el clic */
             .add-payment-actions {
                 display: flex;
                 flex-direction: column;
@@ -61,46 +59,54 @@
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
         }
+
+        /* Clase para resaltar la opción seleccionada */
+        .payment-option.selected {
+            border: 2px solid #fbc02d !important;
+            background-color: #fff9e6 !important;
+        }
     </style>
 </head>
 <body class="form-page">
     <main class="main-content cart-main">
         <div class="background-overlay"></div>
 
-        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-width: 650px; margin: 40px auto;">
             <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 30px;">3. Seleccionar Método de Pago</h1>
             
             <div class="checkout-step-content">
                 <h2 style="font-size: 1.2rem; color: #5d4037; margin-bottom: 15px; border-bottom: 2px solid #fbc02d; padding-bottom: 5px;">Tus Opciones de Pago</h2>
                 
                 <div id="payment-options-list" style="display: flex; flex-direction: column; gap: 10px;">
-                    <label class="payment-option selected" style="background: white; border: 2px solid #fbc02d; border-radius: 8px; padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
-                        <input type="radio" name="payment_method" value="paypal" checked>
+                    <label class="payment-option selected" style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                        <input type="radio" name="payment_method" value="paypal" checked onchange="updatePaymentSelection(this)">
                         <i class="fab fa-paypal" style="color: #0070ba; font-size: 24px;"></i> 
-                        <span style="font-weight: bold; color: #5d4037;">PayPal</span> (usuario@ejemplo.com)
+                        <span style="font-weight: bold; color: #5d4037;">PayPal</span> 
+                        <span style="font-size: 0.9rem; color: #777;">(usuario@ejemplo.com)</span>
                     </label>
 
                     <label class="payment-option" style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
-                        <input type="radio" name="payment_method" value="card1">
+                        <input type="radio" name="payment_method" value="card1" onchange="updatePaymentSelection(this)">
                         <i class="fas fa-credit-card" style="color: #333; font-size: 24px;"></i> 
-                        <span style="font-weight: bold; color: #5d4037;">Tarjeta</span> •••• 1234
+                        <span style="font-weight: bold; color: #5d4037;">Tarjeta de Débito/Crédito</span> 
+                        <span style="font-size: 0.9rem; color: #777;">•••• 1234</span>
                     </label>
                 </div>
 
                 <div class="add-payment-actions" style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button class="btn-secondary btn-add-payment" style="flex: 1; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <button type="button" class="btn-secondary btn-add-payment" style="flex: 1; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">
                         <i class="fas fa-plus"></i> Añadir Tarjeta
                     </button>
-                    <button class="btn-secondary btn-add-payment" style="flex: 1; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                    <button type="button" class="btn-secondary btn-add-payment" style="flex: 1; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">
                         <i class="fab fa-paypal"></i> Añadir PayPal
                     </button>
                 </div>
                 
                 <div class="navigation-actions" style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
-                    <button class="btn-dark-action btn-prev-step" onclick="window.history.back()" style="background: #555; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                    <button type="button" class="btn-dark-action btn-prev-step" onclick="window.history.back()" style="background: #555; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                         ← Regresar
                     </button>
-                    <button class="btn-primary btn-next-step" onclick="window.location.href='Confirmar_Compra.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                    <button type="button" id="btn-finalizar-compra" class="btn-primary" style="background: #5d4037; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                         Revisar y Pagar →
                     </button>
                 </div>
@@ -108,11 +114,12 @@
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; background: rgba(44, 44, 44, 0.9); color: white; margin-top: auto;">
+    <footer class="site-footer" style="text-align: center; padding: 20px; background: rgba(44, 44, 44, 0.9); color: white; margin-top: 40px;">
         <div class="copyright">
             © Todos los derechos reservados 2026. La Lechuza Lectora ©
         </div>
     </footer>
+
     <script src="../../../Js/checkoutManager.js"></script>
 </body>
 </html>

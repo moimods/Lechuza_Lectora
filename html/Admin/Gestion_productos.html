@@ -18,73 +18,30 @@
             z-index: 5;
         }
 
-        
         @media (max-width: 600px) {
-            .form-container-admin {
-                width: 90%;
-                padding: 20px;
-                margin: 10px auto;
-            }
-            
-            
-            .responsive-grid {
-                grid-template-columns: 1fr !important;
-            }
+            .form-container-admin { width: 95%; padding: 20px; }
+            .responsive-grid { grid-template-columns: 1fr !important; }
         }
 
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 700;
-            color: #5d4037;
-            margin-bottom: 5px;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px; 
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-            box-sizing: border-box; 
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-weight: 700; color: #5d4037; margin-bottom: 5px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; box-sizing: border-box; 
         }
 
         .btn-save-product {
-            background-color: #5d4037;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 5px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.3s;
-            font-size: 1.1em;
+            background-color: #5d4037; color: white; border: none; padding: 15px;
+            border-radius: 5px; font-weight: 700; cursor: pointer; width: 100%;
+            transition: background 0.3s; font-size: 1.1em;
         }
+        .btn-save-product:hover { background-color: #4e342e; }
 
         .preview-box {
-            width: 120px;
-            height: 180px;
-            border: 2px dashed #ccc;
-            margin: 10px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #888;
-            border-radius: 5px;
-            overflow: hidden;
-            background: #fff;
+            width: 120px; height: 160px; border: 2px dashed #ccc; margin: 10px auto;
+            display: flex; align-items: center; justify-content: center;
+            color: #888; border-radius: 5px; background: #fff;
         }
-
-        .preview-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body class="dashboard-page">
@@ -97,21 +54,23 @@
         
         <nav class="nav-links">
             <button class="hamburger-btn" id="hamburger-btn">
-                <i class="fa-solid fa-bars"></i>
+        <div class="burger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
             </button>
             <div class="menu-items" id="menu-items">
                 <a href="panel_de_admin.html">Dashboard</a>
-                <a href="Gestion_Inventario.html">Inventario</a>
-                <a href="../../index.html">Cerrar Sesión</a>
+                <a href="Gestion_de_inventario.html">Inventario</a>
+                <a href="../../index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
             </div>
         </nav>
 
         <div class="auth-actions user-actions">
-            <a href="panel_de_admin.html" style="text-decoration: none; color: inherit;">
-                <i class="fa-solid fa-house"></i>
-            </a>
+            <a href="panel_de_admin.html"><i class="fa-solid fa-house"></i></a>
             <span class="admin-label">Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover; border-radius: 50%;">
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover; border-radius: 50%; width: 35px; height: 35px;">
         </div>
     </header>
 
@@ -120,19 +79,29 @@
 
         <div class="form-container-admin">
             <div class="inventory-header">
-                <i class="fa-solid fa-arrow-left" onclick="location.href='panel_de_admin.html'" style="cursor: pointer;"></i>
-                <h2 class="dashboard-title" style="font-size: 1.5rem;">Gestión de Libro</h2>
+                <i class="fa-solid fa-arrow-left" onclick="location.href='panel_de_admin.html'" style="cursor: pointer; margin-right: 10px;"></i>
+                <h2 class="dashboard-title">Registrar Nuevo Libro</h2>
             </div>
 
             <form id="productForm">
                 <div class="form-group">
-                    <label for="titulo">Título:</label>
-                    <input type="text" id="titulo" placeholder="Nombre del libro" required>
+                    <label for="nombre">Título del Libro:</label>
+                    <input type="text" id="nombre" placeholder="Ej: El Quijote" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="autor">Autor:</label>
-                    <input type="text" id="autor" placeholder="Nombre del autor" required>
+                    <label for="descripcion">Autor / Descripción:</label>
+                    <textarea id="descripcion" placeholder="Nombre del autor o breve reseña" rows="2" style="width: 100%; border-radius: 5px; border: 1px solid #ccc; padding: 10px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria">Categoría:</label>
+                    <select id="categoria">
+                        <option value="Terror">Terror</option>
+                        <option value="Fantasía">Fantasía</option>
+                        <option value="Clásicos">Clásicos</option>
+                        <option value="Novedades">Novedades</option>
+                    </select>
                 </div>
 
                 <div class="form-group responsive-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -141,30 +110,32 @@
                         <input type="number" id="precio" placeholder="0.00" step="0.01" required>
                     </div>
                     <div>
-                        <label for="stock">Stock:</label>
+                        <label for="stock">Stock inicial:</label>
                         <input type="number" id="stock" placeholder="Cantidad" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="imagen">Portada:</label>
-                    <input type="file" id="imagen" accept="image/*" onchange="previewImage(event)" style="padding: 5px;">
-                    <div class="preview-box" id="imagePreview">
-                        <span>Sin imagen</span>
-                    </div>
+                    <label>Portada (Opcional):</label>
+                    <input type="file" id="imagen" accept="image/*" onchange="previewImage(event)">
+                    <div class="preview-box" id="imagePreview"><span>Vista previa</span></div>
                 </div>
 
-                <button type="submit" class="btn-save-product">Guardar Producto</button>
+                <button type="submit" class="btn-save-product" id="btnGuardar">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar en Base de Datos
+                </button>
             </form>
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
-        © 2026 La Lechuza Lectora
-    </footer>
-
     <script>
-        // Previsualización de imagen
+        // 1. SEGURIDAD
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        if (!usuario || usuario.rol !== 'admin') {
+            window.location.href = '../Inicio_de_sesion/Inicio_sesion_admin.html';
+        }
+
+        // 2. VISTA PREVIA IMAGEN
         function previewImage(event) {
             const reader = new FileReader();
             reader.onload = function(){
@@ -174,7 +145,47 @@
             reader.readAsDataURL(event.target.files[0]);
         }
 
-        // Lógica del Menú Hamburguesa
+        // 3. GUARDAR PRODUCTO (CONEXIÓN REAL)
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btnGuardar');
+            btn.disabled = true;
+            btn.innerText = "Guardando...";
+
+            const nuevoProducto = {
+                nombre: document.getElementById('nombre').value,
+                descripcion: document.getElementById('descripcion').value,
+                precio: parseFloat(document.getElementById('precio').value),
+                stock: parseInt(document.getElementById('stock').value),
+                categoria: document.getElementById('categoria').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/productos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(nuevoProducto)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("¡Libro registrado correctamente en el sistema!");
+                    window.location.href = 'Gestion_de_inventario.html'; // Redirigir a la tabla
+                } else {
+                    alert("Error al guardar: " + data.error);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("No se pudo conectar con el servidor.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar en Base de Datos';
+            }
+        });
+
+        // Menú hamburguesa
         const btnHamburguesa = document.getElementById('hamburger-btn');
         const menuDesplegable = document.getElementById('menu-items');
         if (btnHamburguesa) {
@@ -183,12 +194,6 @@
                 menuDesplegable.classList.toggle('show-menu');
             });
         }
-
-        document.getElementById('productForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert("¡Producto guardado exitosamente!");
-            window.location.href = 'panel_de_admin.html';
-        });
     </script>
 </body>
 </html>

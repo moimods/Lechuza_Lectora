@@ -10,7 +10,7 @@
         /* Ajustes de responsividad para Recuperación */
         @media (max-width: 768px) {
             .form-card.recovery-card {
-                width: 95% !important; /* Aprovechamos el ancho máximo en móvil */
+                width: 95% !important;
                 padding: 25px 15px !important;
                 margin: 20px auto;
             }
@@ -21,19 +21,16 @@
             }
 
             .action-buttons-group {
-                display: flex;
-                flex-direction: column !important; /* Botones en vertical para mejor ergonomía táctil */
+                flex-direction: column !important;
                 gap: 12px;
             }
 
-            .btn-action {
-                width: 100% !important; /* Botones a lo ancho de la tarjeta */
+            .btn-dark-action {
+                width: 100% !important;
                 padding: 12px !important;
-                font-size: 1rem;
             }
         }
 
-        /* Fondo consistente con el resto del sitio logeado */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
@@ -45,6 +42,11 @@
             height: 100%;
             z-index: -1;
         }
+
+        /* Prevenir desbordamiento de inputs */
+        input {
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body class="form-page">
@@ -52,8 +54,8 @@
     <main class="main-content form-main">
         <div class="background-overlay"></div>
 
-        <div class="form-card recovery-card">
-            <h1 class="form-title" style="color: #5d4037; text-align: center; margin-bottom: 25px; font-weight: bold;">Recuperar Contraseña</h1>
+        <div class="form-card recovery-card" style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <h1 class="form-title" style="color: #5d4037; text-align: center; margin-bottom: 25px; font-weight: bold; font-size: 1.8rem;">Recuperar Contraseña</h1>
             
             <form class="recovery-form" id="recoveryForm">
                 <div class="input-group" style="margin-bottom: 15px;">
@@ -64,7 +66,7 @@
 
                 <div class="input-group" style="margin-bottom: 25px;">
                     <label for="codigo" style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Código de verificación:</label>
-                    <input type="text" id="codigo" placeholder="Introduce el código" 
+                    <input type="text" id="codigo" placeholder="Introduce el código (1234)" 
                            style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ccc;">
                 </div>
             </form>
@@ -97,6 +99,43 @@
         </div>
     </footer>
 
-    <script src="../../JS/Redireccionamiento_Recuperacion.js"></script>
+    <script>
+        // Acción para enviar el código (Simulación de Backend)
+        document.getElementById('btn-enviar-codigo').addEventListener('click', async () => {
+            const email = document.getElementById('correo').value;
+            if(!email) return alert("Por favor, ingresa tu correo para enviarte el código.");
+
+            try {
+                // Cambia esta URL por tu endpoint real si lo tienes implementado
+                const response = await fetch('http://localhost:3000/api/solicitar-recuperacion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                if (response.ok) {
+                    alert("Código de verificación enviado. Revisa tu bandeja de entrada (Prueba: 1234)");
+                } else {
+                    alert("Simulación: Si el correo existe, se enviará el código 1234.");
+                }
+            } catch (error) {
+                // Si el backend no está listo, permitimos la simulación para la escuela
+                alert("Simulación activa: Se ha enviado el código 1234 a su correo.");
+            }
+        });
+
+        // Acción para validar código y pasar al cambio de contraseña
+        document.getElementById('btn-siguiente').addEventListener('click', () => {
+            const codigo = document.getElementById('codigo').value;
+            if(!codigo) return alert("Por favor, ingresa el código que recibiste.");
+
+            if(codigo === "1234") { 
+                alert("Código verificado con éxito.");
+                window.location.href = 'Cambio_Contraseña.html';
+            } else {
+                alert("El código ingresado es incorrecto. Intenta con '1234'.");
+            }
+        });
+    </script>
 </body>
 </html>

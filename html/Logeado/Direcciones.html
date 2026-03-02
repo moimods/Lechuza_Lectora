@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <script src="../../JS/UserDropdown.js" defer></script>
     <style>
-        /* AJUSTES RESPONSIVOS CRÍTICOS */
         @media (max-width: 768px) {
             .profile-main-wrapper {
                 margin-top: 20px !important;
@@ -160,21 +159,31 @@
         </div>
     </footer>
 
-    <script>
-        function forceToggleMenu() {
-            const menu = document.getElementById('avatar-dropdown');
-            if (menu) {
-                const isHidden = window.getComputedStyle(menu).display === 'none';
-                menu.style.display = isHidden ? 'block' : 'none';
-            }
+    <script>async function cargarDirecciones() {
+    const idUsuario = localStorage.getItem('userId');
+    const contenedor = document.getElementById('lista-direcciones'); // Asegúrate de tener este ID en tu HTML
+
+    try {
+        const respuesta = await fetch(`/api/direcciones/usuario/${idUsuario}`);
+        const direcciones = await respuesta.json();
+
+        if (direcciones.length === 0) {
+            contenedor.innerHTML = "<p>No tienes direcciones guardadas.</p>";
+            return;
         }
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('avatar-dropdown');
-            const btn = document.getElementById('avatar-btn');
-            if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
-                menu.style.display = 'none';
-            }
-        });
+
+        contenedor.innerHTML = direcciones.map(dir => `
+            <div class="card-direccion">
+                <p><strong>${dir.tipo_domicilio}</strong></p>
+                <p>${dir.direccion_texto}, Col. ${dir.colonia}</p>
+                <p>${dir.municipio_alcaldia}, ${dir.estado} - CP: ${dir.cp}</p>
+                <button onclick="eliminarDireccion(${dir.id_direccion})">Eliminar</button>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error("Error al cargar direcciones");
+    }
+}
     </script>
 </body>
 </html>

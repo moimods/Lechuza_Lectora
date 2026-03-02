@@ -1,144 +1,221 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // --- CONFIGURACIÓN Y CLAVES ---
     const STORAGE_KEY_CHECKOUT = 'laLechuzaCheckoutData';
-    const CART_PAGE_URL = '../carrito.html'; 
+    const CART_STORAGE_KEY = 'laLechuzaLectoraCart'; 
     const INDEX_PAGE_URL = '../../../index.html';
+    const API_BASE_URL = 'http://localhost:3000/api'; 
 
     const STEP_PAGES = {
         resumen_compra: 'resumen_compra.html',
-        direccion: 'domicilio.html',
+        domicilio: 'domicilio.html',
         pago: 'pago.html',
-        finalizar: 'finalizar.html'
+        finalizar: 'finalizar.html',
+        carrito: '../carrito.html'
     };
 
+    // Estado inicial de la compra
     let checkoutData = {
-        selectedAddress: 'address1',
+        selectedAddress: null,
         selectedPayment: 'paypal',
-        isCartEmpty: true,
-        totals: {
-            itemCount: 0,
-            subtotal: 0.00,
-            shipping: 'Gratis',
-            total: 0.00
-        }
+        totals: { itemCount: 0, total: 0 }
     };
 
-    if (typeof loadCart !== 'function' || typeof calculateTotals !== 'function') {
-        console.error("ERROR: checkoutManager requiere loadCart y calculateTotals de cartManager.js.");
-        return;
+    // --- 1. CARGA DE DATOS Y PERSISTENCIA ---
+    async function loadAllData() {
+        // 1.1 Cargar carrito y calcular totales
+        const cartItems = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
+        const total = cartItems.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+        
+        checkoutData.totals = {
+            itemCount: cartItems.length,
+            total: total
+        };
+
+        // 1.2 Cargar selecciones previas del proceso de compra
+        const stored = localStorage.getItem(STORAGE_KEY_CHECKOUT);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            checkoutData.selectedAddress = parsed.selectedAddress || null;
+            checkoutData.selectedPayment = parsed.selectedPayment || 'paypal';
+        }
+
+        // 1.3 Si estamos en la página de domicilio, cargar direcciones de la BD
+        if (window.location.pathname.includes('domicilio.html')) {
+            await fetchUserAddresses();
+        }
+
+        // 1.4 Si estamos en la página de pago, marcar la opción guardada
+        if (window.location.pathname.includes('pago.html')) {
+            syncPaymentUI();
+        }
     }
 
-    function saveCheckoutData() {
+    async function fetchUserAddresses() {
+        const idUsuario = localStorage.getItem('userId');
+        const container = document.getElementById('addresses-list-container');
+        if (!container || !idUsuario) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/direcciones/usuario/${idUsuario}`);
+            const direcciones = await response.json();
+
+            if (direcciones.length === 0) {
+                container.innerHTML = '<p style="text-align:center;">No tienes direcciones guardadas. <br><a href="Agregar_domicilio.html" class="btn-link">Agrega una aquí</a>.</p>';
+                return;
+            }
+
+            container.innerHTML = direcciones.map(dir => `
+                <div class="address-option ${checkoutData.selectedAddress == dir.id_direccion ? 'selected' : ''}" 
+                     style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s;"
+                     onclick="window.selectAddress(${dir.id_direccion})">
+                    <input type="radio" name="delivery_address" value="${dir.id_direccion}" 
+                           ${checkoutData.selectedAddress == dir.id_direccion ? 'checked' : ''} 
+                           style="margin-right: 10px;">
+                    <span class="address-text">
+                        <strong>${dir.tipo_domicilio || 'Domicilio'}</strong>: ${dir.direccion_texto}, ${dir.colonia || ''}
+                    </span>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error("Error al cargar direcciones:", error);
+            container.innerHTML = '<p>Error al conectar con el servidor.</p>';
+        }
+    }
+
+    // Funciones globales para interacción con el HTML
+    window.selectAddress = (id) => {
+        checkoutData.selectedAddress = id;
+        saveSelections();
+        // Actualización visual inmediata
+        document.querySelectorAll('.address-option').forEach(opt => opt.classList.remove('selected'));
+        const selectedOpt = document.querySelector(`input[value="${id}"]`)?.closest('.address-option');
+        if (selectedOpt) selectedOpt.classList.add('selected');
+    };
+
+    window.updatePaymentSelection = (input) => {
+        checkoutData.selectedPayment = input.value;
+        saveSelections();
+        syncPaymentUI();
+    };
+
+    function syncPaymentUI() {
+        document.querySelectorAll('.payment-option').forEach(label => {
+            label.style.border = "1px solid #ddd";
+            label.classList.remove('selected');
+        });
+        const selectedInput = document.querySelector(`input[name="payment_method"][value="${checkoutData.selectedPayment}"]`);
+        if (selectedInput) {
+            const parent = selectedInput.closest('.payment-option');
+            parent.style.border = "2px solid #fbc02d";
+            parent.classList.add('selected');
+            selectedInput.checked = true;
+        }
+    }
+
+    function saveSelections() {
         localStorage.setItem(STORAGE_KEY_CHECKOUT, JSON.stringify(checkoutData));
     }
 
-    function loadCheckoutData() {
-
-        loadCart();
-        checkoutData.totals = calculateTotals();
-        checkoutData.isCartEmpty = checkoutData.totals.itemCount === 0;
-
-        const storedData = localStorage.getItem(STORAGE_KEY_CHECKOUT);
-        if (storedData) {
-            const parsedData = JSON.parse(storedData);
-            checkoutData.selectedAddress = parsedData.selectedAddress || checkoutData.selectedAddress;
-            checkoutData.selectedPayment = parsedData.selectedPayment || checkoutData.selectedPayment;
-        }
-    }
-    /**
-     * Navega a la siguiente página del checkout (o a la anterior).
-     * @param {string} stepKey Clave de la página de destino (resumen_compra, domicilio, etc.).
-     * @param {boolean} useReplace Usar window.location.replace() para romper el historial.
-     */
-    function navigateToStep(stepKey, useReplace = false) {
-        if (!STEP_PAGES[stepKey]) {
-            console.error(`Paso de checkout desconocido: ${stepKey}`);
+    // --- 2. NAVEGACIÓN ENTRE PASOS ---
+    function handleNavigation(btn, isNext) {
+        const stepKey = btn.getAttribute(isNext ? 'data-next-step' : 'data-prev-step');
+        
+        // Validación: No avanzar a pago sin dirección
+        if (isNext && stepKey === 'pago' && !checkoutData.selectedAddress) {
+            alert("Por favor, selecciona una dirección de envío antes de continuar.");
             return;
         }
 
-        const url = STEP_PAGES[stepKey];
-
-        if (useReplace) {
-            window.location.replace(url);
-        } else {
-            window.location.href = url;
+        if (STEP_PAGES[stepKey]) {
+            window.location.href = STEP_PAGES[stepKey];
         }
     }
 
-    function finalizePurchase(event) {
-        event.preventDefault();
+    // --- 3. PROCESAMIENTO FINAL (SIMULACIÓN DE PAGO Y GUARDADO EN BD) ---
+    async function finalizePurchase() {
+        const finalizeBtn = document.getElementById('btn-finalizar-compra');
+        const idUsuario = localStorage.getItem('userId');
+        const cartItems = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
 
-        localStorage.removeItem(STORAGE_KEY); 
+        // Validaciones de seguridad
+        if (!idUsuario) return alert("Debes iniciar sesión para comprar.");
+        if (cartItems.length === 0) return alert("El carrito está vacío.");
+        if (!checkoutData.selectedAddress) return alert("Falta seleccionar la dirección de envío.");
 
-        localStorage.removeItem(STORAGE_KEY_CHECKOUT); 
-
-        const modal = document.getElementById('compra-success-modal');
-        if (modal) {
-            modal.style.display = 'flex';
+        // Bloqueo visual del botón (UX de carga)
+        if (finalizeBtn) {
+            finalizeBtn.disabled = true;
+            finalizeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando Pago...';
         }
+
+        // Simulamos un retraso de red de 1.5 segundos para la tarea
+        setTimeout(async () => {
+            const payload = {
+                id_usuario: parseInt(idUsuario),
+                id_direccion: parseInt(checkoutData.selectedAddress),
+                total: checkoutData.totals.total,
+                metodo_pago: checkoutData.selectedPayment,
+                productos: cartItems.map(item => ({
+                    id_libro: item.id_libro,
+                    cantidad: item.cantidad,
+                    precio: item.precio
+                }))
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/pedidos/crear`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // LIMPIEZA TRAS ÉXITO
+                    localStorage.removeItem(CART_STORAGE_KEY);
+                    localStorage.removeItem(STORAGE_KEY_CHECKOUT);
+                    
+                    window.location.href = STEP_PAGES.finalizar;
+                } else {
+                    alert("Hubo un problema al registrar tu pedido: " + (result.error || "Desconocido"));
+                    if (finalizeBtn) {
+                        finalizeBtn.disabled = false;
+                        finalizeBtn.textContent = 'Reintentar Compra';
+                    }
+                }
+            } catch (error) {
+                console.error("Error de servidor:", error);
+                alert("No se pudo conectar con el servidor para registrar el pedido.");
+                if (finalizeBtn) finalizeBtn.disabled = false;
+            }
+        }, 1500);
     }
+    
+    // --- 4. INICIALIZACIÓN ---
+    async function init() {
+        await loadAllData();
 
-    function attachCheckoutListeners() {
+        // Si el carrito está vacío y no estamos en la página de éxito, regresar al carrito
+        if (checkoutData.totals.itemCount === 0 && !window.location.pathname.includes('finalizar.html')) {
+            window.location.replace(STEP_PAGES.carrito);
+            return;
+        }
 
+        // Eventos para botones de Siguiente / Anterior
         document.querySelectorAll('.btn-next-step').forEach(btn => {
-            btn.onclick = () => navigateToStep(btn.getAttribute('data-next-step'));
+            btn.onclick = () => handleNavigation(btn, true);
         });
 
         document.querySelectorAll('.btn-prev-step').forEach(btn => {
-            btn.onclick = () => navigateToStep(btn.getAttribute('data-prev-step'));
+            btn.onclick = () => handleNavigation(btn, false);
         });
 
-        const cancelBtn = document.querySelector('.btn-cancel-checkout');
-        if (cancelBtn) {
-
-            cancelBtn.onclick = () => window.location.replace(INDEX_PAGE_URL);
-        }
-
+        // Evento para el botón final de pago
         const finalizeBtn = document.getElementById('btn-finalizar-compra');
-        if (finalizeBtn) {
-            finalizeBtn.onclick = finalizePurchase;
-        }
-
-        const modalAcceptBtn = document.getElementById('btn-modal-compra-accept');
-        if (modalAcceptBtn) {
-            modalAcceptBtn.onclick = () => window.location.replace('../pagina_principal.html');
-        }
-
-        document.querySelectorAll('input[name="delivery_address"]').forEach(input => {
-            input.onchange = () => {
-                checkoutData.selectedAddress = input.value;
-                saveCheckoutData();
-
-                document.querySelectorAll('.address-option').forEach(label => label.classList.remove('selected'));
-                input.closest('.address-option').classList.add('selected');
-            };
-        });
-
-        document.querySelectorAll('input[name="payment_method"]').forEach(input => {
-            input.onchange = () => {
-                checkoutData.selectedPayment = input.value;
-                saveCheckoutData();
-
-                document.querySelectorAll('.payment-option').forEach(label => label.classList.remove('selected'));
-                input.closest('.payment-option').classList.add('selected');
-            };
-        });
+        if (finalizeBtn) finalizeBtn.onclick = finalizePurchase;
     }
 
-
-    function init() {
-        loadCheckoutData();
-
-        if (checkoutData.isCartEmpty && !window.location.pathname.includes(CART_PAGE_URL)) {
-
-             alert("Tu carrito está vacío. Redirigiendo a la página del carrito.");
-             window.location.replace(CART_PAGE_URL); 
-             return;
-        }
-
-        attachCheckoutListeners();
-
-    }
-    
     init();
 });

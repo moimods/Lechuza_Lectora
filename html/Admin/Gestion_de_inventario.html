@@ -17,14 +17,17 @@
         
         <nav class="nav-links">
             <button class="hamburger-btn" id="hamburger-btn">
-                <i class="fa-solid fa-bars"></i>
+        <div class="burger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
             </button>
-
             <div class="menu-items" id="menu-items">
                 <a href="panel_de_admin.html">Panel Principal</a>
-                <a href="recibir_inventario.html">Recibir Stock</a>
-                <a href="reportes.html">Reportes</a>
-                <a href="../../index.html">Cerrar Sesión</a>
+                <a href="Gestion_productos.html">Agregar Producto</a>
+                <a href="Reporte_de_ventas.html">Reportes</a>
+                <a href="../../index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
             </div>
         </nav>
 
@@ -33,7 +36,7 @@
                 <i class="fa-solid fa-house"></i>
             </a>
             <span class="admin-label">Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover; border-radius: 50%;">
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover; border-radius: 50%; width: 40px; height: 40px;">
         </div>
     </header>
 
@@ -42,68 +45,35 @@
 
         <div class="inventory-container">
             <div class="inventory-header">
-                <i class="fa-solid fa-arrow-left" onclick="location.href='panel_de_admin.html'" style="cursor: pointer;"></i>
-                <h1 class="dashboard-title">Gestión de Inventario</h1>
+                <i class="fa-solid fa-arrow-left" onclick="location.href='panel_de_admin.html'" style="cursor: pointer; color: white; font-size: 1.5rem; margin-right: 15px;"></i>
+                <h1 class="dashboard-title">Control de Existencias</h1>
             </div>
 
-            <div class="inventory-table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+            <div class="inventory-table-wrapper" style="overflow-x: auto; background: white; border-radius: 8px;">
                 <table class="inventory-table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" aria-label="Seleccionar todos"></th>
-                            <th>Fecha</th>
-                            <th>Almacen</th>
-                            <th>Aparador</th>
-                            <th>Compra</th>
-                            <th>Venta</th>
-                            <th>Status</th>
+                            <th>ID</th>
+                            <th>Libro / Producto</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Precio</th>
+                            <th>Estado</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tabla-inventario">
                         <tr>
-                            <td><input type="checkbox"></td>
-                            <td>15/02/2026</td>
-                            <td>Pasillo A - E4</td>
-                            <td>Terror</td>
-                            <td>$150.00</td>
-                            <td>$399.00</td>
-                            <td><span class="status-tag available">Disponible</span></td>
-                            <td><button class="btn-edit">Editar</button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>16/02/2026</td>
-                            <td>Pasillo C - E2</td>
-                            <td>Novedades</td>
-                            <td>$210.00</td>
-                            <td>$456.00</td>
-                            <td><span class="status-tag sold-out">Agotado</span></td>
-                            <td><button class="btn-edit">Editar</button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>17/02/2026</td>
-                            <td>Pasillo B - E1</td>
-                            <td>Clásicos</td>
-                            <td>$300.00</td>
-                            <td>$764.00</td>
-                            <td><span class="status-tag available">Disponible</span></td>
-                            <td><button class="btn-edit">Editar</button></td>
+                            <td colspan="7" style="text-align: center; padding: 20px;">Cargando inventario...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="inventory-footer">
-                <div class="pagination-nav">
-                    <span>←</span>
-                    <div class="pagination">
-                        <span>1</span><span>2</span><span>3</span>
-                    </div>
-                    <span>→</span>
-                </div>
-                <button class="btn-print">Imprimir</button>
+                <button class="btn-print" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> Generar Reporte PDF
+                </button>
             </div>
         </div>
     </main>
@@ -113,6 +83,14 @@
     </footer>
 
     <script>
+        // 1. SEGURIDAD: Verificar si es Admin
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        if (!usuario || usuario.rol !== 'admin') {
+            alert("Acceso denegado.");
+            window.location.href = '../Inicio_de_sesion/Inicio_sesion_admin.html';
+        }
+
+        // 2. Lógica del Menú Hamburguesa
         const btnHamburguesa = document.getElementById('hamburger-btn');
         const menuDesplegable = document.getElementById('menu-items');
 
@@ -123,12 +101,48 @@
             });
         }
 
-        document.addEventListener('click', () => {
-            if (menuDesplegable && menuDesplegable.classList.contains('show-menu')) {
-                menuDesplegable.classList.remove('show-menu');
-            }
-        });
-    </script>
+        // 3. CARGAR DATOS REALES DESDE EL SERVIDOR
+        async function cargarInventario() {
+            try {
+                const response = await fetch('http://localhost:3000/api/productos');
+                const productos = await response.json();
+                
+                const tablaBody = document.getElementById('tabla-inventario');
+                tablaBody.innerHTML = ''; 
 
+                if (productos.length === 0) {
+                    tablaBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay productos registrados</td></tr>';
+                    return;
+                }
+
+                productos.forEach(prod => {
+                    const stockVal = parseInt(prod.stock);
+                    const claseEstado = stockVal > 5 ? 'available' : (stockVal > 0 ? 'low-stock' : 'sold-out');
+                    const textoEstado = stockVal > 5 ? 'Disponible' : (stockVal > 0 ? 'Pocas unidades' : 'Agotado');
+                    
+                    tablaBody.innerHTML += `
+                        <tr>
+                            <td>#${prod.id_producto}</td>
+                            <td style="font-weight: bold;">${prod.nombre}</td>
+                            <td>${prod.categoria || 'Sin categoría'}</td>
+                            <td>${prod.stock} unidades</td>
+                            <td>$${prod.precio}</td>
+                            <td><span class="status-tag ${claseEstado}">${textoEstado}</span></td>
+                            <td>
+                                <button class="btn-edit" onclick="location.href='Gestion_productos.html?id=${prod.id_producto}'">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('tabla-inventario').innerHTML = '<tr><td colspan="7" style="color:red; text-align:center;">Error al conectar con el servidor</td></tr>';
+            }
+        }
+
+        window.onload = cargarInventario;
+    </script>
 </body>
 </html>

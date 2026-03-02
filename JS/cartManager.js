@@ -106,26 +106,45 @@ function generateCartItemHTML(item) {
     `;
 }
 
+// ... (tus funciones saveCart, loadCart, calculateTotals se mantienen igual)
+
 function renderCart() {
     const container = document.getElementById('cart-items-container');
+    const emptyMessage = document.getElementById('empty-cart-message');
+    const totalDisplay = document.getElementById('total-display'); // El ID que tienes en el HTML
     const totals = calculateTotals();
+
     if (!container) return;
 
     if (cartItems.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding:20px;">Tu carrito está vacío.</p>';
-        document.getElementById('empty-cart-message').style.display = 'block';
+        container.innerHTML = '';
+        if (emptyMessage) emptyMessage.style.display = 'block';
+        if (totalDisplay) totalDisplay.textContent = '$0.00';
     } else {
-        document.getElementById('empty-cart-message').style.display = 'none';
+        if (emptyMessage) emptyMessage.style.display = 'none';
         container.innerHTML = cartItems.map(generateCartItemHTML).join('');
+        
+        // Actualizamos el total en el resumen negro de la derecha
+        if (totalDisplay) totalDisplay.textContent = `$${totals.total}`;
     }
-
-    const totalItemsDisplay = document.getElementById('total-items-display');
-    if (totalItemsDisplay) totalItemsDisplay.textContent = totals.itemCount;
-    const subtotalDisplay = document.getElementById('subtotal-display');
-    if (subtotalDisplay) subtotalDisplay.textContent = `$${totals.subtotal}`;
-    const totalDisplay = document.getElementById('total-display');
-    if (totalDisplay) totalDisplay.textContent = `$${totals.total}`;
 }
+
+// Asegúrate de que esta función se llame al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    loadCart();
+    updateCartCount();
+    
+    // Si estamos en la página del carrito, renderizamos
+    if (document.getElementById('cart-items-container')) {
+        renderCart();
+    }
+    
+    // Vincular el botón del icono del carrito
+    const cartBtn = document.getElementById('cart-icon-btn');
+    if (cartBtn) {
+        cartBtn.onclick = () => window.location.href = 'carrito.html';
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();

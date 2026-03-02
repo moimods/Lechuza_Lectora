@@ -17,7 +17,11 @@
         
         <nav class="nav-links">
             <button class="hamburger-btn" id="hamburger-btn">
-                <i class="fa-solid fa-bars"></i>
+                <div class="burger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </button>
 
             <div class="menu-items" id="menu-items">
@@ -53,18 +57,18 @@
                 <div class="info-card stock-card">
                     <h2>Stock Disponible</h2>
                     <table class="data-table">
-                        <tr><th>Contreo Total</th><td>2203</td></tr>
-                        <tr><th>Disponible</th><td>2131 (99.5%)</td></tr>
-                        <tr><th>No disponible</th><td>12 (0.5%)</td></tr>
+                        <tr><th>Conteo Total</th><td>Cargando...</td></tr>
+                        <tr><th>Disponible</th><td>-</td></tr>
+                        <tr><th>No disponible</th><td>-</td></tr>
                     </table>
                 </div>
 
                 <div class="info-card restock-card">
                     <h2>Reabastecimiento</h2>
                     <table class="data-table">
-                        <tr><th>Líneas de Producto</th><td>19</td></tr>
-                        <tr><th>No Stock</th><td>0</td></tr>
-                        <tr><th>Low Stock</th><td>4</td></tr>
+                        <tr><th>Líneas de Producto</th><td>-</td></tr>
+                        <tr><th>No Stock</th><td>-</td></tr>
+                        <tr><th>Low Stock</th><td>Cargando...</td></tr>
                     </table>
                 </div>
                 
@@ -76,11 +80,7 @@
                                 <tr><th>ID Libro</th><th>Editorial</th><th>En stock</th><th>Reordenar</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>LB5784</td><td>Gandhi</td><td>15</td><td>50</td></tr>
-                                <tr><td>LB4745</td><td>Gandhi</td><td>10</td><td>50</td></tr>
-                                <tr><td>LB7245</td><td>Gandhi</td><td>20</td><td>30</td></tr>
-                                <tr><td>LBB945</td><td>Gandhi</td><td>0</td><td>50</td></tr>
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -95,6 +95,7 @@
     </footer>
 
     <script>
+        // --- LÓGICA DEL MENÚ HAMBURGUESA ---
         const btnHamburguesa = document.getElementById('hamburger-btn');
         const menuDesplegable = document.getElementById('menu-items');
 
@@ -102,15 +103,68 @@
             btnHamburguesa.addEventListener('click', (e) => {
                 e.stopPropagation();
                 menuDesplegable.classList.toggle('show-menu');
+                btnHamburguesa.classList.toggle('open');
             });
         }
 
         document.addEventListener('click', () => {
             if (menuDesplegable && menuDesplegable.classList.contains('show-menu')) {
                 menuDesplegable.classList.remove('show-menu');
+                btnHamburguesa.classList.remove('open');
             }
         });
-    </script>
 
+        // --- LÓGICA DE LA API (DATOS DINÁMICOS) ---
+        async function cargarEstadisticas() {
+            try {
+                const respuesta = await fetch('/api/admin/stats');
+                const datos = await respuesta.json();
+
+                if (datos) {
+                    const celdasStock = document.querySelectorAll('.stock-card .data-table td');
+                    celdasStock[0].textContent = datos.librosRegistrados; 
+                    
+                    const celdasRestock = document.querySelectorAll('.restock-card .data-table td');
+                    celdasRestock[2].textContent = datos.alertasStock; 
+                }
+            } catch (error) {
+                console.error("Error al conectar con la API:", error);
+            }
+        }
+
+        async function cargarProductosRecientes() {
+            try {
+                const respuesta = await fetch('/api/productos');
+                const productos = await respuesta.json();
+                const tablaAlertas = document.querySelector('.alerts-table tbody');
+                
+                if(!tablaAlertas) return;
+                
+                tablaAlertas.innerHTML = ''; 
+                const productosBajos = productos.filter(p => p.stock < 10);
+
+                productosBajos.forEach(prod => {
+                    const fila = `
+                        <tr>
+                            <td>${prod.id_producto}</td>
+                            <td>${prod.categoria || 'General'}</td>
+                            <td style="color: ${prod.stock === 0 ? '#ff4d4d' : '#ffa500'}; font-weight: bold;">
+                                ${prod.stock}
+                            </td>
+                            <td>50</td> 
+                        </tr>
+                    `;
+                    tablaAlertas.innerHTML += fila;
+                });
+            } catch (error) {
+                console.error("Error al cargar productos:", error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarEstadisticas();
+            cargarProductosRecientes();
+        });
+    </script>
 </body>
 </html>

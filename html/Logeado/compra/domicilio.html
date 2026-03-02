@@ -7,49 +7,17 @@
 
     <link rel="stylesheet" href="../../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
     <script src="../../../JS/checkoutManager.js" defer></script>
-    <script src="../../../JS/chechoutNavigation.js" defer></script>
     
     <style>
-        /* Estilos específicos para mejorar la experiencia móvil */
         @media (max-width: 768px) {
-            .checkout-container {
-                width: 95% !important;
-                padding: 20px 15px !important;
-                margin: 20px auto !important;
-            }
-
-            .checkout-title {
-                font-size: 1.5rem !important;
-            }
-
-            /* Hacemos que las opciones de dirección sean más fáciles de tocar */
-            .address-option {
-                padding: 20px !important;
-                margin-bottom: 15px !important;
-                flex-direction: row;
-                align-items: flex-start;
-            }
-
-            .address-option input[type="radio"] {
-                margin-top: 5px;
-                transform: scale(1.3); /* Radio button más grande para móviles */
-            }
-
-            /* Navegación vertical para evitar botones comprimidos */
-            .navigation-actions {
-                flex-direction: column !important;
-                gap: 12px !important;
-            }
-
-            .btn-next-step, .btn-prev-step, .btn-add-address {
-                width: 100% !important;
-                padding: 12px !important;
-                font-size: 1rem !important;
-            }
+            .checkout-container { width: 95% !important; padding: 20px 15px !important; margin: 20px auto !important; }
+            .address-option { padding: 20px !important; display: flex; align-items: center; gap: 10px; }
+            .navigation-actions { flex-direction: column !important; gap: 12px !important; }
+            .btn-next-step, .btn-prev-step, .btn-add-address { width: 100% !important; }
         }
 
-        /* Fondo de marca consistente */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('../../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
@@ -58,6 +26,12 @@
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
         }
+
+        /* Estilo para la opción seleccionada */
+        .address-option.selected {
+            border: 2px solid #fbc02d !important;
+            background-color: #fffefb !important;
+        }
     </style>
 </head>
 <body class="form-page">
@@ -65,36 +39,22 @@
     <main class="main-content cart-main">
         <div class="background-overlay"></div>
 
-        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-width: 800px; margin: 40px auto;">
             <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 30px;">2. Seleccionar Domicilio</h1>
             
             <div class="checkout-step-content">
                 <h2 style="font-size: 1.2rem; color: #5d4037; margin-bottom: 15px; border-bottom: 2px solid #fbc02d; padding-bottom: 5px;">Direcciones Guardadas</h2>
                 
-                <div id="address-list-container" class="address-list" style="display: flex; flex-direction: column; gap: 15px;">
-                    <label class="address-option selected" style="background: white; border: 2px solid #fbc02d; border-radius: 8px; padding: 15px; cursor: pointer; display: flex; gap: 15px;">
-                        <input type="radio" name="delivery_address" value="address1" checked>
-                        <span class="address-text">
-                            <strong style="color: #5d4037;">Casa (Principal)</strong><br>
-                            Av. Los Pinos #123, Col. Centro, CDMX, 01000.
-                        </span>
-                    </label>
-
-                    <label class="address-option" style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; cursor: pointer; display: flex; gap: 15px;">
-                        <input type="radio" name="delivery_address" value="address2">
-                        <span class="address-text">
-                            <strong style="color: #5d4037;">Oficina</strong><br>
-                            Calle Falsa #456, Col. Sur, CDMX, 02000.
-                        </span>
-                    </label>
+                <div id="addresses-list-container" class="address-list" style="display: flex; flex-direction: column; gap: 15px;">
+                    <p style="text-align: center; color: #666;">Cargando tus direcciones...</p>
                 </div>
 
-                <button class="btn-secondary btn-add-address" id="btn-add-address" style="margin-top: 20px; width: auto; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                <button class="btn-secondary btn-add-address" onclick="window.location.href='Agregar_domicilio.html'" style="margin-top: 20px; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                     <i class="fas fa-plus-circle"></i> Agregar Nuevo Domicilio
                 </button>
                 
                 <div class="navigation-actions" style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
-                    <button class="btn-dark-action btn-prev-step" data-prev-step="resumen_compra" onclick="window.history.back()" style="background: #555; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                    <button class="btn-dark-action btn-prev-step" data-prev-step="resumen_compra" style="background: #555; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                         ← Regresar
                     </button>
 
@@ -106,23 +66,9 @@
         </div>
     </main>
     
-    <footer class="site-footer" style="text-align: center; padding: 20px; background: rgba(44, 44, 44, 0.9); color: white; margin-top: auto;">
-        <div class="social-links" style="margin-bottom: 10px;">
-            <a href="#" style="color: white; margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#" style="color: white; margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" style="color: white; margin: 0 10px; font-size: 1.2rem;"><i class="fa-brands fa-youtube"></i></a>
-        </div>
-        <div class="copyright">
-            © Todos los derechos reservados 2026. La Lechuza Lectora ©
-        </div>
+    <footer class="site-footer" style="text-align: center; padding: 20px; background: rgba(44, 44, 44, 0.9); color: white;">
+        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
-    <div id="custom-success-modal" class="modal-backdrop" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="modal-content" style="background: white; padding: 30px; border-radius: 10px; text-align: center; max-width: 400px; width: 90%;">
-            <h2 id="custom-modal-title" style="color: #5d4037;"></h2>
-            <p id="custom-modal-message" style="margin: 15px 0;"></p>
-            <button id="btn-modal-accept-success" style="background: #5d4037; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Aceptar</button>
-        </div>
-    </div>
 </body>
 </html>

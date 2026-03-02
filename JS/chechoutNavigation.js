@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+/*document.addEventListener('DOMContentLoaded', () => {
 
     const BASE_PAGES = {
         CARRITO: '../carrito.html',
@@ -66,3 +66,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setupNavigationListeners();
     setupDomicilioActions();
 });
+*/

@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        
         .key-metrics-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -23,19 +22,9 @@
         }
 
         @media (max-width: 768px) {
-            .key-metrics-grid {
-                grid-template-columns: 1fr; 
-            }
-            .charts-and-table-grid {
-                grid-template-columns: 1fr; 
-            }
-            .data-table-card {
-                grid-column: span 1 !important;
-            }
-            
-            .table-responsive {
-                overflow-x: auto;
-            }
+            .key-metrics-grid { grid-template-columns: 1fr; }
+            .charts-and-table-grid { grid-template-columns: 1fr; }
+            .data-table-card { grid-column: span 1 !important; }
         }
 
         .metric-card {
@@ -65,10 +54,7 @@
             text-align: center;
         }
 
-        .chart-container {
-            height: 300px;
-            width: 100%;
-        }
+        .chart-container { height: 300px; width: 100%; }
 
         .chart-card {
             background: white;
@@ -82,13 +68,19 @@
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
         <nav class="nav-links">
             <button class="hamburger-btn" id="hamburger-btn">
-                <i class="fa-solid fa-bars"></i>
+        <div class="burger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+            </button>
+            <i class="fa-solid fa-bars"></i>
             </button>
             <div class="menu-items" id="menu-items">
                 <a href="panel_de_admin.html">Dashboard</a>
@@ -109,67 +101,56 @@
         <div class="background-overlay dashboard-bg" style="filter: brightness(0.6);"></div>
         
         <div class="report-container large-report">
-            <h1 class="report-title" style="text-align: center; color: #5d4037; margin-bottom: 25px;">Reporte de Compras</h1>
+            <h1 class="report-title" style="text-align: center; color: #5d4037; margin-bottom: 25px;">Reporte de Inversión y Compras</h1>
 
             <div class="key-metrics-grid">
                 <div class="metric-card">
                     <i class="fa-solid fa-sack-dollar" style="color: #daa520;"></i>
-                    <p>Ventas totales</p>
-                    <strong>$1,250,000</strong>
+                    <p>Inversión Total</p>
+                    <strong id="total-inversion">$0</strong>
                 </div>
                 <div class="metric-card">
-                    <i class="fa-solid fa-chart-line" style="color: #388e3c;"></i>
-                    <p>CRECIMIENTO</p>
-                    <strong>+18%</strong>
+                    <i class="fa-solid fa-book" style="color: #388e3c;"></i>
+                    <p>Libros Adquiridos</p>
+                    <strong id="total-libros">0</strong>
                 </div>
                 <div class="metric-card">
-                    <i class="fa-solid fa-calendar-alt" style="color: #2196f3;"></i>
-                    <p>MAYOR VENTA</p>
-                    <strong>Feb ($85,000)</strong>
+                    <i class="fa-solid fa-calendar-check" style="color: #2196f3;"></i>
+                    <p>Mes Mayor Gasto</p>
+                    <strong id="mes-pico">-</strong>
                 </div>
             </div>
 
             <div class="charts-and-table-grid">
                 <div class="chart-card">
-                    <h2>Ventas por Mes</h2>
+                    <h2>Inversión por Mes</h2>
                     <div class="chart-container">
                         <canvas id="ventasMesChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-card">
-                    <h2>Crecimiento Mensual</h2>
+                    <h2>Nuevas Adquisiciones (Stock)</h2>
                     <div class="chart-container">
                         <canvas id="crecimientoChart"></canvas>
                     </div>
                 </div>
                 
-                <div class="data-table-card distribution-table" style="grid-column: span 2; background: white; padding: 20px; border-radius: 10px;">
-                    <h2>Distribución por Trimestre</h2>
+                <div class="data-table-card" style="grid-column: span 2; background: white; padding: 20px; border-radius: 10px;">
+                    <h2>Desglose Detallado de Adquisiciones</h2>
                     <div class="table-responsive">
                         <table class="report-data-table">
                             <thead>
                                 <tr style="background-color: #5d4037; color: white;">
                                     <th>MES</th>
-                                    <th>PROYECTADAS</th>
-                                    <th>REALES</th>
-                                    <th>CRECIMIENTO</th>
+                                    <th>PRESUPUESTO</th>
+                                    <th>INVERSIÓN REAL</th>
+                                    <th>LIBROS NUEVOS</th>
+                                    <th>ESTADO</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Enero</td>
-                                    <td>$90,000</td>
-                                    <td>$95,000</td>
-                                    <td><span style="color: green;">▲+10%</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Febrero</td>
-                                    <td>$102,000</td>
-                                    <td>$85,000</td>
-                                    <td><span style="color: red;">▼-5%</span></td>
-                                </tr>
-                            </tbody>
+                            <tbody id="tabla-compras">
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -177,52 +158,93 @@
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
-        © 2026 La Lechuza Lectora
-    </footer>
-
     <script>
-        
-        const btnHamburguesa = document.getElementById('hamburger-btn');
-        const menuDesplegable = document.getElementById('menu-items');
-        if (btnHamburguesa) {
-            btnHamburguesa.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menuDesplegable.classList.toggle('show-menu');
+        // DATOS MAESTROS DE COMPRAS
+        const datosCompras = [
+            { mes: 'Enero', presupuesto: 90000, real: 95000, libros: 45 },
+            { mes: 'Febrero', presupuesto: 102000, real: 85000, libros: 30 },
+            { mes: 'Marzo', presupuesto: 120000, real: 130000, libros: 65 }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            llenarMetricas();
+            llenarTabla();
+            crearGraficas();
+        });
+
+        function llenarMetricas() {
+            const total = datosCompras.reduce((acc, curr) => acc + curr.real, 0);
+            const libros = datosCompras.reduce((acc, curr) => acc + curr.libros, 0);
+            const mayorGasto = [...datosCompras].sort((a,b) => b.real - a.real)[0];
+
+            document.getElementById('total-inversion').innerText = `$${total.toLocaleString()}`;
+            document.getElementById('total-libros').innerText = libros;
+            document.getElementById('mes-pico').innerText = `${mayorGasto.mes} ($${mayorGasto.real.toLocaleString()})`;
+        }
+
+        function llenarTabla() {
+            const tbody = document.getElementById('tabla-compras');
+            tbody.innerHTML = "";
+
+            datosCompras.forEach(item => {
+                const dif = ((item.real - item.presupuesto) / item.presupuesto) * 100;
+                const color = item.real <= item.presupuesto ? 'green' : 'red';
+                const icono = item.real <= item.presupuesto ? '▲' : '▼';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.mes}</td>
+                        <td>$${item.presupuesto.toLocaleString()}</td>
+                        <td>$${item.real.toLocaleString()}</td>
+                        <td>${item.libros} uds.</td>
+                        <td style="color: ${color}; font-weight: bold;">
+                            ${icono} ${Math.abs(dif).toFixed(1)}%
+                        </td>
+                    </tr>
+                `;
             });
         }
 
-        
-        const ctxVentas = document.getElementById('ventasMesChart').getContext('2d');
-        new Chart(ctxVentas, {
-            type: 'bar',
-            data: {
-                labels: ['Ene', 'Feb', 'Mar'],
-                datasets: [{
-                    label: 'Ventas Reales',
-                    data: [95000, 85000, 130000],
-                    backgroundColor: '#5d4037'
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        function crearGraficas() {
+            const labels = datosCompras.map(d => d.mes);
+            
+            // Gráfica de Barras (Inversión)
+            new Chart(document.getElementById('ventasMesChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Gasto Real ($)',
+                        data: datosCompras.map(d => d.real),
+                        backgroundColor: '#5d4037'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
 
-        // Gráfica de Crecimiento
-        const ctxCrecimiento = document.getElementById('crecimientoChart').getContext('2d');
-        new Chart(ctxCrecimiento, {
-            type: 'line',
-            data: {
-                labels: ['Ene', 'Feb', 'Mar'],
-                datasets: [{
-                    label: 'Crecimiento %',
-                    data: [10, -5, 20],
-                    borderColor: '#fbc02d',
-                    backgroundColor: 'rgba(251, 192, 45, 0.2)',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
+            // Gráfica de Línea (Stock)
+            new Chart(document.getElementById('crecimientoChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Libros Ingresados',
+                        data: datosCompras.map(d => d.libros),
+                        borderColor: '#fbc02d',
+                        backgroundColor: 'rgba(251, 192, 45, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        const btn = document.getElementById('hamburger-btn');
+        const menu = document.getElementById('menu-items');
+        btn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('show-menu');
         });
     </script>
 </body>

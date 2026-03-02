@@ -56,7 +56,45 @@ body {
 
 }
 
+.hamburger-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    display: none; /* Se oculta en escritorio */
+    z-index: 1100;
+}
 
+.burger-icon {
+    width: 25px;
+    height: 18px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.burger-icon span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: var(--color-primary);
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Animación a X cuando tiene la clase .open */
+.hamburger-btn.open .burger-icon span:nth-child(1) {
+    transform: translateY(7.5px) rotate(45deg);
+}
+
+.hamburger-btn.open .burger-icon span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-btn.open .burger-icon span:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg);
+}
 
 a { text-decoration: none; color: inherit; }
 
@@ -6311,12 +6349,6 @@ a { text-decoration: none; color: inherit; }
     max-width: 1200px;
     margin: auto;
 }
-
-/* ================================
-   MEJORAS RESPONSIVAS OPTIMIZADAS
-   ================================ */
-
-/* --- DESKTOP GRANDE --- */
 @media (max-width: 1200px) {
 
     .catalog-container {
@@ -6474,7 +6506,7 @@ a { text-decoration: none; color: inherit; }
         flex-direction: column;
     }
 }
-<<<<<<< HEAD
+
 
 .admin-profile-navbar {
     padding: 10px 40px;
@@ -6663,5 +6695,52 @@ input, button {
 .dropdown-menu.show {
     display: block !important;
 }
-=======
->>>>>>> dec7c20b0a22c916913a10d4daa5f4647220e270
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid #e0d5c5;
+    gap: 20px;
+}
+
+.cart-item img {
+    width: 80px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+}
+
+.item-details { flex: 2; }
+.item-details h2 { font-size: 1.2rem; color: #5d4037; margin: 0 0 5px 0; }
+.item-price { font-weight: bold; color: #5d4037; font-size: 1.1rem; }
+
+.item-quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+.btn-qty-control {
+    background: #5d4037;
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-remove {
+    background: none;
+    border: none;
+    color: #c0392b;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.9rem;
+}

@@ -11,7 +11,7 @@
         /* Ajustes específicos para dispositivos móviles */
         @media (max-width: 768px) {
             .form-card.admin-login-card {
-                width: 90% !important; /* Aprovecha el espacio lateral en celulares */
+                width: 90% !important;
                 padding: 25px 20px !important;
                 margin: 20px auto;
             }
@@ -26,12 +26,11 @@
             }
 
             .btn-primary {
-                padding: 12px !important; /* Botón más grande para el pulgar */
+                padding: 12px !important;
                 font-size: 1rem;
             }
         }
 
-        /* Estilo del fondo consistente con el login de usuario */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
@@ -49,28 +48,28 @@
     <main class="main-content form-main">
         <div class="background-overlay"></div>
 
-        <div class="form-card login-card admin-login-card">
-            <div class="center-logo-box">
+        <div class="form-card login-card admin-login-card" style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            <div class="center-logo-box" style="text-align: center;">
                 <img src="../../Imagenes/logo.png" alt="Logo Central" class="main-logo" style="width: 100px; height: 100px; object-fit: contain;">
                 <h2 style="color: #5d4037; margin-top: 10px; font-weight: bold;">Acceso Panel Control</h2>
             </div>
             
             <form class="login-form" id="adminLoginForm" style="margin-top: 20px;">
                 <label for="correo" style="display: block; text-align: left; font-weight: bold; color: #5d4037;">Administrador:</label>
-                <input type="email" id="correo" placeholder="Cualquier correo" required 
-                       style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;">
+                <input type="email" id="correo" placeholder="correo@admin.com" required 
+                       style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;">
 
                 <label for="contrasena" style="display: block; text-align: left; font-weight: bold; color: #5d4037;">Contraseña:</label>
-                <input type="password" id="contrasena" placeholder="Cualquier contraseña" required 
-                       style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc;">
+                <input type="password" id="contrasena" placeholder="********" required 
+                       style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;">
 
                 <button type="submit" class="btn-primary" 
-                        style="width: 100%; padding: 10px; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold; cursor: pointer;">
+                        style="width: 100%; padding: 12px; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold; cursor: pointer;">
                     Entrar al Panel
                 </button>
             </form>
 
-            <button class="btn-forgot-password admin-forgot" style="background: none; border: none; color: #5d4037; text-decoration: underline; margin-top: 15px; cursor: pointer; font-size: 0.9em;">
+            <button class="btn-forgot-password admin-forgot" onclick="window.location.href='Recuperacion.html'" style="background: none; border: none; color: #5d4037; text-decoration: underline; margin-top: 15px; cursor: pointer; font-size: 0.9em; width: 100%;">
                 ¿Olvidó la contraseña?
             </button>
             
@@ -87,14 +86,38 @@
     </footer>
 
     <script>
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            
-            // Ruta corregida para entrar al panel administrativo
-            const targetPath = "../Admin/panel_de_admin.html";
-            console.log("Redirigiendo a:", targetPath);
-            window.location.href = targetPath;
-        });
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('correo').value;
+        const password = document.getElementById('contrasena').value;
+
+        try {
+            const response = await fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            // Verificamos éxito Y que el rol sea 'admin'
+            if (data.success && data.user.rol === 'admin') {
+                localStorage.setItem('admin_session', 'true');
+                localStorage.setItem('usuario', JSON.stringify(data.user));
+                alert("Acceso administrativo concedido. Bienvenido " + data.user.nombre);
+                // Redirigir al panel de administración (ajusta la ruta según tu carpeta)
+                window.location.href = '../Admin/panel_de_admin.html'; 
+            } else if (data.success) {
+                alert("Acceso denegado: No tienes permisos de administrador.");
+            } else {
+                alert("Error: " + data.error);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("No se pudo conectar con el servidor.");
+        }
+    });
     </script>
 </body>
 </html>

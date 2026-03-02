@@ -107,5 +107,47 @@
     
     <script src="../../../Js/cartManager.js"></script>
     <script src="../../../Js/checkoutManager.js"></script>
+    <script src="../../../Js/cartManager.js"></script>
+<script src="../../../Js/checkoutManager.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    renderizarResumen(); // Esta función debe estar en tu checkoutManager.js
+});
+
+async function finalizarPedidoBaseDeDatos() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const idUsuario = localStorage.getItem('userId');
+    const idDireccion = localStorage.getItem('direccionSeleccionada'); // Se obtiene en el paso de Domicilio
+
+    if (carrito.length === 0) return alert("Tu carrito está vacío");
+
+    const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+    const datosCompra = {
+        id_usuario: idUsuario,
+        id_direccion: idDireccion || null, // Se actualizará en el paso de Domicilio.html
+        total: total,
+        productos: carrito
+    };
+
+    try {
+        const respuesta = await fetch('/api/pedidos/crear', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(datosCompra)
+        });
+
+        const resultado = await respuesta.json();
+
+        if (resultado.success) {
+            localStorage.removeItem('carrito');
+            window.location.href = 'finalizar.html';
+        }
+    } catch (error) {
+        console.error("Error al enviar el pedido:", error);
+    }
+}
+</script>
 </body>
 </html>

@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        
         .sales-report-grid {
             display: grid;
             grid-template-columns: 1fr 1.5fr; 
@@ -16,7 +15,6 @@
             margin-top: 20px;
         }
 
-        
         .table-container-responsive {
             width: 100%;
             overflow-x: auto; 
@@ -37,12 +35,10 @@
             text-align: center;
         }
 
-        
         @media (max-width: 992px) {
             .sales-report-grid {
                 grid-template-columns: 1fr; 
             }
-
             .chart-card.sales-chart {
                 height: 450px; 
             }
@@ -53,13 +49,19 @@
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
         <nav class="nav-links">
             <button class="hamburger-btn" id="hamburger-btn">
-                <i class="fa-solid fa-bars"></i>
+        <div class="burger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+            </button>
+            <i class="fa-solid fa-bars"></i>
             </button>
             <div class="menu-items" id="menu-items">
                 <a href="panel_de_admin.html">Dashboard</a>
@@ -72,8 +74,8 @@
             <button class="icon-button" onclick="window.location.href='panel_de_admin.html'">
                 <i class="fa-solid fa-house"></i>
             </button>
-            <span class="admin-label">Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover; border-radius: 50%;">
+            <span class="admin-label" id="admin-name">Admin</span>
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="object-fit: cover; border-radius: 50%;">
         </div>
     </header>
 
@@ -81,7 +83,7 @@
         <div class="background-overlay dashboard-bg" style="filter: brightness(0.6);"></div>
 
         <div class="report-container large-report">
-            <h1 class="report-title" style="text-align: center; color: #5d4037;">Reporte de Ventas Anual</h1>
+            <h1 class="report-title" style="text-align: center; color: #5d4037; margin-top: 20px;">Reporte de Ventas Anual</h1>
 
             <div class="sales-report-grid">
                 <div class="table-container-responsive">
@@ -93,20 +95,8 @@
                                 <th>Crecimiento</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr><td>Enero</td><td>1500</td><td>500</td></tr>
-                            <tr><td>Febrero</td><td>2000</td><td>500</td></tr>
-                            <tr><td>Marzo</td><td>2300</td><td>300</td></tr>
-                            <tr><td>Abril</td><td>2200</td><td style="color: red;">-100</td></tr>
-                            <tr><td>Mayo</td><td>2900</td><td>700</td></tr>
-                            <tr><td>Junio</td><td>2500</td><td>1600</td></tr>
-                            <tr><td>Julio</td><td>6500</td><td>2000</td></tr>
-                            <tr><td>Agosto</td><td>5000</td><td style="color: red;">-500</td></tr>
-                            <tr><td>Septiembre</td><td>7000</td><td style="color: red;">-1000</td></tr>
-                            <tr><td>Octubre</td><td>7300</td><td>2000</td></tr>
-                            <tr><td>Noviembre</td><td>8000</td><td>700</td></tr>
-                            <tr><td>Diciembre</td><td>6000</td><td>300</td></tr>
-                        </tbody>
+                        <tbody id="sales-table-body">
+                            </tbody>
                     </table>
                 </div>
 
@@ -124,45 +114,105 @@
         © Todos los derechos reservados 2026. La Lechuza Lectora
     </footer>
 
-    <script>
     
-        const btnHamburguesa = document.getElementById('hamburger-btn');
-        const menuDesplegable = document.getElementById('menu-items');
 
-        if (btnHamburguesa && menuDesplegable) {
-            btnHamburguesa.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menuDesplegable.classList.toggle('show-menu');
+    <script>
+        // DATOS MAESTROS: Solo edita aquí para actualizar todo el reporte
+        const datosVentas = [
+            { mes: 'Ene', monto: 1500, crecimiento: 500 },
+            { mes: 'Feb', monto: 2000, crecimiento: 500 },
+            { mes: 'Mar', monto: 2300, crecimiento: 300 },
+            { mes: 'Abr', monto: 2200, crecimiento: -100 },
+            { mes: 'May', monto: 2900, crecimiento: 700 },
+            { mes: 'Jun', monto: 2500, crecimiento: 1600 },
+            { mes: 'Jul', monto: 6500, crecimiento: 2000 },
+            { mes: 'Ago', monto: 5000, crecimiento: -500 },
+            { mes: 'Sep', monto: 7000, crecimiento: -1000 },
+            { mes: 'Oct', monto: 7300, crecimiento: 300 },
+            { mes: 'Nov', monto: 8000, crecimiento: 700 },
+            { mes: 'Dic', monto: 6000, crecimiento: -2000 }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar datos de usuario
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            if (usuario && usuario.nombre) {
+                document.getElementById('admin-name').innerText = usuario.nombre;
+            }
+
+            // Inicializar componentes
+            llenarTabla();
+            crearGrafica();
+            initMenu();
+        });
+
+        function initMenu() {
+            const btn = document.getElementById('hamburger-btn');
+            const menu = document.getElementById('menu-items');
+            if (btn && menu) {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    menu.classList.toggle('show-menu');
+                });
+            }
+        }
+
+        function llenarTabla() {
+            const tbody = document.getElementById('sales-table-body');
+            tbody.innerHTML = ""; 
+
+            datosVentas.forEach(item => {
+                const colorC = item.crecimiento >= 0 ? 'green' : 'red';
+                const simbolo = item.crecimiento >= 0 ? '▲ +' : '▼ ';
+
+                const fila = `
+                    <tr>
+                        <td>${item.mes}</td>
+                        <td>$${item.monto.toLocaleString()}</td>
+                        <td style="color: ${colorC}; font-weight: bold;">${simbolo}${Math.abs(item.crecimiento)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += fila;
             });
         }
 
-        
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        const salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                datasets: [{
-                    label: 'Ventas Totales ($)',
-                    data: [1500, 2000, 2300, 2200, 2900, 2500, 6500, 5000, 7000, 7300, 8000, 6000],
-                    borderColor: '#5d4037', 
-                    backgroundColor: 'rgba(93, 64, 55, 0.2)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4 
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
+        function crearGrafica() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            const etiquetas = datosVentas.map(item => item.mes);
+            const valores = datosVentas.map(item => item.monto);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: etiquetas,
+                    datasets: [{
+                        label: 'Ventas Mensuales ($)',
+                        data: valores,
+                        borderColor: '#5d4037',
+                        backgroundColor: 'rgba(93, 64, 55, 0.2)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#5d4037'
+                    }]
                 },
-                scales: {
-                    y: { beginAtZero: true }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            ticks: { callback: value => '$' + value }
+                        }
+                    }
                 }
-            }
-        });
+            });
+        }
     </script>
 </body>
 </html>
