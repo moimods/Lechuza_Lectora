@@ -15,10 +15,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ===============================
+// ARCHIVOS ESTÁTICOS (FRONTEND)
+// ===============================
+app.use(express.static(path.join(__dirname)));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ===============================
 // CONEXIÓN POSTGRESQL
 // ===============================
 const pool = new Pool({
-    host: process.env.DB_HOST,
+    host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
@@ -33,6 +42,7 @@ pool.connect()
 // LOGIN
 // ===============================
 app.post('/api/login', async (req, res) => {
+
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -43,6 +53,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     try {
+
         const result = await pool.query(
             `SELECT id_usuario,
                     nombre_completo AS nombre,
@@ -61,7 +72,7 @@ app.post('/api/login', async (req, res) => {
             });
         }
 
-        // ⚠️ Comparación simple (recomendado usar bcrypt)
+        // Comparación simple (puedes cambiar a bcrypt después)
         if (result.rows[0].password_hash !== password) {
             return res.status(401).json({
                 success: false,
@@ -92,17 +103,17 @@ app.post('/api/logout', (req, res) => {
 });
 
 // ===============================
-// OBTENER USUARIO POR EMAIL
+// OBTENER USUARIO
 // ===============================
 app.get('/api/usuario/:email', async (req, res) => {
-    const { email } = req.params;
 
     try {
+
         const result = await pool.query(
             `SELECT id_usuario, nombre_completo, email, telefono
              FROM Usuarios
              WHERE email = $1`,
-            [email]
+            [req.params.email]
         );
 
         if (result.rows.length === 0)
@@ -120,7 +131,9 @@ app.get('/api/usuario/:email', async (req, res) => {
 // PRODUCTOS
 // ===============================
 app.get('/api/productos', async (req, res) => {
+
     try {
+
         const result = await pool.query(`
             SELECT p.id_producto,
                    p.titulo,
@@ -144,7 +157,9 @@ app.get('/api/productos', async (req, res) => {
 });
 
 app.get('/api/productos/:id', async (req, res) => {
+
     try {
+
         const result = await pool.query(
             'SELECT * FROM Productos WHERE id_producto = $1',
             [req.params.id]
@@ -156,6 +171,7 @@ app.get('/api/productos/:id', async (req, res) => {
         res.json(result.rows[0]);
 
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: "Error al obtener producto" });
     }
 });
@@ -164,7 +180,9 @@ app.get('/api/productos/:id', async (req, res) => {
 // DIRECCIONES
 // ===============================
 app.get('/api/direcciones/usuario/:id', async (req, res) => {
+
     try {
+
         const result = await pool.query(
             `SELECT *
              FROM Direcciones
@@ -188,9 +206,16 @@ app.post('/api/ventas/registrar', async (req, res) => {
 
     const { id_usuario, id_direccion, total, productos } = req.body;
 
+    if (!productos || productos.length === 0) {
+        return res.status(400).json({
+            error: "No hay productos en la venta"
+        });
+    }
+
     const client = await pool.connect();
 
     try {
+
         await client.query('BEGIN');
 
         const venta = await client.query(
@@ -204,6 +229,16 @@ app.post('/api/ventas/registrar', async (req, res) => {
         const idVenta = venta.rows[0].id_venta;
 
         for (const prod of productos) {
+
+            // Validar stock
+            const stock = await client.query(
+                "SELECT stock FROM Productos WHERE id_producto=$1",
+                [prod.id_producto]
+            );
+
+            if (stock.rows[0].stock < prod.cantidad) {
+                throw new Error("Stock insuficiente");
+            }
 
             await client.query(
                 `INSERT INTO Detalles_Ventas
@@ -228,9 +263,11 @@ app.post('/api/ventas/registrar', async (req, res) => {
         });
 
     } catch (err) {
+
         await client.query('ROLLBACK');
         console.error(err);
-        res.status(500).json({ error: "Error en la venta" });
+        res.status(500).json({ error: err.message });
+
     } finally {
         client.release();
     }
