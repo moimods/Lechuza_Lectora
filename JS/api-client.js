@@ -1,11 +1,10 @@
-<<<<<<< HEAD
 /**
- * API CLIENT - Gestor centralizado de llamadas al backend
- * Este archivo centraliza todas las llamadas a la API para mantener el código limpio
+ * API CLIENT - La Lechuza Lectora
+ * Gestor centralizado de llamadas al backend
  */
 
 const APIClient = {
-    // URL base de la API (ajusta según tu configuración)
+    // URL base de la API
     baseURL: 'http://localhost:3000/api',
 
     // --- MÉTODOS DE USUARIOS ---
@@ -47,7 +46,6 @@ const APIClient = {
 
     /**
      * Crear un nuevo producto (requiere autenticación de admin)
-     * @param {Object} productData
      */
     async createProduct(productData) {
         return this.post('/productos', productData);
@@ -55,7 +53,6 @@ const APIClient = {
 
     /**
      * Eliminar un producto
-     * @param {number} productId
      */
     async deleteProduct(productId) {
         return this.delete(`/productos/${productId}`);
@@ -65,7 +62,6 @@ const APIClient = {
 
     /**
      * Registrar una venta
-     * @param {Object} saleData - {id_usuario, id_direccion, total, productos}
      */
     async registerSale(saleData) {
         return this.post('/ventas/registrar', saleData);
@@ -78,110 +74,56 @@ const APIClient = {
         return this.get('/reportes/ventas-mensuales');
     },
 
-    // --- MÉTODOS HTTP PRIVADOS ---
+    // --- MÉTODOS HTTP PRIVADOS (Lógica base) ---
 
-    /**
-     * Método GET privado
-     */
     async get(endpoint) {
         try {
             const response = await fetch(`${this.baseURL}${endpoint}`, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            return await response.json();
+            return await this._handleResponse(response);
         } catch (error) {
             console.error('Error en GET:', error);
             throw error;
         }
     },
 
-    /**
-     * Método POST privado
-     */
     async post(endpoint, data) {
         try {
             const response = await fetch(`${this.baseURL}${endpoint}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            return await response.json();
+            return await this._handleResponse(response);
         } catch (error) {
             console.error('Error en POST:', error);
             throw error;
         }
     },
 
-    /**
-     * Método DELETE privado
-     */
     async delete(endpoint) {
         try {
             const response = await fetch(`${this.baseURL}${endpoint}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            return await response.json();
+            return await this._handleResponse(response);
         } catch (error) {
             console.error('Error en DELETE:', error);
             throw error;
         }
+    },
+
+    /**
+     * Procesa la respuesta del servidor
+     */
+    async _handleResponse(response) {
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
     }
 };
-=======
-// API client code
-
-class ApiClient {
-    constructor(baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    async get(endpoint) {
-        const response = await fetch(`${this.baseUrl}${endpoint}`);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
-        }
-        return response.json();
-    }
-
-    async post(endpoint, data) {
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
-        }
-        return response.json();
-    }
-}
-
-// Usage Example:
-// const apiClient = new ApiClient('https://api.example.com');
-// apiClient.get('/data').then(data => console.log(data));
->>>>>>> 8f85dd1101edd13231a5807a1fe6243e7f21665d
