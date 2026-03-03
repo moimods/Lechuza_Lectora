@@ -1,16 +1,25 @@
+<<<<<<< HEAD
 require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 const cors = require('cors');
+=======
+// Adding missing endpoints and fixing age validation
 
-const app = express();
+const express = require('express');
+const router = express.Router();
+>>>>>>> 8f85dd1101edd13231a5807a1fe6243e7f21665d
 
-// --- 1. CONFIGURACIÓN Y MIDDLEWARES ---
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Missing Endpoints
 
+// Endpoint to get user directions by ID
+router.get('/api/direcciones/usuario/:id', (req, res) => {
+    const userId = req.params.id;
+    // Implementation to retrieve user directions
+});
+
+<<<<<<< HEAD
 // Servir la raíz y carpetas de recursos
 app.use(express.static(path.join(__dirname))); 
 app.use('/Estilos', express.static(path.join(__dirname, 'Estilos')));
@@ -137,9 +146,41 @@ app.post('/api/registro', async (req, res) => {
             success: false, 
             error: "Error al registrar usuario" 
         });
-    }
+=======
+// Endpoint to get user by email
+router.get('/api/usuario/:email', (req, res) => {
+    const userEmail = req.params.email;
+    // Implementation to retrieve user by email
 });
 
+// Endpoint to get orders by user ID
+router.get('/api/pedidos/usuario/:id', (req, res) => {
+    const userId = req.params.id;
+    // Implementation to retrieve user orders
+});
+
+// Endpoint to create a new order
+router.post('/api/pedidos/crear', (req, res) => {
+    // Implementation to create a new order
+});
+
+// Admin statistics endpoint
+router.get('/api/admin/estadisticas-ventas', (req, res) => {
+    // Implementation to get sales statistics
+});
+
+// Updated /api/registro endpoint with age validation
+router.post('/api/registro', (req, res) => {
+    const { username, password, age } = req.body;
+    // Age validation
+    if (age < 18) {
+        return res.status(400).json({ message: 'Age must be 18 or older.' });
+>>>>>>> 8f85dd1101edd13231a5807a1fe6243e7f21665d
+    }
+    // Implementation to handle registration
+});
+
+<<<<<<< HEAD
 /**
  * LOGIN DE USUARIO
  * POST /api/login
@@ -1006,3 +1047,6 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+=======
+module.exports = router;
+>>>>>>> 8f85dd1101edd13231a5807a1fe6243e7f21665d
