@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+
         .status-tag {
             padding: 5px 10px;
             border-radius: 15px;
@@ -44,6 +45,26 @@
     </style>
 </head>
 <body class="dashboard-page">
+    <h2>Inventario</h2>
+
+<form id="formAgregarProducto">
+    <input type="text" id="titulo" placeholder="Título">
+    <input type="text" id="autor" placeholder="Autor">
+    <input type="number" id="precio" placeholder="Precio">
+    <input type="number" id="stock" placeholder="Stock">
+
+    <select id="categoria">
+        <option>Novela</option>
+        <option>Ciencia</option>
+        <option>Historia</option>
+    </select>
+
+    <input type="text" id="imagen_url" placeholder="URL Imagen">
+
+    <button type="submit">Agregar</button>
+</form>
+
+<script src="/js/inventario.js"></script>
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">

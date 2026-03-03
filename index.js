@@ -7,25 +7,25 @@ const path = require('path');
 
 const app = express();
 
-// ===============================
-// CONFIGURACIÓN BASE
-// ===============================
+/* =====================================================
+   CONFIGURACIÓN BASE
+===================================================== */
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ===============================
-// ARCHIVOS ESTÁTICOS (FRONTEND)
-// ===============================
-app.use(express.static(path.join(__dirname)));
+/* =====================================================
+   ARCHIVOS ESTÁTICOS (FRONTEND)
+===================================================== */
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// ===============================
-// CONEXIÓN POSTGRESQL
-// ===============================
+/* =====================================================
+   CONEXIÓN POSTGRESQL
+===================================================== */
 const pool = new Pool({
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER,
@@ -38,102 +38,83 @@ pool.connect()
     .then(() => console.log("✅ Base de datos conectada"))
     .catch(err => console.error("❌ Error DB:", err));
 
-// ===============================
-// LOGIN
-// ===============================
+/* =====================================================
+   LOGIN
+===================================================== */
 app.post('/api/login', async (req, res) => {
 
     const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({
-            success: false,
-            error: "Email y contraseña requeridos"
-        });
-    }
+    if (!email || !password)
+        return res.status(400).json({ success:false, error:"Datos incompletos" });
 
     try {
 
-        const result = await pool.query(
-            `SELECT id_usuario,
-                    nombre_completo AS nombre,
-                    email,
-                    rol,
-                    password_hash
-             FROM Usuarios
-             WHERE email = $1`,
-            [email]
-        );
+        const result = await pool.query(`
+            SELECT id_usuario,
+                   nombre_completo AS nombre,
+                   email,
+                   rol,
+                   password_hash
+            FROM Usuarios
+            WHERE email=$1
+        `,[email]);
 
-        if (result.rows.length === 0) {
-            return res.status(401).json({
-                success: false,
-                error: "Correo o contraseña incorrectos"
-            });
-        }
+        if(result.rows.length === 0)
+            return res.status(401).json({ success:false, error:"Credenciales incorrectas" });
 
-        // Comparación simple (puedes cambiar a bcrypt después)
-        if (result.rows[0].password_hash !== password) {
-            return res.status(401).json({
-                success: false,
-                error: "Correo o contraseña incorrectos"
-            });
-        }
+        if(result.rows[0].password_hash !== password)
+            return res.status(401).json({ success:false, error:"Credenciales incorrectas" });
 
         delete result.rows[0].password_hash;
 
         res.json({
-            success: true,
-            message: "Login exitoso",
+            success:true,
             user: result.rows[0]
         });
 
-    } catch (err) {
-        console.error("Error login:", err);
-        res.status(500).json({ error: "Error interno del servidor" });
+    } catch(err){
+        console.error(err);
+        res.status(500).json({ error:"Error interno" });
     }
 });
 
-// ===============================
-// LOGOUT
-// ===============================
-app.post('/api/logout', (req, res) => {
-    console.log("🦉 Sesión finalizada");
-    res.json({ success: true });
+/* =====================================================
+   LOGOUT
+===================================================== */
+app.post('/api/logout', (req,res)=>{
+    res.json({success:true});
 });
 
-// ===============================
-// OBTENER USUARIO
-// ===============================
-app.get('/api/usuario/:email', async (req, res) => {
+/* =====================================================
+   USUARIO
+===================================================== */
+app.get('/api/usuario/:email', async (req,res)=>{
 
-    try {
+    try{
+        const result = await pool.query(`
+            SELECT id_usuario,nombre_completo,email,telefono
+            FROM Usuarios
+            WHERE email=$1
+        `,[req.params.email]);
 
-        const result = await pool.query(
-            `SELECT id_usuario, nombre_completo, email, telefono
-             FROM Usuarios
-             WHERE email = $1`,
-            [req.params.email]
-        );
-
-        if (result.rows.length === 0)
-            return res.status(404).json({ error: "Usuario no encontrado" });
+        if(result.rows.length===0)
+            return res.status(404).json({error:"Usuario no encontrado"});
 
         res.json(result.rows[0]);
 
-    } catch (err) {
+    }catch(err){
         console.error(err);
-        res.status(500).json({ error: "Error al obtener usuario" });
+        res.status(500).json({error:"Error servidor"});
     }
 });
 
-// ===============================
-// PRODUCTOS
-// ===============================
-app.get('/api/productos', async (req, res) => {
+/* =====================================================
+   PRODUCTOS (READ)
+===================================================== */
+app.get('/api/productos', async (req,res)=>{
 
-    try {
-
+    try{
         const result = await pool.query(`
             SELECT p.id_producto,
                    p.titulo,
@@ -144,162 +125,257 @@ app.get('/api/productos', async (req, res) => {
                    c.nombre AS categoria
             FROM Productos p
             LEFT JOIN Categorias c
-            ON p.id_categoria = c.id_categoria
+            ON p.id_categoria=c.id_categoria
             ORDER BY p.id_producto
         `);
 
         res.json(result.rows);
 
-    } catch (err) {
+    }catch(err){
         console.error(err);
-        res.status(500).json({ error: "Error al obtener productos" });
+        res.status(500).json({error:"Error productos"});
     }
 });
 
-app.get('/api/productos/:id', async (req, res) => {
+app.get('/api/productos/:id', async (req,res)=>{
 
-    try {
-
+    try{
         const result = await pool.query(
-            'SELECT * FROM Productos WHERE id_producto = $1',
+            'SELECT * FROM Productos WHERE id_producto=$1',
             [req.params.id]
         );
 
-        if (result.rows.length === 0)
-            return res.status(404).json({ error: "Producto no encontrado" });
+        if(result.rows.length===0)
+            return res.status(404).json({error:"Producto no encontrado"});
 
         res.json(result.rows[0]);
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al obtener producto" });
+    }catch(err){
+        res.status(500).json({error:"Error servidor"});
     }
 });
 
-// ===============================
-// DIRECCIONES
-// ===============================
-app.get('/api/direcciones/usuario/:id', async (req, res) => {
+/* =====================================================
+   PRODUCTOS (CREATE)
+===================================================== */
+app.post('/api/productos', async (req,res)=>{
 
-    try {
+    const { titulo, autor, precio, stock, categoria, imagen_url } = req.body;
 
-        const result = await pool.query(
-            `SELECT *
-             FROM Direcciones
-             WHERE id_usuario = $1
-             ORDER BY id_direccion DESC`,
+    if(!titulo || !autor)
+        return res.status(400).json({error:"Datos incompletos"});
+
+    try{
+
+        const cat = await pool.query(
+            'SELECT id_categoria FROM Categorias WHERE nombre=$1',
+            [categoria]
+        );
+
+        if(cat.rows.length===0)
+            return res.status(400).json({error:"Categoría inválida"});
+
+        await pool.query(`
+            INSERT INTO Productos
+            (titulo,autor,precio,stock,id_categoria,imagen_url)
+            VALUES ($1,$2,$3,$4,$5,$6)
+        `,[titulo,autor,precio,stock,cat.rows[0].id_categoria,imagen_url]);
+
+        res.json({success:true});
+
+    }catch(err){
+        console.error(err);
+        res.status(500).json({error:"Error al crear producto"});
+    }
+});
+
+/* =====================================================
+   PRODUCTOS (UPDATE)
+===================================================== */
+app.put('/api/productos/:id', async (req,res)=>{
+
+    const { titulo, autor, precio, stock, categoria, imagen_url } = req.body;
+
+    try{
+
+        const cat = await pool.query(
+            "SELECT id_categoria FROM Categorias WHERE nombre=$1",
+            [categoria]
+        );
+
+        if(cat.rows.length === 0)
+            return res.status(400).json({error:"Categoría inválida"});
+
+        await pool.query(`
+            UPDATE Productos
+            SET titulo=$1,
+                autor=$2,
+                precio=$3,
+                stock=$4,
+                id_categoria=$5,
+                imagen_url=$6
+            WHERE id_producto=$7
+        `,[
+            titulo,
+            autor,
+            precio,
+            stock,
+            cat.rows[0].id_categoria,
+            imagen_url,
+            req.params.id
+        ]);
+
+        res.json({success:true});
+
+    }catch(err){
+        console.error(err);
+        res.status(500).json({error:"Error al actualizar"});
+    }
+});
+
+/* =====================================================
+   PRODUCTOS (DELETE)
+===================================================== */
+app.delete('/api/productos/:id', async (req,res)=>{
+
+    try{
+
+        await pool.query(
+            'DELETE FROM Productos WHERE id_producto=$1',
             [req.params.id]
         );
 
-        res.json(result.rows);
+        res.json({success:true});
 
-    } catch (err) {
+    }catch(err){
+
         console.error(err);
-        res.status(500).json({ error: "Error al obtener direcciones" });
+
+        res.status(400).json({
+            error:"No se puede eliminar: producto relacionado a ventas"
+        });
     }
 });
 
-// ===============================
-// REGISTRAR VENTA
-// ===============================
-app.post('/api/ventas/registrar', async (req, res) => {
+/* =====================================================
+   PRODUCTO PARA EDITAR
+===================================================== */
+app.get('/api/producto-editar/:id', async (req,res)=>{
 
-    const { id_usuario, id_direccion, total, productos } = req.body;
+    try{
 
-    if (!productos || productos.length === 0) {
-        return res.status(400).json({
-            error: "No hay productos en la venta"
-        });
+        const result = await pool.query(`
+            SELECT p.*, c.nombre AS categoria
+            FROM Productos p
+            LEFT JOIN Categorias c
+            ON p.id_categoria = c.id_categoria
+            WHERE id_producto = $1
+        `,[req.params.id]);
+
+        res.json(result.rows[0]);
+
+    }catch(err){
+        console.error(err);
+        res.status(500).json({error:"Error"});
     }
+});
+
+/* =====================================================
+   DIRECCIONES
+===================================================== */
+app.get('/api/direcciones/usuario/:id', async (req,res)=>{
+
+    try{
+        const result = await pool.query(`
+            SELECT * FROM Direcciones
+            WHERE id_usuario=$1
+            ORDER BY id_direccion DESC
+        `,[req.params.id]);
+
+        res.json(result.rows);
+
+    }catch(err){
+        res.status(500).json({error:"Error direcciones"});
+    }
+});
+
+/* =====================================================
+   VENTAS
+===================================================== */
+app.post('/api/ventas/registrar', async (req,res)=>{
+
+    const { id_usuario,id_direccion,total,productos } = req.body;
+
+    if(!productos?.length)
+        return res.status(400).json({error:"Sin productos"});
 
     const client = await pool.connect();
 
-    try {
+    try{
 
         await client.query('BEGIN');
 
-        const venta = await client.query(
-            `INSERT INTO Ventas
+        const venta = await client.query(`
+            INSERT INTO Ventas
             (id_usuario,id_direccion,total,fecha_venta,estado)
             VALUES ($1,$2,$3,NOW(),'completado')
-            RETURNING id_venta`,
-            [id_usuario, id_direccion || null, total]
-        );
+            RETURNING id_venta
+        `,[id_usuario,id_direccion||null,total]);
 
         const idVenta = venta.rows[0].id_venta;
 
-        for (const prod of productos) {
+        for(const prod of productos){
 
-            // Validar stock
-            const stock = await client.query(
-                "SELECT stock FROM Productos WHERE id_producto=$1",
-                [prod.id_producto]
-            );
-
-            if (stock.rows[0].stock < prod.cantidad) {
-                throw new Error("Stock insuficiente");
-            }
-
-            await client.query(
-                `INSERT INTO Detalles_Ventas
+            await client.query(`
+                INSERT INTO Detalles_Ventas
                 (id_venta,id_producto,cantidad,precio_unitario)
-                VALUES ($1,$2,$3,$4)`,
-                [idVenta, prod.id_producto, prod.cantidad, prod.precio]
-            );
+                VALUES ($1,$2,$3,$4)
+            `,[idVenta,prod.id_producto,prod.cantidad,prod.precio]);
 
-            await client.query(
-                `UPDATE Productos
-                 SET stock = stock - $1
-                 WHERE id_producto = $2`,
-                [prod.cantidad, prod.id_producto]
-            );
+            await client.query(`
+                UPDATE Productos
+                SET stock = stock - $1
+                WHERE id_producto=$2
+            `,[prod.cantidad,prod.id_producto]);
         }
 
         await client.query('COMMIT');
 
-        res.status(201).json({
-            success: true,
-            id_venta: idVenta
-        });
+        res.status(201).json({success:true,id_venta:idVenta});
 
-    } catch (err) {
-
+    }catch(err){
         await client.query('ROLLBACK');
-        console.error(err);
-        res.status(500).json({ error: err.message });
-
-    } finally {
+        res.status(500).json({error:err.message});
+    }finally{
         client.release();
     }
 });
 
-// ===============================
-// 404
-// ===============================
-app.use((req, res) => {
+/* =====================================================
+   404
+===================================================== */
+app.use((req,res)=>{
     res.status(404).json({
-        error: "Ruta no encontrada",
-        path: req.path
+        error:"Ruta no encontrada",
+        path:req.path
     });
 });
 
-// ===============================
-// ERRORES GLOBALES
-// ===============================
-app.use((err, req, res, next) => {
+/* =====================================================
+   ERRORES GLOBALES
+===================================================== */
+app.use((err,req,res,next)=>{
     console.error(err);
-    res.status(500).json({
-        error: "Error interno del servidor"
-    });
+    res.status(500).json({error:"Error interno"});
 });
 
-// ===============================
-// INICIAR SERVIDOR
-// ===============================
+/* =====================================================
+   INICIAR SERVIDOR
+===================================================== */
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT,()=>{
     console.clear();
-    console.log(`🦉 LA LECHUZA LECTORA ONLINE`);
+    console.log("🦉 LA LECHUZA LECTORA ONLINE");
     console.log(`http://localhost:${PORT}`);
 });
