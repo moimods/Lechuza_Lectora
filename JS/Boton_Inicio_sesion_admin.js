@@ -1,15 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     const adminSwitchButton = document.querySelector('.btn-admin-switch');
 
-
-    const ADMIN_LOGIN_URL = 'inicio_sesion_admin.html'; 
-
     if (adminSwitchButton) {
-        adminSwitchButton.addEventListener('click', () => {
+        adminSwitchButton.addEventListener('click', (e) => {
+            e.preventDefault(); // Previene comportamientos extraños si es un enlace
 
-            window.location.href = ADMIN_LOGIN_URL;
-            console.log("Redirigiendo a:", ADMIN_LOGIN_URL);
+            const path = window.location.pathname;
+            let targetURL = 'inicio_sesion_admin.html';
+
+            // Lógica de "Escape" de carpetas:
+            // Si el usuario está en una subcarpeta (como /logeado/ o /vistas/)
+            // necesitamos subir un nivel para encontrar el login de admin.
+            if (path.includes('/logeado/') || path.includes('/vistas/')) {
+                targetURL = '../inicio_sesion_admin.html';
+            }
+
+            console.log("Acceso administrativo detectado. Redirigiendo a:", targetURL);
+            window.location.href = targetURL;
         });
     }
 });

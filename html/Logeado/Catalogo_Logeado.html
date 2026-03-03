@@ -206,50 +206,74 @@ function forceToggleMenu() {
     }
 }
 
-document.addEventListener('click', function(event) {
-    const menu = document.getElementById('avatar-dropdown');
-    const btn = document.getElementById('avatar-btn');
-    const nav = document.getElementById('mobile-nav');
-    const hamburger = document.getElementById('hamburger-btn');
-
-    // Cerrar avatar menu si se hace clic fuera
-    if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
-        menu.classList.remove('show');
+document.addEventListener('DOMContentLoaded', () => {
+    const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+    if (!usuario) {
+        alert("Debes iniciar sesión para acceder al catálogo.");
+        window.location.href = '../Inicio_de_sesion/Inicio_sesion.html';
+        return;
     }
-
-    // Cerrar hamburguesa si se hace clic fuera
-    if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
-        nav.classList.remove('active');
-    }
+    // Opcional: Cambiar el avatar o mostrar nombre del usuario
+    console.log("Bienvenido: " + usuario.nombre);
+    
+    // Cargar productos reales
+    cargarProductosPropios();
 });
 
-// Simulación de carga de productos
-window.addEventListener('DOMContentLoaded', () => {
+// --- 2. CARGA REAL DESDE LA API ---
+async function cargarProductosPropios() {
     const container = document.getElementById('products-container');
-    const misLibros = [
-        {titulo: "El Resplandor", autor: "Stephen King", precio: "350", imagen: "../../Imagenes/Libros/1.jpg"},
-        {titulo: "Cien Años de Soledad", autor: "G. García Márquez", precio: "420", imagen: "../../Imagenes/Libros/2.jpg"}
-    ];
-    misLibros.forEach(libro => {
-        const card = document.createElement('div');
-        card.className = 'book-product-card';
-        card.style.background = "white";
-        card.style.padding = "15px";
-        card.style.borderRadius = "8px";
-        card.style.textAlign = "center";
-        card.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
-        card.innerHTML = `
-            <img src="${libro.imagen}" alt="${libro.titulo}" style="width:100%; height:200px; object-fit:contain; margin-bottom:10px;">
-            <h3 style="font-size:0.9rem; color:#5d4037; height:35px; overflow:hidden;">${libro.titulo}</h3>
-            <p style="font-size:0.75rem; color:#777;">${libro.autor}</p>
-            <span style="font-weight:bold; color:#d32f2f; display:block; margin:8px 0;">$${libro.precio}</span>
-            <div style="display:flex; gap:5px;">
-                <button style="flex:1; background:#5d4037; color:white; border:none; padding:8px; border-radius:4px; font-size:0.8rem; cursor:pointer;">Añadir</button>
-                <button style="flex:1; background:#fbc02d; color:#5d4037; border:none; padding:8px; border-radius:4px; font-size:0.8rem; cursor:pointer; font-weight:bold;">Comprar</button>
-            </div>
-        `;
-        container.appendChild(card);
-    });
+    try {
+        const response = await fetch('/api/productos'); // Endpoint de tu index.js
+        const productos = await response.json();
+
+        container.innerHTML = ""; // Limpiar el contenedor
+
+        productos.forEach(libro => {
+            const card = document.createElement('div');
+            card.className = 'book-product-card';
+            card.style = "background:white; padding:15px; border-radius:8px; text-align:center; box-shadow:0 4px 6px rgba(0,0,0,0.1);";
+            
+            // Usamos los nombres de columna de tu base de datos (id_producto, titulo, precio, etc.)
+            card.innerHTML = `
+                <img src="../../Imagenes/Libros/${libro.id_producto}.jpg" onerror="this.src='../../Imagenes/Libros/default.jpg'" style="width:100%; height:200px; object-fit:contain; margin-bottom:10px;">
+                <h3 style="font-size:0.9rem; color:#5d4037; height:35px; overflow:hidden;">${libro.titulo}</h3>
+                <p style="font-size:0.75rem; color:#777;">Autor ID: ${libro.autor || 'Desconocido'}</p>
+                <span style="font-weight:bold; color:#d32f2f; display:block; margin:8px 0;">$${libro.precio}</span>
+                <div style="display:flex; gap:5px;">
+                    <button onclick="agregarAlCarrito(${libro.id_producto}, '${libro.titulo}', ${libro.precio})" style="flex:1; background:#5d4037; color:white; border:none; padding:8px; border-radius:4px; font-size:0.8rem; cursor:pointer;">Añadir</button>
+                    <button onclick="comprarDirecto(${libro.id_producto})" style="flex:1; background:#fbc02d; color:#5d4037; border:none; padding:8px; border-radius:4px; font-size:0.8rem; cursor:pointer; font-weight:bold;">Comprar</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Error cargando productos:", error);
+        container.innerHTML = "<p>Error al conectar con la base de datos.</p>";
+    }
+}
+
+// --- 3. FUNCIONES DE NAVEGACIÓN Y MENÚS ---
+function toggleMobileMenu() {
+    document.getElementById('mobile-nav').classList.toggle('active');
+}
+
+function forceToggleMenu() {
+    document.getElementById('avatar-dropdown').classList.toggle('show');
+}
+
+// Cerrar sesión
+document.getElementById('logout-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    localStorage.removeItem('usuario_logeado');
+    window.location.href = '../../index.html';
+});
+
+// Cerrar menús al hacer clic fuera
+document.addEventListener('click', (e) => {
+    if (!document.getElementById('avatar-btn').contains(e.target)) {
+        document.getElementById('avatar-dropdown').classList.remove('show');
+    }
 });
 </script>
 </body>

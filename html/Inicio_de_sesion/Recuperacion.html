@@ -4,48 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Recuperar Contraseña</title>
+    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* Ajustes de responsividad para Recuperación */
+        /* Ajustes de responsividad */
         @media (max-width: 768px) {
             .form-card.recovery-card {
-                width: 95% !important;
-                padding: 25px 15px !important;
-                margin: 20px auto;
+                width: 90% !important;
+                padding: 20px !important;
             }
-
-            .form-title {
-                font-size: 1.6rem !important;
-                margin-bottom: 20px !important;
-            }
-
             .action-buttons-group {
                 flex-direction: column !important;
-                gap: 12px;
             }
-
             .btn-dark-action {
                 width: 100% !important;
-                padding: 12px !important;
             }
         }
 
         .background-overlay {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
         }
 
-        /* Prevenir desbordamiento de inputs */
-        input {
-            box-sizing: border-box;
+        .btn-disabled {
+            background-color: #999 !important;
+            cursor: not-allowed !important;
         }
     </style>
 </head>
@@ -54,86 +42,89 @@
     <main class="main-content form-main">
         <div class="background-overlay"></div>
 
-        <div class="form-card recovery-card" style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-            <h1 class="form-title" style="color: #5d4037; text-align: center; margin-bottom: 25px; font-weight: bold; font-size: 1.8rem;">Recuperar Contraseña</h1>
-            
-            <form class="recovery-form" id="recoveryForm">
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label for="correo" style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Correo asociado:</label>
-                    <input type="email" id="correo" placeholder="ejemplo@correo.com" required 
-                           style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ccc;">
-                </div>
-
-                <div class="input-group" style="margin-bottom: 25px;">
-                    <label for="codigo" style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Código de verificación:</label>
-                    <input type="text" id="codigo" placeholder="Introduce el código (1234)" 
-                           style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ccc;">
-                </div>
-            </form>
-
-            <div class="action-buttons-group" style="display: flex; gap: 10px; justify-content: center;">
-                <button type="button" id="btn-enviar-codigo" class="btn-dark-action" 
-                        style="flex: 1; padding: 10px; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold; cursor: pointer;">
-                    Enviar código
-                </button>
-                <button type="button" id="btn-siguiente" class="btn-dark-action" 
-                        style="flex: 1; padding: 10px; border-radius: 5px; border: none; background-color: #5d4037; color: white; font-weight: bold; cursor: pointer;">
-                    Siguiente
-                </button>
-                <button type="button" id="btn-regresar" class="btn-dark-action" onclick="window.location.href='Inicio_sesion.html'"
-                        style="flex: 1; padding: 10px; border-radius: 5px; border: none; background-color: #555; color: white; font-weight: bold; cursor: pointer;">
-                    Regresar
-                </button>
+        <div class="form-card recovery-card" style="max-width: 450px; margin: 80px auto; background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-lock-rotate" style="font-size: 3rem; color: #5d4037;"></i>
             </div>
+            <h1 class="form-title" style="color: #5d4037; text-align: center; margin-bottom: 10px; font-weight: bold; font-size: 1.8rem;">¿Olvidaste tu contraseña?</h1>
+            <p style="text-align: center; color: #666; margin-bottom: 25px; font-size: 0.9rem;">No te preocupes, dinos tu correo y te enviaremos un código de vuelo.</p>
+            
+            <form id="recoveryForm">
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label for="correo" style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 8px;">Correo electrónico:</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-envelope" style="position: absolute; left: 12px; top: 15px; color: #5d4037;"></i>
+                        <input type="email" id="correo" placeholder="ejemplo@correo.com" required 
+                               style="width: 100%; padding: 12px 12px 12px 40px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 30px;">
+                    <label for="codigo" style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 8px;">Código de verificación:</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-key" style="position: absolute; left: 12px; top: 15px; color: #5d4037;"></i>
+                        <input type="text" id="codigo" placeholder="Ingresa el código (1234)" 
+                               style="width: 100%; padding: 12px 12px 12px 40px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div class="action-buttons-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" id="btn-enviar-codigo" class="btn-dark-action" 
+                            style="flex: 1.5; padding: 12px; border-radius: 6px; border: none; background-color: #5d4037; color: white; font-weight: bold; cursor: pointer; transition: 0.3s;">
+                        Enviar código
+                    </button>
+                    <button type="button" id="btn-siguiente" class="btn-dark-action" 
+                            style="flex: 1; padding: 12px; border-radius: 6px; border: none; background-color: #fbc02d; color: #333; font-weight: bold; cursor: pointer; transition: 0.3s;">
+                        Siguiente
+                    </button>
+                </div>
+                
+                <button type="button" onclick="window.location.href='Inicio_sesion.html'" 
+                        style="width: 100%; margin-top: 15px; background: transparent; border: none; color: #5d4037; text-decoration: underline; cursor: pointer; font-size: 0.9rem;">
+                    Regresar al inicio de sesión
+                </button>
+            </form>
         </div>
     </main>
 
-    <footer class="site-footer" style="background: rgba(44, 44, 44, 0.9); color: white; text-align: center; padding: 20px; margin-top: auto;">
-        <div class="social-links" style="margin-bottom: 10px;">
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem; color: white;"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem; color: white;"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" style="margin: 0 10px; font-size: 1.2rem; color: white;"><i class="fa-brands fa-youtube"></i></a>
-        </div>
-        <div class="copyright">
-            © 2026 La Lechuza Lectora
-        </div>
-    </footer>
+    
 
     <script>
-        // Acción para enviar el código (Simulación de Backend)
-        document.getElementById('btn-enviar-codigo').addEventListener('click', async () => {
-            const email = document.getElementById('correo').value;
-            if(!email) return alert("Por favor, ingresa tu correo para enviarte el código.");
+        const btnEnviar = document.getElementById('btn-enviar-codigo');
+        const btnSiguiente = document.getElementById('btn-siguiente');
+        const inputCorreo = document.getElementById('correo');
+        const inputCodigo = document.getElementById('codigo');
 
-            try {
-                // Cambia esta URL por tu endpoint real si lo tienes implementado
-                const response = await fetch('http://localhost:3000/api/solicitar-recuperacion', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
-                
-                if (response.ok) {
-                    alert("Código de verificación enviado. Revisa tu bandeja de entrada (Prueba: 1234)");
-                } else {
-                    alert("Simulación: Si el correo existe, se enviará el código 1234.");
-                }
-            } catch (error) {
-                // Si el backend no está listo, permitimos la simulación para la escuela
-                alert("Simulación activa: Se ha enviado el código 1234 a su correo.");
-            }
+        // 1. Simulación de envío de código
+        btnEnviar.addEventListener('click', async () => {
+            const email = inputCorreo.value.trim();
+            if(!email) return alert("🦉 ¡Oye! Necesito tu correo para saber a dónde volar.");
+
+            // Feedback visual de carga
+            btnEnviar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            btnEnviar.classList.add('btn-disabled');
+            btnEnviar.disabled = true;
+
+            setTimeout(() => {
+                alert("✨ Mensaje enviado. Revisa tu bandeja de entrada.\n(Para esta prueba el código es: 1234)");
+                btnEnviar.innerHTML = 'Reenviar código';
+                btnEnviar.classList.remove('btn-disabled');
+                btnEnviar.disabled = false;
+            }, 1500);
         });
 
-        // Acción para validar código y pasar al cambio de contraseña
-        document.getElementById('btn-siguiente').addEventListener('click', () => {
-            const codigo = document.getElementById('codigo').value;
-            if(!codigo) return alert("Por favor, ingresa el código que recibiste.");
+        // 2. Validación de código para avanzar
+        btnSiguiente.addEventListener('click', () => {
+            const codigo = inputCodigo.value.trim();
+            if(!codigo) return alert("Por favor, ingresa el código de 4 dígitos.");
 
             if(codigo === "1234") { 
-                alert("Código verificado con éxito.");
-                window.location.href = 'Cambio_Contraseña.html';
+                alert("✅ Código correcto. Redirigiendo al cambio de contraseña...");
+                window.location.href = 'Cambio_Contraseña.html'; 
             } else {
-                alert("El código ingresado es incorrecto. Intenta con '1234'.");
+                alert("❌ El código es incorrecto. Prueba con '1234'.");
+                inputCodigo.value = "";
+                inputCodigo.focus();
             }
         });
     </script>

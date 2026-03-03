@@ -1,22 +1,22 @@
+// --- CONFIGURACIÓN ---
 let cartItems = []; 
-const CHECKOUT_START_URL = 'compra/resumen_compra.html'; 
-const CART_PAGE_URL = 'carrito.html'; 
 const STORAGE_KEY = 'laLechuzaLectoraCart'; 
+const CART_PAGE_URL = 'carrito.html';
 
+// --- PERSISTENCIA ---
 function saveCart() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
 }
 
 function loadCart() {
     const storedCart = localStorage.getItem(STORAGE_KEY);
-    if (storedCart) {
-        cartItems = JSON.parse(storedCart);
-    }
+    cartItems = storedCart ? JSON.parse(storedCart) : [];
 }
 
+// --- CÁLCULOS ---
 function calculateTotals() {
     const subtotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-    const shippingCost = 0; 
+    const shippingCost = 0; // Puedes cambiarlo a un valor fijo si lo deseas
     const total = subtotal + shippingCost;
 
     return {
@@ -27,55 +27,60 @@ function calculateTotals() {
     };
 }
 
+// --- INTERFAZ DE USUARIO ---
 function updateCartCount() {
     const totals = calculateTotals();
     const countElement = document.getElementById('cart-count');
     
     if (countElement) {
         countElement.textContent = totals.itemCount;
-        countElement.style.display = totals.itemCount > 0 ? 'block' : 'none';
+        countElement.style.display = totals.itemCount > 0 ? 'flex' : 'none';
     }
 }
 
-function addToCart(producto, buyNow = false) {
+// --- ACCIONES DEL CARRITO ---
+/**
+ * Añade un producto al carrito. 
+ * 'producto' debe ser un objeto: {id, title, price, image}
+ */
+window.agregarAlCarrito = function(id, title, price, image = '../../Imagenes/logo.png') {
     loadCart(); 
-    if (buyNow) cartItems = []; 
 
-    const itemIndex = cartItems.findIndex(item => String(item.id) === String(producto.id));
+    const itemIndex = cartItems.findIndex(item => String(item.id) === String(id));
     
     if (itemIndex > -1) {
         cartItems[itemIndex].quantity += 1;
     } else {
         cartItems.push({ 
-            id: producto.id, 
+            id: id, 
+            name: title, // Lo guardamos como name para el HTML
+            price: parseFloat(price), 
             quantity: 1, 
-            price: parseFloat(producto.price), 
-            name: producto.name,
-            image: producto.image
+            image: image
         }); 
     }
     
     saveCart();
     updateCartCount();
+    alert(`¡"${title}" se añadió al carrito!`);
+};
 
-    if (buyNow) {
-        startCheckout();
-    } else {
-        alert(`${producto.name} se añadió al carrito.`);
-    }
-}
+window.comprarDirecto = function(id, title, price, image) {
+    window.agregarAlCarrito(id, title, price, image);
+    window.location.href = CART_PAGE_URL;
+};
 
 window.updateItemQuantity = function(productId, newQuantity) {
     const itemIndex = cartItems.findIndex(item => String(item.id) === String(productId));
     if (itemIndex > -1) {
         if (newQuantity <= 0) {
-            cartItems.splice(itemIndex, 1);
+            window.removeItem(productId);
         } else {
             cartItems[itemIndex].quantity = newQuantity;
+            saveCart();
+            updateCartCount();
+            renderCart(); 
         }
-        saveCart();
-        updateCartCount();
-        renderCart(); 
     }
 };
 
@@ -86,35 +91,34 @@ window.removeItem = function(productId) {
     renderCart();
 };
 
+// --- RENDERIZADO (PÁGINA CARRITO.HTML) ---
 function generateCartItemHTML(item) {
     const itemTotal = (parseFloat(item.price) * item.quantity).toFixed(2);
     return `
-        <div class="cart-item" data-product-id="${item.id}">
-            <img src="${item.image}" alt="Portada de ${item.name}" onerror="this.src='../../Imagenes/logo.png'">
-            <div class="item-details">
-                <h2>${item.name}</h2>
-                <p>Precio unitario: $${parseFloat(item.price).toFixed(2)}</p>
-                <div class="item-quantity-controls">
-                    <button class="btn-qty-control" onclick="updateItemQuantity('${item.id}', ${item.quantity - 1})">-</button>
-                    <span class="item-quantity-display">${item.quantity}</span>
-                    <button class="btn-qty-control" onclick="updateItemQuantity('${item.id}', ${item.quantity + 1})">+</button>
+        <div class="cart-item" data-product-id="${item.id}" style="display: flex; align-items: center; border-bottom: 1px solid #ddd; padding: 15px; background: white; margin-bottom: 10px; border-radius: 8px;">
+            <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 110px; object-fit: contain; margin-right: 20px;" onerror="this.src='../../Imagenes/logo.png'">
+            <div class="item-details" style="flex-grow: 1;">
+                <h2 style="font-size: 1.1rem; color: #5d4037; margin: 0 0 5px 0;">${item.name}</h2>
+                <p style="color: #777; font-size: 0.9rem; margin-bottom: 10px;">Unitario: $${parseFloat(item.price).toFixed(2)}</p>
+                <div class="item-quantity-controls" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-qty-control" onclick="updateItemQuantity('${item.id}', ${item.quantity - 1})" style="width:25px; cursor:pointer;">-</button>
+                    <span class="item-quantity-display" style="font-weight: bold;">${item.quantity}</span>
+                    <button class="btn-qty-control" onclick="updateItemQuantity('${item.id}', ${item.quantity + 1})" style="width:25px; cursor:pointer;">+</button>
+                    <button class="btn-remove" onclick="removeItem('${item.id}')" style="margin-left: 15px; color: #d32f2f; background: none; border: none; cursor: pointer; font-size: 0.8rem;">Eliminar</button>
                 </div>
-                <button class="btn-remove" onclick="removeItem('${item.id}')">Eliminar</button>
             </div>
-            <span class="item-price">$${itemTotal}</span>
+            <span class="item-price" style="font-weight: bold; color: #5d4037; font-size: 1.1rem;">$${itemTotal}</span>
         </div>
     `;
 }
 
-// ... (tus funciones saveCart, loadCart, calculateTotals se mantienen igual)
-
 function renderCart() {
     const container = document.getElementById('cart-items-container');
     const emptyMessage = document.getElementById('empty-cart-message');
-    const totalDisplay = document.getElementById('total-display'); // El ID que tienes en el HTML
+    const totalDisplay = document.getElementById('total-display'); 
     const totals = calculateTotals();
 
-    if (!container) return;
+    if (!container) return; // No estamos en la página de carrito
 
     if (cartItems.length === 0) {
         container.innerHTML = '';
@@ -123,42 +127,25 @@ function renderCart() {
     } else {
         if (emptyMessage) emptyMessage.style.display = 'none';
         container.innerHTML = cartItems.map(generateCartItemHTML).join('');
-        
-        // Actualizamos el total en el resumen negro de la derecha
         if (totalDisplay) totalDisplay.textContent = `$${totals.total}`;
     }
 }
 
-// Asegúrate de que esta función se llame al cargar la página
+// --- INICIALIZACIÓN ---
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();
     updateCartCount();
-    
-    // Si estamos en la página del carrito, renderizamos
+
+    // Redirigir si existe el contenedor de items
     if (document.getElementById('cart-items-container')) {
         renderCart();
     }
-    
-    // Vincular el botón del icono del carrito
-    const cartBtn = document.getElementById('cart-icon-btn');
-    if (cartBtn) {
-        cartBtn.onclick = () => window.location.href = 'carrito.html';
-    }
-});
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadCart();
-    updateCartCount();
-
-    // --- SOLUCIÓN PARA EL BOTÓN QUE NO REACCIONA ---
+    // Asegurar que el icono del carrito funcione
     const cartBtn = document.getElementById('cart-icon-btn');
     if (cartBtn) {
         cartBtn.onclick = function() {
-            window.location.href = 'carrito.html';
+            window.location.href = '/html/Logeado/carrito.html';
         };
-    }
-
-    if (window.location.pathname.includes(CART_PAGE_URL)) {
-        renderCart();
     }
 });

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Confirmar y Finalizar</title>
-    <link rel="stylesheet" href="../../../Estilos/Estilo1.css">
+    <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* Ajustes de responsividad para el paso final */
+        /* Ajustes de responsividad */
         @media (max-width: 768px) {
             .checkout-container {
                 width: 95% !important;
@@ -19,23 +19,52 @@
             .final-section h3 { font-size: 1rem !important; }
             .final-section p { font-size: 0.9rem !important; }
             .final-totals strong { font-size: 1.8rem !important; }
-            .navigation-actions { flex-direction: column !important; gap: 12px !important; }
+            .navigation-actions { flex-direction: column-reverse !important; gap: 12px !important; }
             .btn-primary, .btn-dark-action { width: 100% !important; padding: 14px !important; font-size: 1rem !important; }
         }
 
         .background-overlay {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('../../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
         }
 
+        .checkout-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            max-width: 650px;
+            margin: 60px auto;
+        }
+
+        .modal-backdrop {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); 
+            z-index: 10000; 
+            justify-content: center; 
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
         .modal-content {
-            width: 90% !important;
+            background: white; 
+            padding: 35px; 
+            border-radius: 15px; 
+            text-align: center;
             max-width: 400px;
-            padding: 25px !important;
+            width: 90%;
+        }
+
+        .btn-disabled {
+            background: #ccc !important;
+            cursor: not-allowed !important;
         }
     </style>
 </head>
@@ -44,73 +73,146 @@
     <main class="main-content cart-main">
         <div class="background-overlay"></div>
 
-        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-width: 700px; margin: 40px auto;">
-            <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 30px;">4. Confirmar y Finalizar Compra</h1>
+        <div class="checkout-container">
+            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px;">
+                <span style="width: 40px; height: 10px; background: #27ae60; border-radius: 5px;"></span>
+                <span style="width: 40px; height: 10px; background: #27ae60; border-radius: 5px;"></span>
+                <span style="width: 40px; height: 10px; background: #5d4037; border-radius: 5px;"></span>
+            </div>
+
+            <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 10px;">4. Confirmar y Finalizar Compra</h1>
+            <p style="text-align: center; color: #888; margin-bottom: 30px;">Revisa tu información antes de realizar el pago.</p>
             
             <div class="checkout-step-content">
-                <h2 style="font-size: 1.3rem; color: #5d4037; margin-bottom: 20px; border-bottom: 2px solid #fbc02d; padding-bottom: 5px;">Resumen Final</h2>
-                
-                <div class="final-summary-area" style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 30px;">
-                    <div class="final-section" style="margin-bottom: 20px;">
+                <div class="final-summary-area" style="background: #fdfdfd; padding: 25px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 30px;">
+                    
+                    <div class="final-section" style="margin-bottom: 20px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px;">
                         <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;"><i class="fas fa-map-marker-alt"></i> Dirección de Envío:</h3>
-                        <p id="display-address" style="color: #555; margin: 0; font-style: italic;">Cargando dirección...</p>
+                        <p id="display-address" style="color: #666; margin: 0; font-style: italic;">Cargando dirección...</p>
                     </div>
                     
-                    <div class="final-section" style="margin-bottom: 20px;">
+                    <div class="final-section" style="margin-bottom: 20px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px;">
                         <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;"><i class="fas fa-wallet"></i> Método de Pago:</h3>
-                        <p id="display-payment" style="color: #555; margin: 0;">Cargando método...</p>
+                        <p id="display-payment" style="color: #666; margin: 0;">Cargando método...</p>
                     </div>
                     
-                    <div class="final-section final-totals" style="padding-top: 15px; border-top: 2px dashed #eee; text-align: right;">
-                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Total del Pedido:</h3>
-                        <strong id="display-total" style="color: #d32f2f; font-size: 2.2rem; display: block;">$0.00</strong>
+                    <div class="final-section final-totals" style="padding-top: 15px; text-align: right;">
+                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Total a Pagar:</h3>
+                        <strong id="display-total" style="color: #d32f2f; font-size: 2.5rem; display: block;">$0.00</strong>
                     </div>
                 </div>
                 
                 <div class="navigation-actions" style="display: flex; justify-content: space-between; gap: 15px;">
-                    <button class="btn-dark-action" onclick="window.history.back()" style="background: #555; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                        ← Regresar
+                    <button class="btn-dark-action" onclick="window.history.back()" style="background: #777; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        ← REGRESAR
                     </button>
 
-                    <button class="btn-primary" id="btn-finalizar-compra" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
-                        PAGAR Y FINALIZAR COMPRA
+                    <button class="btn-primary" id="btn-finalizar-compra" onclick="ejecutarCompraFinal()" style="background: #27ae60; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; flex-grow: 1; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(39,174,96,0.3);">
+                        PAGAR Y FINALIZAR PEDIDO <i class="fas fa-lock" style="margin-left: 10px;"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="compra-success-modal" class="modal-backdrop" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
-            <div class="modal-content" style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
-                <i class="fa-solid fa-circle-check" style="font-size: 50px; color: #388e3c; margin-bottom: 15px;"></i>
-                <h2 style="color: #5d4037;">¡Compra Finalizada!</h2>
-                <p style="color: #666; margin-bottom: 25px;">Tu pedido ha sido procesado con éxito. Recibirás una confirmación por correo.</p>
-                <button id="btn-modal-compra-accept" onclick="window.location.href='../../../index.html'" style="background: #5d4037; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Continuar</button>
+        <div id="compra-success-modal" class="modal-backdrop">
+            <div class="modal-content">
+                <div style="width: 80px; height: 80px; background: #e8f5e9; color: #2e7d32; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 40px;">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h2 style="color: #5d4037; margin-bottom: 10px;">¡Compra Finalizada!</h2>
+                <p style="color: #666; margin-bottom: 25px; line-height: 1.6;">Tu pedido ha sido procesado con éxito. Puedes consultar los detalles en tu perfil de usuario.</p>
+                <button id="btn-modal-compra-accept" onclick="window.location.href='/index.html'" style="background: #5d4037; color: white; padding: 12px 40px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1.1rem;">CONTINUAR</button>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; background: rgba(44, 44, 44, 0.9); color: white; margin-top: auto;">
-        <div class="copyright">© 2026. La Lechuza Lectora ©</div>
+    <footer class="site-footer" style="text-align: center; padding: 25px; background: rgba(44, 44, 44, 0.95); color: #bbb; margin-top: auto;">
+        <div class="copyright">© 2026. La Lechuza Lectora | Todos los derechos reservados.</div>
     </footer>
 
-    <script src="../../../Js/checkoutManager.js"></script>
-    
     <script>
-        // Script pequeño para mostrar los datos locales antes de enviar al servidor
         document.addEventListener('DOMContentLoaded', () => {
-            const data = JSON.parse(localStorage.getItem('laLechuzaCheckoutData')) || {};
+            // Cargar datos del carrito y checkout
+            const carrito = JSON.parse(localStorage.getItem('cart')) || [];
+            const idDireccion = localStorage.getItem('id_direccion_pedido');
+            const metodoPago = localStorage.getItem('metodo_pago') || 'Tarjeta de Crédito / Débito';
             
-            if(data.totals) {
-                document.getElementById('display-total').textContent = `$${data.totals.total.toFixed(2)}`;
+            if(carrito.length === 0) {
+                alert("El carrito está vacío. Redirigiendo...");
+                window.location.href = "/mi-carrito";
+                return;
             }
-            if(data.selectedPayment) {
-                document.getElementById('display-payment').textContent = data.selectedPayment === 'paypal' ? 'PayPal (Simulado)' : 'Tarjeta de Crédito/Débito';
-            }
-            if(data.selectedAddress) {
-                // Aquí podrías poner una lógica para mostrar la dirección real si la guardaste como texto
-                document.getElementById('display-address').textContent = "Dirección confirmada en su perfil";
-            }
+
+            // Calcular total real basado en el carrito actual
+            const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Mostrar datos en pantalla
+            document.getElementById('display-total').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('display-payment').textContent = metodoPago;
+            document.getElementById('display-address').textContent = idDireccion ? `Dirección seleccionada (ID: ${idDireccion})` : "Confirmada en paso anterior";
         });
+
+        async function ejecutarCompraFinal() {
+            const btn = document.getElementById('btn-finalizar-compra');
+            
+            // Evitar múltiples clics
+            btn.disabled = true;
+            btn.classList.add('btn-disabled');
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> PROCESANDO...';
+
+            // Obtener datos para la API
+            const userId = localStorage.getItem('userId');
+            const idDireccion = localStorage.getItem('id_direccion_pedido');
+            const carrito = JSON.parse(localStorage.getItem('cart')) || [];
+            const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            // Validaciones de último segundo
+            if(!userId || !idDireccion) {
+                alert("Faltan datos de sesión o envío. Por favor, vuelve a intentar.");
+                window.location.href = "/mi-carrito";
+                return;
+            }
+
+            const datosVenta = {
+                id_usuario: parseInt(userId),
+                id_direccion: parseInt(idDireccion),
+                total: total,
+                productos: carrito.map(p => ({
+                    id_producto: p.id,
+                    cantidad: p.quantity,
+                    precio_unitario: p.price
+                }))
+            };
+
+            try {
+                const response = await fetch('/api/ventas/registrar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosVenta)
+                });
+
+                const result = await response.json();
+
+                if(response.ok) {
+                    // LIMPIEZA POST-VENTA
+                    localStorage.removeItem('cart');
+                    localStorage.removeItem('id_direccion_pedido');
+                    localStorage.removeItem('metodo_pago');
+                    localStorage.removeItem('laLechuzaCheckoutData'); // Tu data anterior
+
+                    // Mostrar modal de éxito
+                    document.getElementById('compra-success-modal').style.display = 'flex';
+                } else {
+                    throw new Error(result.error || "Error al procesar la venta");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Hubo un problema: " + error.message);
+                btn.disabled = false;
+                btn.classList.remove('btn-disabled');
+                btn.innerHTML = 'PAGAR Y FINALIZAR PEDIDO <i class="fas fa-lock" style="margin-left: 10px;"></i>';
+            }
+        }
     </script>
 </body>
 </html>

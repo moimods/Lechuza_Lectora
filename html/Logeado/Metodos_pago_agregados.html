@@ -1,49 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Métodos de Pago</title>
+    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* AJUSTES RESPONSIVOS CRÍTICOS */
+        /* AJUSTES RESPONSIVOS */
         @media (max-width: 768px) {
-            .form-card.payment-method-card {
-                width: 95% !important;
-                padding: 25px 15px !important;
-                margin: 20px auto;
-            }
-
-            .payment-option {
-                padding: 15px !important;
-                margin-bottom: 12px !important;
-                display: flex !important;
-                align-items: center !important;
-            }
-
-            .icon-box {
-                width: 50px !important;
-                height: 50px !important;
-                margin-right: 15px !important;
-                font-size: 1.2rem !important;
-            }
-
-            .payment-info p {
-                font-size: 0.95rem !important;
-            }
-
-            .btn-confirm-selection {
-                width: 100% !important;
-                padding: 14px !important;
-                font-size: 1.1rem !important;
-                margin-top: 20px !important;
-            }
+            .payment-method-card { width: 92% !important; padding: 30px 20px !important; }
+            .payment-option { padding: 12px !important; }
+            .icon-box { width: 40px !important; height: 40px !important; }
         }
 
-        /* Estabilización del fondo */
+        /* Fondo */
         .background-overlay {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
@@ -51,80 +25,116 @@
             z-index: -1;
         }
 
-        /* Efecto de selección visual */
+        /* Opciones de Pago */
         .payment-option {
             background: white;
             border: 2px solid #ddd;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
             padding: 15px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .payment-option:hover {
+            border-color: #8d6e63;
+            transform: translateY(-2px);
         }
 
         .payment-option.selected {
-            border-color: #fbc02d;
-            background-color: #fffdf5;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-color: #5d4037;
+            background-color: #fdfaf0;
+            box-shadow: 0 4px 12px rgba(93, 64, 55, 0.15);
         }
 
-        .payment-info p {
-            margin: 0;
-            font-weight: bold;
-            color: #333;
+        /* Checkmark para el seleccionado */
+        .payment-option.selected::after {
+            content: "\f058"; /* FontAwesome check-circle */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            color: #5d4037;
+            font-size: 1.2rem;
         }
+
+        .btn-confirm:hover { background: #4b342c !important; }
     </style>
 </head>
-<body class="form-page">
+<body class="form-page" style="display: flex; flex-direction: column; min-height: 100vh;">
 
-    <header class="navbar-minimal" style="padding: 15px; background: rgba(240, 231, 203, 0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-        <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer; display: flex; align-items: center;">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo" style="height: 35px; margin-right: 10px;"> 
-            <span class="site-name" style="font-weight: bold; color: #5d4037;">LA LECHUZA LECTORA</span>
+    <header class="navbar-minimal" style="padding: 15px; background: rgba(240, 231, 203, 0.98); box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div class="logo-container" onclick="window.location.href='Catalogo_Logeado.html'" style="cursor: pointer; display: flex; align-items: center; max-width: 1200px; margin: 0 auto;">
+            <img src="../../Imagenes/logo.png" alt="Logo" style="height: 35px; margin-right: 10px;"> 
+            <span style="font-weight: bold; color: #5d4037; letter-spacing: 1px;">LA LECHUZA LECTORA</span>
         </div>
     </header>
 
-    <main class="main-content form-main">
+    <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px;">
         <div class="background-overlay"></div>
 
-        <div class="form-card payment-method-card" style="background: rgba(245, 245, 245, 0.95); border-radius: 12px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 450px; margin: 0 auto; text-align: center;">
-            <h1 style="color: #5d4037; margin-bottom: 25px; font-size: 1.8rem;">Método de Pago</h1>
+        <div class="payment-method-card" style="background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 100%; max-width: 420px; text-align: center;">
+            <h1 style="color: #5d4037; margin-bottom: 10px; font-size: 1.6rem;">Método de Pago</h1>
+            <p style="color: #777; font-size: 0.9rem; margin-bottom: 30px;">Selecciona tu forma de pago preferida</p>
 
-            <div class="payment-option selected">
-                <div class="icon-box paypal-icon-box" style="background: #0070ba; color: white; width: 45px; height: 45px; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+            <div class="payment-option selected" onclick="selectOption(this)">
+                <div class="icon-box" style="background: #0070ba; color: white; width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-right: 15px; font-size: 1.2rem;">
                     <i class="fa-brands fa-paypal"></i> 
                 </div>
-                <div class="payment-info" style="text-align: left;">
-                    <p>popeyye23r@gmail.com</p>
+                <div style="text-align: left;">
+                    <span style="display: block; font-size: 0.75rem; color: #888; text-transform: uppercase;">PayPal</span>
+                    <p style="margin: 0; font-weight: bold; color: #333;">popeyye23r@gmail.com</p>
                 </div>
             </div>
 
-            <div class="payment-option">
-                <div class="icon-box card-icon-box" style="background: #444; color: white; width: 45px; height: 45px; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+            <div class="payment-option" onclick="selectOption(this)">
+                <div class="icon-box" style="background: #333; color: white; width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-right: 15px; font-size: 1.2rem;">
                     <i class="fa-solid fa-credit-card"></i> 
                 </div>
-                <div class="payment-info" style="text-align: left;">
-                    <p>•••• 5732</p>
+                <div style="text-align: left;">
+                    <span style="display: block; font-size: 0.75rem; color: #888; text-transform: uppercase;">Tarjeta de Débito/Crédito</span>
+                    <p style="margin: 0; font-weight: bold; color: #333;">•••• 5732</p>
                 </div>
             </div>
 
-            <button class="btn-confirm-selection" style="width: 100%; background: #5d4037; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.3s;">
-                Confirmar Pago
+            <button style="background: none; border: 1px dashed #ccc; width: 100%; padding: 10px; border-radius: 10px; color: #888; cursor: pointer; margin-bottom: 25px; font-size: 0.85rem;">
+                <i class="fa-solid fa-plus"></i> Añadir nuevo método
+            </button>
+
+            <button class="btn-confirm" onclick="confirmarPago()" style="width: 100%; background: #5d4037; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(93, 64, 55, 0.3);">
+                Confirmar y Pagar
             </button> 
 
-            <button type="button" onclick="window.history.back()" style="background: none; border: none; color: #666; cursor: pointer; text-decoration: underline; margin-top: 15px; font-size: 0.9rem;">
-                Volver
+            <button type="button" onclick="window.history.back()" style="background: none; border: none; color: #888; cursor: pointer; text-decoration: none; margin-top: 20px; font-size: 0.9rem; display: block; width: 100%;">
+                <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem;"></i> Volver al Carrito
             </button>
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; font-size: 0.8em; margin-top: auto;">
-        <div class="copyright">
-            © Todos los derechos reservados 2026. La Lechuza Lectora ©
-        </div>
+    <footer style="text-align: center; padding: 20px; color: #ffffff; font-size: 0.85rem;">
+        © 2026 La Lechuza Lectora — Transacciones Seguras
     </footer>
 
+    <script>
+        // Función para cambiar la selección visual
+        function selectOption(element) {
+            // Quitar clase selected a todos
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            // Añadir al actual
+            element.classList.add('selected');
+        }
+
+        function confirmarPago() {
+            const selected = document.querySelector('.payment-option.selected p').innerText;
+            alert("Procesando pago con: " + selected);
+            // Aquí redirigirías a la página de éxito o confirmación final
+            window.location.href = "Mis_Pedidos.html";
+        }
+    </script>
 </body>
 </html>

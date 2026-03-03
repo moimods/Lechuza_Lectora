@@ -1,128 +1,174 @@
-
+/**
+ * SISTEMA GLOBAL DE AUTENTICACIÓN Y SEGURIDAD - LA LECHUZA LECTORA
+ * Incluye: Registro, Cambio de Pass, Captcha y Validaciones Reales.
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- 1. CONFIGURACIÓN DE RUTAS Y SELECTORES ---
+    const LOGIN_URL = 'inicio_sesion.html';
+    const INDEX_URL = '../../index.html';
+    let currentCaptcha = '';
+
+    // Referencias de Formulario
+    const registrationForm = document.getElementById('registrationForm');
     const passwordForm = document.getElementById('password-form');
-    const newPasswordInput = document.getElementById('new-password');
-    const confirmPasswordInput = document.getElementById('confirm-password');
-    const regresarButton = document.getElementById('btn-regresar');
-    const toggleButtons = document.querySelectorAll('.password-toggle'); 
     
+    // Referencias de Inputs
+    const passwordInput = document.getElementById('password') || document.getElementById('new-password');
+    const confirmPasswordInput = document.getElementById('confirm_password') || document.getElementById('confirm-password');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('telefono');
+    const birthdateInput = document.getElementById('fecha_nacimiento');
+    const captchaInput = document.getElementById('captcha-input');
+    
+    // Referencias de Requisitos (UI)
+    const reqs = {
+        length: document.getElementById('req-length') || document.getElementById('reg-req-length'),
+        number: document.getElementById('req-number') || document.getElementById('reg-req-number'),
+        special: document.getElementById('req-special') || document.getElementById('reg-req-special'),
+        common: document.getElementById('req-common') || document.getElementById('reg-req-common'),
+        match: document.getElementById('req-match') || document.getElementById('reg-req-match')
+    };
 
-    const reqLength = document.getElementById('req-length');
-    const reqNumber = document.getElementById('req-number');
-    const reqSpecial = document.getElementById('req-special');
-    const reqCommon = document.getElementById('req-common');
-    const reqMatch = document.getElementById('req-match'); 
+    const commonPasswords = ["123456", "password", "qwerty", "12345678", "123456789"];
 
-  
-    const SUCCESS_REDIRECT_URL = '../../index.html'; 
-    const REGRESAR_URL = 'inicio_sesion.html'; 
+    // --- 2. LÓGICA DE CAPTCHA ROBUSTA ---
+    function generateCaptcha() {
+        const captchaDisplay = document.getElementById('captcha-display');
+        if (!captchaDisplay) return;
 
-    const commonPasswords = ["123456", "password", "qwerty", "12345678", "123456789", "qwertyuiop"];
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Sin caracteres confusos
+        let result = "";
+        captchaDisplay.innerHTML = ""; 
 
+        for (let i = 0; i < 6; i++) {
+            const char = chars.charAt(Math.floor(Math.random() * chars.length));
+            result += char;
 
-    function togglePasswordVisibility(event) {
-        const icon = event.currentTarget;
-        const targetId = icon.getAttribute('data-target');
-        const inputField = document.getElementById(targetId);
-
-        if (inputField.type === 'password') {
-            inputField.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash'); 
-        } else {
-            inputField.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye'); 
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.display = 'inline-block';
+            span.style.transform = `rotate(${Math.floor(Math.random() * 30) - 15}deg)`;
+            span.style.margin = '0 4px';
+            span.style.fontSize = '24px';
+            span.style.userSelect = 'none';
+            captchaDisplay.appendChild(span);
         }
+        currentCaptcha = result;
     }
 
-    function updateRequirement(element, condition) {
+    // --- 3. VALIDACIÓN DE CONTRASEÑA EN TIEMPO REAL ---
+    function updateRequirementUI(element, condition) {
         if (!element) return;
-
-        element.style.color = condition ? 'green' : 'red';
+        element.style.color = condition ? '#2e7d32' : '#d32f2f';
         const icon = element.querySelector('i');
         if (icon) {
             icon.className = condition ? 'fa-solid fa-check' : 'fa-solid fa-times';
         }
     }
 
+    function validateSecurity() {
+        const pass = passwordInput ? passwordInput.value : '';
+        const confirm = confirmPasswordInput ? confirmPasswordInput.value : '';
 
-    function validateAndDisplay(newPass, confirmPass) {
-        let allRulesMet = true;
-
-
-        const lengthValid = newPass.length >= 6 && newPass.length <= 10;
-        updateRequirement(reqLength, lengthValid);
-        if (!lengthValid) allRulesMet = false;
-
- 
-        const numberValid = /[0-9]/.test(newPass);
-        updateRequirement(reqNumber, numberValid);
-        if (!numberValid) allRulesMet = false;
-
-        const specialValid = /[!@#$%^&*]/.test(newPass);
-        updateRequirement(reqSpecial, specialValid);
-        if (!specialValid) allRulesMet = false;
-
-
-        const commonValid = !commonPasswords.includes(newPass.toLowerCase());
-        updateRequirement(reqCommon, commonValid);
-        if (!commonValid) allRulesMet = false;
-
-
-        const isMatch = (newPass === confirmPass) && (newPass.length > 0 || confirmPass.length === 0);
-        updateRequirement(reqMatch, isMatch);
-        if (!isMatch) allRulesMet = false;
-        
-        return allRulesMet;
-    }
-
-
-    toggleButtons.forEach(button => {
-        button.addEventListener('click', togglePasswordVisibility);
-    });
-
-
-    if (newPasswordInput && confirmPasswordInput) {
-        const updateAll = () => {
-            const newPass = newPasswordInput.value;
-            const confirmPass = confirmPasswordInput.value;
-            validateAndDisplay(newPass, confirmPass);
+        const rules = {
+            length: pass.length >= 6 && pass.length <= 15,
+            number: /[0-9]/.test(pass),
+            special: /[!@#$%^&*._-]/.test(pass),
+            common: !commonPasswords.includes(pass.toLowerCase().trim()),
+            match: pass === confirm && pass.length > 0
         };
 
-        newPasswordInput.addEventListener('keyup', updateAll);
-        confirmPasswordInput.addEventListener('keyup', updateAll);
-        
+        updateRequirementUI(reqs.length, rules.length);
+        updateRequirementUI(reqs.number, rules.number);
+        updateRequirementUI(reqs.special, rules.special);
+        updateRequirementUI(reqs.common, rules.common);
+        updateRequirementUI(reqs.match, rules.match);
 
-        updateAll();
+        return Object.values(rules).every(r => r === true);
     }
-    
 
-    if (passwordForm) {
-        passwordForm.addEventListener('submit', (event) => {
-            event.preventDefault(); 
+    // --- 4. VALIDACIONES DE CAMPO (EDAD, EMAIL) ---
+    function isValidAge(dateStr) {
+        if (!dateStr) return false;
+        const birth = new Date(dateStr);
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+        if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age >= 18;
+    }
 
-            const newPass = newPasswordInput.value;
-            
-            const allRulesMet = validateAndDisplay(newPass, confirmPasswordInput.value);
-            
-            if (allRulesMet) {
+    // --- 5. EVENTOS DE INTERFAZ ---
 
-                alert("¡Contraseña cambiada con éxito! Redirigiendo al inicio."); 
-                console.log("Cambio exitoso. Redirigiendo a:", SUCCESS_REDIRECT_URL);
-                
-                window.location.href = SUCCESS_REDIRECT_URL;
-            } else {
-                alert("Por favor, corrige los requisitos de seguridad y asegúrate de que las contraseñas coincidan.");
+    // Visibilidad de Password
+    document.querySelectorAll('.password-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const target = document.getElementById(e.currentTarget.dataset.target);
+            if (target) {
+                const isPass = target.type === 'password';
+                target.type = isPass ? 'text' : 'password';
+                e.currentTarget.classList.toggle('fa-eye', !isPass);
+                e.currentTarget.classList.toggle('fa-eye-slash', isPass);
             }
         });
+    });
+
+    // Refrescar Captcha
+    const refreshBtn = document.getElementById('captcha-refresh');
+    if (refreshBtn) refreshBtn.addEventListener('click', generateCaptcha);
+
+    // Escuchar cambios en pass
+    if (passwordInput) {
+        passwordInput.addEventListener('input', validateSecurity);
+        if (confirmPasswordInput) confirmPasswordInput.addEventListener('input', validateSecurity);
     }
 
+    // --- 6. ENVÍO DE FORMULARIOS ---
+    
+    const handleFormSubmit = (e, isRegistration = true) => {
+        e.preventDefault();
 
-    if (regresarButton) {
-        regresarButton.addEventListener('click', () => {
-            window.location.href = REGRESAR_URL;
-        });
-    }
+        // Validar Password primero
+        if (!validateSecurity()) {
+            alert("🦉 La contraseña no cumple los requisitos de seguridad.");
+            return;
+        }
+
+        // Validar Captcha
+        if (captchaInput && captchaInput.value.trim().toUpperCase() !== currentCaptcha) {
+            alert("Código CAPTCHA incorrecto.");
+            generateCaptcha();
+            return;
+        }
+
+        if (isRegistration) {
+            // Validaciones extras de Registro
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+                alert("Email no válido."); return;
+            }
+            if (!/^\d{8,15}$/.test(phoneInput.value)) {
+                alert("Teléfono debe tener entre 8 y 15 números."); return;
+            }
+            if (!isValidAge(birthdateInput.value)) {
+                alert("Debes ser mayor de 18 años."); return;
+            }
+
+            const modal = document.getElementById('success-modal');
+            if (modal) modal.style.display = 'flex';
+            else alert("¡Registro exitoso!");
+        } else {
+            // Lógica de Cambio de Pass
+            alert("¡Contraseña actualizada!");
+            window.location.replace(INDEX_URL);
+        }
+    };
+
+    if (registrationForm) registrationForm.addEventListener('submit', (e) => handleFormSubmit(e, true));
+    if (passwordForm) passwordForm.addEventListener('submit', (e) => handleFormSubmit(e, false));
+
+    // Inicialización
+    generateCaptcha();
+    validateSecurity();
 });

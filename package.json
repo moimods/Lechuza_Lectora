@@ -7,12 +7,27 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "body-parser": "^2.2.2",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "mysql2": "^3.18.2",
     "pg": "^8.19.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
-  }
+  },
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moimods/Lechuza_Lectora.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/moimods/Lechuza_Lectora/issues"
+  },
+  "homepage": "https://github.com/moimods/Lechuza_Lectora#readme"
 }

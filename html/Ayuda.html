@@ -3,95 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Lechuza Lectora - Ayuda</title>
+    <title>La Lechuza Lectora - Centro de Ayuda</title>
     <link rel="icon" type="image/x-icon" href="../Imagenes/logo.png">
     <link rel="stylesheet" href="../Estilos/Estilo1.css">
-    <script src="../JS/Boton_Ini.js" defer></script>
-    <script src="../JS/Boton_contact.js" defer></script>
-    <script src="../JS/Boton_Inicio_Sesion_html.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* ESTILOS DEL MENÚ HAMBURGUESA */
+        /* --- ESTILOS DE ESTRUCTURA --- */
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
         .hamburger-btn {
-            display: none; /* Oculto en PC */
+            display: none;
             background: none;
             border: none;
             color: #5d4037;
             font-size: 1.8rem;
             cursor: pointer;
-            order: 2;
         }
 
-        /* AJUSTES RESPONSIVOS CRÍTICOS */
-        @media (max-width: 768px) {
-            .navbar {
-                flex-wrap: wrap;
-                justify-content: space-between;
-                height: auto !important;
-                padding: 10px 20px !important;
-            }
-
-            .hamburger-btn {
-                display: block; /* Aparece en móvil */
-            }
-
-            .logo-container { order: 1; }
-            .auth-actions { order: 3; width: auto !important; margin: 0 !important; }
-
-            .nav-links {
-                display: none; /* Se oculta para el menú hamburguesa */
-                flex-direction: column;
-                width: 100%;
-                order: 4;
-                background: rgba(244, 236, 226, 0.98);
-                padding: 15px 0;
-                text-align: center;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                margin-top: 10px;
-            }
-
-            .nav-links.active {
-                display: flex !important;
-            }
-
-            .nav-links a {
-                padding: 12px;
-                width: 100%;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-            }
-
-            .help-container {
-                width: 95% !important;
-                padding: 20px 15px !important;
-                margin: 20px auto !important;
-            }
-
-            .help-title {
-                font-size: 1.5rem !important;
-                text-align: center;
-            }
-
-            .help-module {
-                flex-direction: row !important;
-                padding: 15px !important;
-                align-items: center !important;
-                text-align: left !important;
-            }
-
-            .help-module i:first-child {
-                font-size: 1.5rem !important;
-                margin-right: 15px !important;
-                min-width: 30px;
-            }
-
-            .module-text h3 { font-size: 1rem !important; }
-            .module-text p { font-size: 0.85rem !important; }
-            .fa-angle-right { font-size: 0.8rem; color: #ccc; }
+        /* --- CONTENEDOR DE AYUDA --- */
+        .help-container {
+            background: rgba(255, 250, 240, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            margin: 40px auto;
+            max-width: 800px;
+            position: relative;
+            z-index: 5;
+            backdrop-filter: blur(5px);
         }
 
-        /* Estabilización del fondo y tarjetas */
+        .help-module {
+            background: white;
+            border-radius: 12px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 20px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .help-module:hover {
+            transform: translateX(10px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border-color: #5d4037;
+        }
+
+        .help-search-bar {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            border: 2px solid transparent;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: border-color 0.3s;
+        }
+
+        .help-search-bar:focus-within {
+            border-color: #5d4037;
+        }
+
+        .help-search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 1.1rem;
+            margin-left: 15px;
+            color: #5d4037;
+        }
+
         .background-overlay {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
@@ -99,34 +91,66 @@
             z-index: -1;
         }
 
-        .help-module {
-            background: white;
-            border-radius: 8px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            border: 1px solid #ddd;
-            transition: transform 0.2s;
-        }
-
+        /* --- COLORES DE ICONOS --- */
         .icon-red { color: #d32f2f; }
         .icon-yellow { color: #fbc02d; }
-        .icon-orange { color: #f57c00; }
         .icon-brown { color: #5d4037; }
+        .icon-blue { color: #1976d2; }
+
+        /* --- RESPONSIVIDAD --- */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 15px !important;
+                height: auto !important;
+            }
+
+            .hamburger-btn { display: block; order: 1; }
+            .logo-container { order: 2; }
+            .auth-actions { order: 3; }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%; left: 0; width: 100%;
+                flex-direction: column;
+                background: #f4ece2;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+
+            .nav-links.active { display: flex; }
+
+            .help-container {
+                width: 90%;
+                padding: 25px 15px;
+                margin: 20px auto;
+            }
+
+            .help-module {
+                padding: 15px;
+            }
+
+            .help-module i:first-child {
+                font-size: 1.5rem !important;
+                margin-right: 15px !important;
+            }
+
+            .module-text h3 { font-size: 1.1rem; }
+            .module-text p { font-size: 0.85rem; }
+        }
     </style>
 </head>
 <body>
 
     <header class="navbar detail-navbar">
-        <div class="logo-container">
-            <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
-            <span class="site-name">LA LECHUZA LECTORA</span>
-        </div>
-
         <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
             <i class="fa-solid fa-bars"></i>
         </button>
+
+        <div class="logo-container">
+            <img src="../Imagenes/logo.png" alt="Logo" class="logo"> 
+            <span class="site-name">LA LECHUZA LECTORA</span>
+        </div>
         
         <nav class="nav-links" id="mobile-nav">
             <a href="Acerca_de.html">Acerca de</a>
@@ -135,65 +159,81 @@
             <a href="Catalogo.html">Catálogo</a>
         </nav>
         
-        <div class="auth-actions user-actions">
-            <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
+        <div class="auth-actions">
+            <button class="icon-button" onclick="window.location.href='../index.html'" title="Inicio">
+                <i class="fa-solid fa-house"></i>
+            </button>
+            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                Login
+            </button>
         </div>
     </header>
 
-    <main class="main-content help-main">
+    <main class="main-content">
         <div class="background-overlay"></div>
 
-        <div class="help-container" style="background: rgba(240, 231, 203, 0.95); border-radius: 12px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin: 40px auto; max-width: 800px; position: relative; z-index: 5;">
-            <h1 class="help-title" style="color: #5d4037; margin-bottom: 25px;">¿Con qué podemos ayudarte?</h1>
+        <div class="help-container">
+            <h1 style="color: #5d4037; margin-bottom: 10px; text-align: center;">¿Cómo podemos ayudarte?</h1>
+            <p style="text-align: center; color: #795548; margin-bottom: 30px;">Busca artículos o elige una categoría</p>
             
-            <div class="help-search-bar" style="background: white; padding: 12px; border-radius: 25px; display: flex; align-items: center; border: 1px solid #ccc; margin-bottom: 30px;">
-                <i class="fa-solid fa-magnifying-glass" style="color: #999; margin-right: 10px;"></i>
-                <input type="text" placeholder="Buscar en Ayuda" style="border: none; outline: none; width: 100%; font-size: 1rem;">
+            <div class="help-search-bar">
+                <i class="fa-solid fa-magnifying-glass" style="color: #5d4037; font-size: 1.2rem;"></i>
+                <input type="text" placeholder="Escribe tu duda (ej: envíos, pagos...)" id="search-input">
             </div>
 
             <div class="help-modules-grid">
-                <a href="#" class="help-module" style="padding: 20px;">
-                    <i class="fa-solid fa-file-invoice-dollar icon-red" style="font-size: 1.8rem; margin-right: 20px;"></i>
+                <a href="#" class="help-module">
+                    <i class="fa-solid fa-box-open icon-red" style="font-size: 2rem; margin-right: 25px;"></i>
                     <div class="module-text" style="flex-grow: 1;">
-                        <h3 style="color: #5d4037; margin: 0;">Compras</h3>
-                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Seguir envíos o cancelar compras.</p>
+                        <h3 style="color: #5d4037; margin: 0;">Mis Compras</h3>
+                        <p style="color: #666; margin: 5px 0 0;">Rastreo de pedidos, estados y cancelaciones.</p>
                     </div>
-                    <i class="fa-solid fa-angle-right"></i>
+                    <i class="fa-solid fa-chevron-right" style="color: #ccc;"></i>
                 </a>
 
-                <a href="#" class="help-module" style="padding: 20px;">
-                    <i class="fa-solid fa-undo-alt icon-yellow" style="font-size: 1.8rem; margin-right: 20px;"></i>
+                <a href="#" class="help-module">
+                    <i class="fa-solid fa-rotate-left icon-yellow" style="font-size: 2rem; margin-right: 25px;"></i>
                     <div class="module-text" style="flex-grow: 1;">
-                        <h3 style="color: #5d4037; margin: 0;">Reembolsos</h3>
-                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Devolver un producto.</p>
+                        <h3 style="color: #5d4037; margin: 0;">Devoluciones y Reembolsos</h3>
+                        <p style="color: #666; margin: 5px 0 0;">Cómo devolver un libro y plazos de dinero.</p>
                     </div>
-                    <i class="fa-solid fa-angle-right"></i>
+                    <i class="fa-solid fa-chevron-right" style="color: #ccc;"></i>
                 </a>
 
-                <a href="#" class="help-module" style="padding: 20px;">
-                    <i class="fa-solid fa-user-circle icon-brown" style="font-size: 1.8rem; margin-right: 20px;"></i>
+                <a href="#" class="help-module">
+                    <i class="fa-solid fa-shield-halved icon-brown" style="font-size: 2rem; margin-right: 25px;"></i>
                     <div class="module-text" style="flex-grow: 1;">
-                        <h3 style="color: #5d4037; margin: 0;">Perfil</h3>
-                        <p style="color: #666; margin: 5px 0 0; font-size: 0.9rem;">Configuración de tu cuenta.</p>
+                        <h3 style="color: #5d4037; margin: 0;">Seguridad y Privacidad</h3>
+                        <p style="color: #666; margin: 5px 0 0;">Cambiar contraseña y protección de datos.</p>
                     </div>
-                    <i class="fa-solid fa-angle-right"></i>
+                    <i class="fa-solid fa-chevron-right" style="color: #ccc;"></i>
+                </a>
+
+                <a href="#" class="help-module">
+                    <i class="fa-solid fa-credit-card icon-blue" style="font-size: 2rem; margin-right: 25px;"></i>
+                    <div class="module-text" style="flex-grow: 1;">
+                        <h3 style="color: #5d4037; margin: 0;">Métodos de Pago</h3>
+                        <p style="color: #666; margin: 5px 0 0;">Tarjetas aceptadas, facturación y cuotas.</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: #ccc;"></i>
                 </a>
             </div>
 
-            <div class="contact-prompt" style="text-align: center; margin-top: 40px; border-top: 1px solid #ccc; padding-top: 25px;">
-                <h2 style="color: #5d4037; margin-bottom: 15px;">¿Necesitas más ayuda?</h2>
-                <button class="btn-primary" onclick="window.location.href='Contacto.html'" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">Contáctanos</button>
+            <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(0,0,0,0.1);">
+                <p style="color: #5d4037; font-weight: bold; margin-bottom: 15px;">¿No encontraste lo que buscabas?</p>
+                <button class="btn-primary" onclick="window.location.href='Contacto.html'" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: background 0.3s;">
+                    <i class="fa-solid fa-headset"></i> Hablar con Soporte
+                </button>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037;">
-        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
+    <footer style="text-align: center; padding: 30px; color: #5d4037; margin-top: auto;">
+        <div class="copyright">© 2026 La Lechuza Lectora | Centro de Soporte al Cliente</div>
     </footer>
 
     <script>
-        // FUNCIÓN MENÚ HAMBURGUESA
+        // Función Menú Móvil
         function toggleMobileMenu() {
             const nav = document.getElementById('mobile-nav');
             nav.classList.toggle('active');
@@ -203,9 +243,21 @@
         document.addEventListener('click', function(event) {
             const nav = document.getElementById('mobile-nav');
             const hamburger = document.getElementById('hamburger-btn');
-            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+            if (nav.classList.contains('active') && !hamburger.contains(event.target) && !nav.contains(event.target)) {
                 nav.classList.remove('active');
             }
+        });
+
+        // Simulación de búsqueda
+        const searchInput = document.getElementById('search-input');
+        searchInput.addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            const modules = document.querySelectorAll('.help-module');
+            
+            modules.forEach(mod => {
+                const text = mod.textContent.toLowerCase();
+                mod.style.display = text.includes(term) ? 'flex' : 'none';
+            });
         });
     </script>
 </body>

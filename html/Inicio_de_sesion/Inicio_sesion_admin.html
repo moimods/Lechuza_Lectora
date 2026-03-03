@@ -85,39 +85,54 @@
         </div>
     </footer>
 
-    <script>
-    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('correo').value;
-        const password = document.getElementById('contrasena').value;
+<script>
+document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('correo').value;
+    const password = document.getElementById('contrasena').value;
 
-        try {
-            const response = await fetch('http://localhost:3000/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
+    try {
+        // Petición al mismo endpoint de login
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            // Verificamos éxito Y que el rol sea 'admin'
-            if (data.success && data.user.rol === 'admin') {
-                localStorage.setItem('admin_session', 'true');
-                localStorage.setItem('usuario', JSON.stringify(data.user));
-                alert("Acceso administrativo concedido. Bienvenido " + data.user.nombre);
-                // Redirigir al panel de administración (ajusta la ruta según tu carpeta)
-                window.location.href = '../Admin/panel_de_admin.html'; 
-            } else if (data.success) {
-                alert("Acceso denegado: No tienes permisos de administrador.");
+        if (data.success) {
+            // --- VERIFICACIÓN DE ROL ---
+            // Solo permitimos el paso si el campo 'rol' en la DB es 'admin'
+            if (data.user.rol === 'admin') {
+                
+                // Guardamos la sesión siguiendo el estándar de los otros archivos
+                localStorage.setItem('userId', data.user.id_usuario);
+                localStorage.setItem('userName', data.user.nombre);
+                localStorage.setItem('userRole', data.user.rol);
+                localStorage.setItem('admin_session', 'true'); // Flag extra para paneles admin
+
+                alert("🔓 Acceso administrativo concedido. Bienvenido, " + data.user.nombre);
+                
+                // Redirigir al panel (ajusta la ruta según tu estructura)
+                window.location.href = 'Panel_Administrador.html'; 
+
             } else {
-                alert("Error: " + data.error);
+                // Si el usuario existe pero es un cliente normal
+                alert("🚫 Acceso denegado: Esta cuenta no tiene permisos de administrador.");
+                // Opcional: Cerrar sesión por seguridad
+                localStorage.clear();
             }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("No se pudo conectar con el servidor.");
+        } else {
+            // Error de credenciales (correo o contraseña mal)
+            alert("❌ " + data.error);
         }
-    });
-    </script>
+    } catch (error) {
+        console.error("Error de conexión:", error);
+        alert("⚠️ No se pudo conectar con el servidor. Verifica que Node.js esté activo.");
+    }
+});
+</script>
 </body>
 </html>

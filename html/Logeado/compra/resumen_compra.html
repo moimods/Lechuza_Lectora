@@ -112,41 +112,51 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    renderizarResumen(); // Esta función debe estar en tu checkoutManager.js
+    renderizarResumen();
 });
 
-async function finalizarPedidoBaseDeDatos() {
-    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    const idUsuario = localStorage.getItem('userId');
-    const idDireccion = localStorage.getItem('direccionSeleccionada'); // Se obtiene en el paso de Domicilio
+function renderizarResumen() {
+    const container = document.getElementById('checkout-product-list');
+    const subtotalDisplay = document.getElementById('subtotal-display');
+    const totalDisplay = document.getElementById('total-display');
+    
+    // Obtener carrito del localStorage (usando la clave de tu cartManager)
+    const carrito = JSON.parse(localStorage.getItem('laLechuzaLectoraCart')) || [];
 
-    if (carrito.length === 0) return alert("Tu carrito está vacío");
-
-    const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-
-    const datosCompra = {
-        id_usuario: idUsuario,
-        id_direccion: idDireccion || null, // Se actualizará en el paso de Domicilio.html
-        total: total,
-        productos: carrito
-    };
-
-    try {
-        const respuesta = await fetch('/api/pedidos/crear', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(datosCompra)
-        });
-
-        const resultado = await respuesta.json();
-
-        if (resultado.success) {
-            localStorage.removeItem('carrito');
-            window.location.href = 'finalizar.html';
-        }
-    } catch (error) {
-        console.error("Error al enviar el pedido:", error);
+    if (carrito.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <i class="fa-solid fa-cart-shopping" style="font-size: 3rem; color: #ccc;"></i>
+                <p style="margin-top: 10px; color: #666;">Tu carrito está vacío.</p>
+                <a href="../Logeado/Catalogo_Logeado.html" style="color: #5d4037; font-weight: bold;">Volver al catálogo</a>
+            </div>`;
+        return;
     }
+
+    let subtotal = 0;
+    container.innerHTML = ''; // Limpiar cargando
+
+    carrito.forEach(item => {
+        const itemTotal = parseFloat(item.price) * item.quantity;
+        subtotal += itemTotal;
+
+        container.innerHTML += `
+            <div class="checkout-item" style="display: flex; align-items: center; gap: 15px; padding: 10px 0; border-bottom: 1px solid #eee;">
+                <img src="${item.image}" alt="${item.title}" style="width: 60px; height: 80px; object-fit: cover; border-radius: 4px;">
+                <div style="flex-grow: 1;">
+                    <h3 style="font-size: 1rem; color: #5d4037; margin: 0;">${item.title}</h3>
+                    <p style="font-size: 0.9rem; color: #777; margin: 5px 0;">Cantidad: ${item.quantity}</p>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-weight: bold; color: #333;">$${itemTotal.toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    subtotalDisplay.innerText = `$${subtotal.toFixed(2)}`;
+    totalDisplay.innerText = `$${subtotal.toFixed(2)}`;
+    localStorage.setItem('total_compra_actual', subtotal.toFixed(2));
 }
 </script>
 </body>

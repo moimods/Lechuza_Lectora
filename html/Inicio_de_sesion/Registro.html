@@ -104,55 +104,100 @@
         </div>
     </div>
 
-    <script>
-        function togglePass(id) {
-            const input = document.getElementById(id);
-            input.type = input.type === "password" ? "text" : "password";
+<script>
+    // 1. Función para mostrar/ocultar contraseña
+    function togglePass(id) {
+        const input = document.getElementById(id);
+        const icon = event.target;
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = "password";
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // 2. Referencias a campos críticos
+        const pass = document.getElementById('password').value;
+        const confirm = document.getElementById('confirm_password').value;
+        const captchaInput = document.getElementById('captcha-input').value.trim().toUpperCase();
+        const captchaReal = "JUPRO"; 
+
+        // 3. Validaciones de Frontend antes de molestar al servidor
+        if (pass.length < 6) {
+            alert("🦉 La lechuza dice que tu contraseña es muy corta (mínimo 6 caracteres).");
+            return;
         }
 
-        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        if (pass !== confirm) { 
+            alert("⚠️ Las contraseñas no coinciden. Revisa con el icono del ojo."); 
+            return; 
+        }
 
-            const pass = document.getElementById('password').value;
-            const confirm = document.getElementById('confirm_password').value;
-            const captcha = document.getElementById('captcha-input').value.toUpperCase();
+        if (captchaInput !== captchaReal) { 
+            alert("⚠️ El código de verificación JUPRO es incorrecto."); 
+            return; 
+        }
 
-            if (pass !== confirm) { alert("Las contraseñas no coinciden."); return; }
-            if (captcha !== "JUPRO") { alert("Captcha incorrecto."); return; }
+        // 4. Preparación de datos (Mapeo limpio)
+        // Usamos filter(Boolean) para ignorar campos vacíos (como el segundo apellido)
+        const partesNombre = [
+            document.getElementById('nombres').value.trim(),
+            document.getElementById('apellido1').value.trim(),
+            document.getElementById('apellido2').value.trim()
+        ];
+        const nombreCompleto = partesNombre.filter(Boolean).join(' ');
 
-            const nombreCompleto = `${document.getElementById('nombres').value} ${document.getElementById('apellido1').value} ${document.getElementById('apellido2').value}`.trim();
-            
-            const datos = {
-                nombre: nombreCompleto,
-                email: document.getElementById('email').value,
-                password: pass,
-                telefono: document.getElementById('telefono').value
-            };
+        const datosUsuario = {
+            nombre: nombreCompleto,
+            email: document.getElementById('email').value.trim(),
+            password: pass,
+            telefono: document.getElementById('telefono').value.trim(),
+            domicilio: document.getElementById('domicilio').value.trim(),
+            fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+            nickname: document.getElementById('nickname').value.trim() || "Lector Anónimo"
+        };
 
-            try {
-                // Se conecta al servidor Node.js que ya tienes configurado en el puerto 3000
-                const response = await fetch('http://localhost:3000/api/registro', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datos)
-                });
+        // 5. Envío al Backend
+        try {
+            // Cambiamos el texto del botón para dar feedback
+            const btnSubmit = document.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.innerText;
+            btnSubmit.innerText = "Registrando...";
+            btnSubmit.disabled = true;
 
-                const result = await response.json();
+            const response = await fetch('/api/registro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datosUsuario)
+            });
 
-                if (response.ok) {
-                    document.getElementById('success-modal').style.display = 'flex';
-                } else {
-                    alert("Error: " + result.error);
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("No se pudo conectar con el servidor. Asegúrate de que Node.js esté corriendo (npm run dev).");
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // Mostrar modal de éxito
+                document.getElementById('success-modal').style.display = 'flex';
+                this.reset(); // Limpiar el formulario
+            } else {
+                alert("❌ Error: " + (result.message || "Ese correo ya está registrado."));
+                btnSubmit.innerText = originalText;
+                btnSubmit.disabled = false;
             }
-        });
+        } catch (error) {
+            console.error("Error en la petición:", error);
+            alert("⚠️ No pudimos conectar con el servidor de la librería. Intenta más tarde.");
+            document.querySelector('button[type="submit"]').disabled = false;
+        }
+    });
 
-        document.getElementById('btn-modal-accept').addEventListener('click', function() {
-            window.location.href = 'Inicio_sesion.html';
-        });
-    </script>
+    // Acción del botón Aceptar en el Modal
+    document.getElementById('btn-modal-accept').onclick = function() {
+        window.location.href = 'Inicio_sesion.html';
+    };
+</script>
 </body>
 </html>

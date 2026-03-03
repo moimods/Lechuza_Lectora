@@ -1,24 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Definimos la ruta centralizada (Ruta absoluta es mejor)
+    const USER_LOGIN_URL = '/html/Inicio_de_sesion/Inicio_sesion.html';
 
-    const headerLoginButtons = document.querySelectorAll('.btn-primary');
+    // 1. Selector por ID (El más seguro y rápido para el icono/botón específico)
+    const loginIconBtn = document.getElementById('btn-login-redirect');
+    if (loginIconBtn) {
+        loginIconBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = USER_LOGIN_URL;
+        });
+    }
 
-    const userLoginURL = '/html/Inicio_de_sesion/Inicio_sesion.html';
+    // 2. Selector para botones del Header
+    const headerButtons = document.querySelectorAll('.btn-primary');
 
-    headerLoginButtons.forEach(button => {
+    headerButtons.forEach(button => {
+        // Limpiamos el texto para evitar errores por espacios o mayúsculas
+        const buttonText = button.textContent.trim().toLowerCase();
         
-        if (button.textContent.trim() === 'Iniciar Sesión') {
-            button.addEventListener('click', () => {
-                
-                window.location.href = userLoginURL;
+        if (buttonText === 'iniciar sesión') {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log("Redirigiendo al Login de usuario...");
+                window.location.href = USER_LOGIN_URL;
             });
         }
     });
-
-  
-    const loginIconBtn = document.getElementById('btn-login-redirect');
-    if (loginIconBtn) {
-        loginIconBtn.onclick = () => {
-            window.location.href = userLoginURL;
-        };
-    }
 });

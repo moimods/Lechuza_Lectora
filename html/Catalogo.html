@@ -8,80 +8,126 @@
     <link rel="stylesheet" href="../Estilos/Estilo1.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
-    <script src="../JS/productLoader.js" defer></script>
-    <script src="../JS/filterSidebar.js" defer></script>
-    <script src="../JS/Boton_Ini.js" defer></script>
-    <script src="../JS/Boton_Inicio_Sesion_html.js" defer></script>
-    
     <style>
-        /* ESTILOS DEL MENÚ HAMBURGUESA */
+        /* --- ESTILOS BASE Y ESTRUCTURA --- */
+        body { margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+
         .hamburger-btn {
-            display: none; /* Oculto en PC */
+            display: none;
             background: none;
             border: none;
             color: #5d4037;
             font-size: 1.8rem;
             cursor: pointer;
-            order: 2;
         }
 
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* --- FILTROS SIDEBAR --- */
+        .filter-sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            height: fit-content;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-section h3 {
+            color: #5d4037;
+            border-bottom: 2px solid #fbc02d;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .filter-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #4e342e;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 4px 0;
+        }
+
+        .filter-options label:hover { color: #f57c00; }
+
+        /* --- TARJETAS DE PRODUCTO --- */
+        .book-product-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .book-product-card:hover { transform: translateY(-8px); }
+
+        .book-product-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* --- RESPONSIVIDAD --- */
         @media (max-width: 768px) {
             .navbar {
                 flex-wrap: wrap;
                 justify-content: space-between;
-                padding: 10px !important;
+                padding: 10px 15px !important;
                 height: auto !important;
             }
 
-            .hamburger-btn {
-                display: block; /* Aparece en móvil */
-            }
-
-            .logo-container { order: 1; }
-            .auth-actions { order: 3; margin-bottom: 0 !important; width: auto !important; }
+            .hamburger-btn { display: block; order: 1; }
+            .logo-container { order: 2; margin-right: auto; margin-left: 10px; }
+            .auth-actions { order: 3; }
 
             .search-bar.detail-search {
                 order: 4;
                 width: 100% !important;
                 margin: 10px 0 !important;
+                background: white;
             }
 
             .nav-links {
-                display: none; 
+                display: none;
+                position: absolute;
+                top: 100%; left: 0; width: 100%;
                 flex-direction: column;
-                width: 100%;
-                order: 5;
-                background: rgba(244, 236, 226, 0.98);
-                padding: 15px 0;
-                text-align: center;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                background: #f4ece2;
+                z-index: 1000;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
             }
 
-            .nav-links.active {
-                display: flex !important;
-            }
+            .nav-links.active { display: flex; }
 
-            .nav-links a {
-                padding: 12px;
-                width: 100%;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-            }
-
-            /* AJUSTES DEL CATÁLOGO EN MÓVIL */
             .catalog-container {
                 display: block !important;
-                padding: 10px !important;
+                padding: 15px !important;
             }
 
             .filter-sidebar {
-                display: none;
+                display: none; /* Se oculta y se muestra como modal */
                 position: fixed;
                 top: 0; left: 0;
-                width: 80%; height: 100%;
-                background: white;
+                width: 280px; height: 100%;
                 z-index: 2000;
-                padding: 20px;
-                box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+                border-radius: 0;
             }
 
             .filter-sidebar.active { display: block; }
@@ -89,126 +135,111 @@
             .btn-filter-toggle {
                 display: block !important;
                 width: 100%;
-                background: #5d4037;
-                color: white;
+                background: #fbc02d;
+                color: #5d4037;
                 padding: 12px;
                 border: none;
-                border-radius: 5px;
-                margin-bottom: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
                 font-weight: bold;
+                cursor: pointer;
             }
 
             .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
                 gap: 15px !important;
             }
-        }
-
-        .book-product-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .background-overlay {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
-            background-size: cover;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
+            
+            .book-product-card img { height: 160px; }
         }
     </style>
 </head>
 <body>
 
     <header class="navbar detail-navbar">
-        <div class="logo-container">
-            <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
-            <span class="site-name">LA LECHUZA LECTORA</span>
-        </div>
-
         <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
             <i class="fa-solid fa-bars"></i>
         </button>
-        
+
+        <div class="logo-container">
+            <img src="../Imagenes/logo.png" alt="Logo" class="logo"> 
+            <span class="site-name">LA LECHUZA LECTORA</span>
+        </div>
+
         <div class="search-bar detail-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="main-search" placeholder="Buscar Libros...">
+            <input type="text" id="main-search" placeholder="Buscar por título o autor...">
         </div>
         
         <nav class="nav-links" id="mobile-nav">
-            <a href="Acerca de.html">Acerca de</a>
+            <a href="Acerca_de.html">Acerca de</a>
             <a href="Contacto.html">Contacto</a>
             <a href="Ayuda.html">Ayuda</a>
             <a href="#" class="active-link">Catálogo</a>
         </nav>
         
-        <div class="auth-actions user-actions">
+        <div class="auth-actions">
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" id="btn-login-redirect" onclick="window.location.href='Inicio_de_sesion/Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
+            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 18px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
         </div>
     </header>
 
-    <main class="main-content catalog-main">
+    <main class="main-content">
         <div class="background-overlay"></div>
         
-        <button id="filter-toggle" class="btn-filter-toggle" style="display: none;">
-            <i class="fa-solid fa-filter"></i> Filtrar Categorías
-        </button>
+        <div class="catalog-container" style="display: grid; grid-template-columns: 260px 1fr; gap: 30px; padding: 40px; max-width: 1400px; margin: 0 auto;">
+            
+            <button id="filter-toggle" class="btn-filter-toggle" style="display: none;">
+                <i class="fa-solid fa-filter"></i> Filtrar Libros
+            </button>
 
-        <div class="catalog-container" style="display: grid; grid-template-columns: 250px 1fr; gap: 20px; padding: 20px;">
             <aside class="filter-sidebar" id="filter-sidebar">
-                <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; margin-bottom: 15px;">
-                    <h2 style="color: #5d4037;">Filtros</h2>
-                    <button id="sidebar-close-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-times"></i></button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #5d4037; margin: 0;">Filtros</h2>
+                    <button id="sidebar-close-btn" class="hamburger-btn" style="display: block; color: #d32f2f;"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
-                <div class="filter-section filter-genres">
-                    <h3 style="color: #5d4037; margin-bottom: 10px;">Géneros</h3>
-                    <div class="filter-options" style="display: flex; flex-direction: column; gap: 8px;">
-                        <label><input type="checkbox" data-filter="Terror"> Terror</label>
-                        <label><input type="checkbox" data-filter="Novela"> Novela</label>
-                        <label><input type="checkbox" data-filter="CienciaFiccion"> Ciencia Ficción</label>
-                        <label><input type="checkbox" data-filter="Fantasia"> Fantasía</label>
+                <div class="filter-section">
+                    <h3>Categorías</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" class="genre-filter" value="Terror"> Terror</label>
+                        <label><input type="checkbox" class="genre-filter" value="Novela"> Novela</label>
+                        <label><input type="checkbox" class="genre-filter" value="Ciencia Ficción"> Ciencia Ficción</label>
+                        <label><input type="checkbox" class="genre-filter" value="Fantasía"> Fantasía</label>
+                        <label><input type="checkbox" class="genre-filter" value="Clásicos"> Clásicos</label>
+                    </div>
+                </div>
+
+                <div class="filter-section" style="margin-top: 30px;">
+                    <h3>Rango de Precio</h3>
+                    <div class="filter-options">
+                        <label><input type="radio" name="price" value="all" checked> Todos</label>
+                        <label><input type="radio" name="price" value="0-300"> Hasta $300</label>
+                        <label><input type="radio" name="price" value="300-600"> $300 - $600</label>
                     </div>
                 </div>
             </aside>
             
-            <section class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <section>
+                <div class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px;">
+                    </div>
+
+                <div class="carousel-nav" style="text-align: center; padding: 50px 0; display: flex; justify-content: center; gap: 15px; align-items: center;">
+                    <button class="btn-primary" style="background: white; color: #5d4037; border: 1px solid #5d4037;">← Anterior</button> 
+                    <span style="color: white; font-weight: bold; background: #5d4037; padding: 5px 15px; border-radius: 20px;">Página 1</span>
+                    <button class="btn-primary" style="background: white; color: #5d4037; border: 1px solid #5d4037;">Siguiente →</button>
+                </div>
             </section>
-        </div>
-        
-        <div class="carousel-nav catalog-pagination" style="text-align: center; padding: 40px;">
-            <button id="prev-page-btn" style="padding: 10px; border-radius: 5px; border: 1px solid #5d4037; cursor: pointer;">← Anterior</button> 
-            <span class="pagination"></span>
-            <button id="next-page-btn" style="padding: 10px; border-radius: 5px; border: 1px solid #5d4037; cursor: pointer;">Siguiente →</button>
         </div>
     </main>
 
     <script>
-        // FUNCIÓN MENÚ HAMBURGUESA
+        // --- LÓGICA DE NAVEGACIÓN ---
         function toggleMobileMenu() {
-            const nav = document.getElementById('mobile-nav');
-            nav.classList.toggle('active');
+            document.getElementById('mobile-nav').classList.toggle('active');
         }
 
-        // Lógica de búsqueda
-        const searchInput = document.getElementById('main-search');
-        if(searchInput) {
-            searchInput.addEventListener('keyup', () => {
-                const term = searchInput.value.toLowerCase();
-                const books = document.querySelectorAll('.book-product-card');
-                books.forEach(book => {
-                    const title = book.querySelector('.book-title-grid').innerText.toLowerCase();
-                    book.style.display = title.includes(term) ? "flex" : "none";
-                });
-            });
-        }
-
-        // Toggle de filtros laterales
+        // --- LÓGICA DE FILTROS MÓVIL ---
         document.getElementById('filter-toggle').addEventListener('click', () => {
             document.getElementById('filter-sidebar').classList.add('active');
         });
@@ -217,39 +248,65 @@
             document.getElementById('filter-sidebar').classList.remove('active');
         });
 
-        // Cerrar menús al hacer clic fuera
-        document.addEventListener('click', function(event) {
-            const nav = document.getElementById('mobile-nav');
-            const hamburger = document.getElementById('hamburger-btn');
-            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
-                nav.classList.remove('active');
-            }
-        });
+        // --- SIMULACIÓN DE DATOS Y BÚSQUEDA ---
+        const demoBooks = [
+            {titulo: "El Resplandor", autor: "Stephen King", precio: 350, imagen: "../Imagenes/Libros/1.jpg", genero: "Terror"},
+            {titulo: "Dune", autor: "Frank Herbert", precio: 420, imagen: "../Imagenes/Libros/2.jpg", genero: "Ciencia Ficción"},
+            {titulo: "It (Eso)", autor: "Stephen King", precio: 380, imagen: "../Imagenes/Libros/3.jpg", genero: "Terror"},
+            {titulo: "Cien Años de Soledad", autor: "G. García Márquez", precio: 290, imagen: "../Imagenes/Libros/4.jpg", genero: "Novela"},
+            {titulo: "El Psicoanalista", autor: "John Katzenbach", precio: 310, imagen: "../Imagenes/Libros/5.jpg", genero: "Terror"}
+        ];
 
-        // Simulación de carga de libros
-        window.addEventListener('DOMContentLoaded', () => {
+        function renderBooks(books) {
             const container = document.getElementById('products-container');
-            const demoBooks = [
-                {titulo: "El Resplandor", autor: "Stephen King", precio: "350", imagen: "../Imagenes/Libros/1.jpg"},
-                {titulo: "Dune", autor: "Frank Herbert", precio: "420", imagen: "../Imagenes/Libros/2.jpg"},
-                {titulo: "It", autor: "Stephen King", precio: "380", imagen: "../Imagenes/Libros/3.jpg"}
-            ];
+            container.innerHTML = '';
+            
+            if(books.length === 0) {
+                container.innerHTML = `<p style="color:white; grid-column: 1/-1; text-align:center;">No se encontraron libros que coincidan.</p>`;
+                return;
+            }
 
-            demoBooks.forEach(libro => {
+            books.forEach(libro => {
                 const card = document.createElement('div');
                 card.className = 'book-product-card';
                 card.innerHTML = `
-                    <img src="${libro.imagen}" alt="${libro.titulo}" style="width:100%; height:180px; object-fit:contain;">
-                    <h3 class="book-title-grid" style="font-size:0.9rem; margin:10px 0;">${libro.titulo}</h3>
-                    <p style="font-size:0.75rem; color:#666;">${libro.autor}</p>
-                    <span style="font-weight:bold; color:#d32f2f; display:block; margin:10px 0;">$${libro.precio}</span>
-                    <div class="product-actions" style="display:flex; gap:5px;">
-                        <button class="btn-add-to-cart" style="flex:1; background:#5d4037; color:white; border:none; padding:8px; border-radius:4px; font-size:0.8rem;">Añadir</button>
-                        <button class="btn-buy-now" style="flex:1; background:#fbc02d; color:#5d4037; border:none; padding:8px; border-radius:4px; font-weight:bold; font-size:0.8rem;">Comprar</button>
+                    <div>
+                        <img src="${libro.imagen}" alt="${libro.titulo}">
+                        <h3 style="font-size:1rem; margin:10px 0; color:#5d4037;">${libro.titulo}</h3>
+                        <p style="font-size:0.8rem; color:#777; margin-bottom:10px;">${libro.autor}</p>
+                    </div>
+                    <div>
+                        <span style="font-weight:bold; color:#d32f2f; font-size:1.2rem; display:block; margin-bottom:15px;">$${libro.precio}</span>
+                        <div style="display:flex; gap:8px;">
+                            <button style="flex:1; background:#5d4037; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-cart-plus"></i></button>
+                            <button style="flex:2; background:#fbc02d; color:#5d4037; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Comprar</button>
+                        </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // Inicializar
+        renderBooks(demoBooks);
+
+        // Buscador en tiempo real
+        document.getElementById('main-search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = demoBooks.filter(b => 
+                b.titulo.toLowerCase().includes(term) || 
+                b.autor.toLowerCase().includes(term)
+            );
+            renderBooks(filtered);
+        });
+
+        // Cerrar menú móvil al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            const nav = document.getElementById('mobile-nav');
+            const hamburger = document.getElementById('hamburger-btn');
+            if (nav.classList.contains('active') && !hamburger.contains(e.target) && !nav.contains(e.target)) {
+                nav.classList.remove('active');
+            }
         });
     </script>
 </body>

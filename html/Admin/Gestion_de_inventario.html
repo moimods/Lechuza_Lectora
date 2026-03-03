@@ -6,22 +6,54 @@
     <title>La Lechuza Lectora - Gestión de Inventario</title>
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        .status-tag {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .available { background-color: #e8f5e9; color: #2e7d32; }
+        .low-stock { background-color: #fff3e0; color: #ef6c00; }
+        .sold-out { background-color: #ffedee; color: #c62828; }
+
+        .btn-edit, .btn-delete {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 2px;
+        }
+        .btn-edit { background: #5d4037; color: white; }
+        .btn-edit:hover { background: #3e2723; }
+        .btn-delete { background: #e53935; color: white; }
+        .btn-delete:hover { background: #b71c1c; }
+
+        /* Estilos del Buscador */
+        .search-container input:focus {
+            border-color: #5d4037 !important;
+            box-shadow: 0 0 8px rgba(93, 64, 55, 0.2);
+        }
+
+        @media print {
+            .navbar, .hamburger-btn, .inventory-footer, .btn-edit, .btn-delete, .search-container { display: none !important; }
+            .inventory-container { width: 100%; box-shadow: none; margin: 0; }
+        }
+    </style>
 </head>
 <body class="dashboard-page">
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
         <nav class="nav-links">
             <button class="hamburger-btn" id="hamburger-btn">
-        <div class="burger-icon">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+                <div class="burger-icon"><span></span><span></span><span></span></div>
             </button>
             <div class="menu-items" id="menu-items">
                 <a href="panel_de_admin.html">Panel Principal</a>
@@ -32,11 +64,9 @@
         </nav>
 
         <div class="auth-actions user-actions">
-            <a href="panel_de_admin.html" class="home-icon">
-                <i class="fa-solid fa-house"></i>
-            </a>
-            <span class="admin-label">Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover; border-radius: 50%; width: 40px; height: 40px;">
+            <a href="panel_de_admin.html" class="home-icon"><i class="fa-solid fa-house"></i></a>
+            <span class="admin-label" id="admin-name">Admin</span>
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="object-fit: cover; border-radius: 50%; width: 40px; height: 40px;">
         </div>
     </header>
 
@@ -44,105 +74,174 @@
         <div class="background-overlay dashboard-bg" style="filter: brightness(0.6);"></div>
 
         <div class="inventory-container">
-            <div class="inventory-header">
-                <i class="fa-solid fa-arrow-left" onclick="location.href='panel_de_admin.html'" style="cursor: pointer; color: white; font-size: 1.5rem; margin-right: 15px;"></i>
-                <h1 class="dashboard-title">Control de Existencias</h1>
+            <div class="inventory-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center;">
+                    <a href="panel_de_admin.html" style="color: white; margin-right: 15px;"><i class="fa-solid fa-circle-left fa-2x"></i></a>
+                    <h1 class="dashboard-title" style="color: white; margin: 0;">Control de Existencias</h1>
+                </div>
             </div>
 
-            <div class="inventory-table-wrapper" style="overflow-x: auto; background: white; border-radius: 8px;">
-                <table class="inventory-table">
+            <div class="search-container" style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px;">
+                <div style="position: relative; flex: 1;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #5d4037;"></i>
+                    <input type="text" id="inventory-search" placeholder="Buscar por título, autor o ID..." 
+                        style="width: 100%; padding: 12px 12px 12px 45px; border-radius: 8px; border: none; outline: none; font-size: 1rem;">
+                </div>
+                <div style="color: white; font-weight: bold; min-width: 150px; text-align: right;">
+                    <span id="results-count">0</span> productos
+                </div>
+            </div>
+
+            <div class="inventory-table-wrapper" style="overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <table class="inventory-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr>
-                            <th>ID</th>
+                        <tr style="background: #5d4037; color: white;">
+                            <th style="padding: 15px;">ID</th>
                             <th>Libro / Producto</th>
-                            <th>Categoría</th>
+                            <th>Autor</th>
                             <th>Stock</th>
                             <th>Precio</th>
                             <th>Estado</th>
-                            <th>Acción</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-inventario">
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 20px;">Cargando inventario...</td>
+                            <td colspan="7" style="text-align: center; padding: 40px;">
+                                <i class="fa-solid fa-spinner fa-spin fa-2x" style="color: #5d4037;"></i><br>Conectando al servidor...
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="inventory-footer">
-                <button class="btn-print" onclick="window.print()">
-                    <i class="fa-solid fa-print"></i> Generar Reporte PDF
+            <div class="inventory-footer" style="margin-top: 20px; text-align: right;">
+                <button class="btn-print" onclick="window.print()" style="padding: 12px 20px; background: #444; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    <i class="fa-solid fa-file-pdf"></i> Generar Reporte de Almacén
                 </button>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer">
-        © Todos los derechos reservados 2026. La Lechuza Lectora
-    </footer>
-
     <script>
-        // 1. SEGURIDAD: Verificar si es Admin
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-        if (!usuario || usuario.rol !== 'admin') {
-            alert("Acceso denegado.");
-            window.location.href = '../Inicio_de_sesion/Inicio_sesion_admin.html';
-        }
+        let todosLosProductos = []; // Almacén local para búsqueda rápida
 
-        // 2. Lógica del Menú Hamburguesa
-        const btnHamburguesa = document.getElementById('hamburger-btn');
-        const menuDesplegable = document.getElementById('menu-items');
+        document.addEventListener('DOMContentLoaded', () => {
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            
+            if (!usuario || usuario.rol !== 'admin') {
+                window.location.href = '/login'; 
+                return;
+            }
 
-        if (btnHamburguesa && menuDesplegable) {
-            btnHamburguesa.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menuDesplegable.classList.toggle('show-menu');
-            });
-        }
+            document.getElementById('admin-name').innerText = usuario.nombre || 'Administrador';
+            
+            cargarInventario();
+            initMenu();
+            initSearch();
+        });
 
-        // 3. CARGAR DATOS REALES DESDE EL SERVIDOR
         async function cargarInventario() {
             try {
-                const response = await fetch('http://localhost:3000/api/productos');
-                const productos = await response.json();
+                const response = await fetch('/api/productos');
+                if (!response.ok) throw new Error('Error en servidor');
                 
-                const tablaBody = document.getElementById('tabla-inventario');
-                tablaBody.innerHTML = ''; 
+                todosLosProductos = await response.json();
+                renderizarTabla(todosLosProductos);
 
-                if (productos.length === 0) {
-                    tablaBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay productos registrados</td></tr>';
-                    return;
-                }
-
-                productos.forEach(prod => {
-                    const stockVal = parseInt(prod.stock);
-                    const claseEstado = stockVal > 5 ? 'available' : (stockVal > 0 ? 'low-stock' : 'sold-out');
-                    const textoEstado = stockVal > 5 ? 'Disponible' : (stockVal > 0 ? 'Pocas unidades' : 'Agotado');
-                    
-                    tablaBody.innerHTML += `
-                        <tr>
-                            <td>#${prod.id_producto}</td>
-                            <td style="font-weight: bold;">${prod.nombre}</td>
-                            <td>${prod.categoria || 'Sin categoría'}</td>
-                            <td>${prod.stock} unidades</td>
-                            <td>$${prod.precio}</td>
-                            <td><span class="status-tag ${claseEstado}">${textoEstado}</span></td>
-                            <td>
-                                <button class="btn-edit" onclick="location.href='Gestion_productos.html?id=${prod.id_producto}'">
-                                    <i class="fa-solid fa-pen"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
             } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('tabla-inventario').innerHTML = '<tr><td colspan="7" style="color:red; text-align:center;">Error al conectar con el servidor</td></tr>';
+                console.error("Error de carga:", error);
+                document.getElementById('tabla-inventario').innerHTML = `
+                    <tr><td colspan="7" style="color:red; text-align:center; padding: 30px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Error al conectar con la base de datos.</td></tr>`;
             }
         }
 
-        window.onload = cargarInventario;
+        function renderizarTabla(lista) {
+            const tablaBody = document.getElementById('tabla-inventario');
+            const countLabel = document.getElementById('results-count');
+            
+            if (lista.length === 0) {
+                tablaBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px;">No se encontraron resultados.</td></tr>';
+                countLabel.innerText = "0";
+                return;
+            }
+
+            let htmlRows = '';
+            lista.forEach(prod => {
+                const stockVal = parseInt(prod.stock);
+                let claseE = 'available', textoE = 'En Stock';
+                
+                if (stockVal <= 0) { claseE = 'sold-out'; textoE = 'Agotado'; }
+                else if (stockVal <= 5) { claseE = 'low-stock'; textoE = 'Crítico'; }
+
+                const precioMXN = new Intl.NumberFormat('es-MX', {
+                    style: 'currency', currency: 'MXN'
+                }).format(prod.precio);
+
+                htmlRows += `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="text-align:center; padding: 12px;">#${prod.id_producto}</td>
+                        <td style="font-weight: bold; color: #5d4037;">${prod.titulo}</td>
+                        <td>${prod.autor || 'N/A'}</td>
+                        <td style="text-align:center;">${prod.stock} uds</td>
+                        <td style="text-align:center; font-weight: 600;">${precioMXN}</td>
+                        <td style="text-align:center;"><span class="status-tag ${claseE}">${textoE}</span></td>
+                        <td style="text-align:center;">
+                            <button class="btn-edit" onclick="editarProducto(${prod.id_producto})" title="Editar">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="btn-delete" onclick="eliminarProducto(${prod.id_producto}, '${prod.titulo}')" title="Eliminar">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+            tablaBody.innerHTML = htmlRows;
+            countLabel.innerText = lista.length;
+        }
+
+        function initSearch() {
+            const searchInput = document.getElementById('inventory-search');
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtrados = todosLosProductos.filter(p => 
+                    p.titulo.toLowerCase().includes(term) || 
+                    p.autor?.toLowerCase().includes(term) ||
+                    p.id_producto.toString().includes(term)
+                );
+                renderizarTabla(filtrados);
+            });
+        }
+
+        async function eliminarProducto(id, nombre) {
+            if (!confirm(`¿Eliminar permanentemente "${nombre}"?`)) return;
+
+            try {
+                const response = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    alert("✅ Eliminado correctamente.");
+                    cargarInventario(); 
+                } else {
+                    alert("❌ No se puede eliminar: El libro tiene ventas registradas.");
+                }
+            } catch (error) {
+                alert("🚨 Error de conexión.");
+            }
+        }
+
+        function editarProducto(id) {
+            window.location.href = `Gestion_productos.html?id=${id}`;
+        }
+
+        function initMenu() {
+            const btn = document.getElementById('hamburger-btn');
+            const menu = document.getElementById('menu-items');
+            btn?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menu.classList.toggle('show-menu');
+            });
+        }
     </script>
 </body>
 </html>

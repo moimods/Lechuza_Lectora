@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <style>
-        /* --- ESTILOS MENÚ HAMBURGUESA --- */
+        /* --- OPTIMIZACIONES DE ESTILO --- */
+        
+        /* Menú Hamburguesa Móvil */
         .hamburger-btn {
             display: none;
             background: none;
@@ -18,9 +20,13 @@
             order: 2;
         }
 
-        /* AJUSTES RESPONSIVOS */
         @media (max-width: 768px) {
-            .navbar { flex-wrap: wrap; justify-content: space-between; height: auto !important; padding: 10px 20px !important; }
+            .navbar { 
+                flex-wrap: wrap; 
+                justify-content: space-between; 
+                height: auto !important; 
+                padding: 10px 20px !important; 
+            }
             .hamburger-btn { display: block; }
             .nav-links {
                 display: none; 
@@ -31,11 +37,13 @@
                 padding: 15px 0;
                 text-align: center;
                 border-radius: 0 0 10px 10px;
+                transition: all 0.3s ease;
             }
             .nav-links.active { display: flex !important; }
             .profile-header-card { flex-direction: column !important; text-align: center; }
             .profile-actions-grid-custom { grid-template-columns: 1fr !important; }
             .info-grid { grid-template-columns: 1fr !important; }
+            .search-bar.detail-search { order: 4; width: 100%; margin: 10px 0; }
         }
 
         /* Dropdown Avatar */
@@ -52,7 +60,9 @@
             padding: 10px 0;
             border: 1px solid #ddd;
         }
-        .dropdown-menu.show { display: block; }
+        .dropdown-menu.show { display: block; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
         .dropdown-menu a {
             color: #5d4037 !important;
             padding: 12px 16px;
@@ -60,9 +70,20 @@
             display: block;
             font-weight: bold;
         }
-        .avatar { border-radius: 50%; width: 40px; height: 40px; object-fit: cover; cursor: pointer; border: 2px solid #5d4037; }
+        .dropdown-menu a:hover { background-color: #fdf5e6; }
         
-        /* Estilos del Historial */
+        .avatar { 
+            border-radius: 50%; 
+            width: 40px; 
+            height: 40px; 
+            object-fit: cover; 
+            cursor: pointer; 
+            border: 2px solid #5d4037; 
+            transition: transform 0.2s;
+        }
+        .avatar:hover { transform: scale(1.1); }
+        
+        /* Estilos del Historial y Cards */
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .info-label { font-weight: bold; color: #888; display: block; font-size: 0.85rem; text-transform: uppercase; }
         .info-value { font-size: 1.1rem; color: #333; margin: 5px 0; }
@@ -73,10 +94,27 @@
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
         }
-        .pedido-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .pedido-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .badge-estado { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: white; }
+
+        .action-module {
+            background: white; 
+            padding: 25px; 
+            border-radius: 12px; 
+            text-decoration: none; 
+            border: 1px solid #ddd; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+        .action-module:hover {
+            transform: translateY(-5px);
+            border-color: #5d4037;
+            box-shadow: 0 6px 15px rgba(93, 64, 55, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -167,11 +205,11 @@
             </div>
 
             <div class="profile-actions-grid-custom" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 800px; margin: 0 auto;">
-                <a href="Direcciones.html" class="action-module" style="background: white; padding: 25px; border-radius: 12px; text-decoration: none; border: 1px solid #ddd; display: flex; align-items: center; gap: 15px;">
+                <a href="Direcciones.html" class="action-module">
                     <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: #5d4037;"></i>
                     <h3 style="color: #5d4037; margin: 0;">Direcciones</h3>
                 </a>
-                <a href="Tarjetas.html" class="action-module" style="background: white; padding: 25px; border-radius: 12px; text-decoration: none; border: 1px solid #ddd; display: flex; align-items: center; gap: 15px;">
+                <a href="Tarjetas.html" class="action-module">
                     <i class="fas fa-credit-card" style="font-size: 2rem; color: #5d4037;"></i>
                     <h3 style="color: #5d4037; margin: 0;">Métodos de Pago</h3>
                 </a>
@@ -179,7 +217,7 @@
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #ffffff;">
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: #ffffff; background: rgba(93, 64, 55, 0.8); margin-top: 40px;">
         <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
@@ -194,7 +232,6 @@
             }
 
             try {
-                // 1. Obtener Datos Personales
                 const respuesta = await fetch(`/api/usuario/${userEmail}`);
                 const datos = await respuesta.json();
                 
@@ -205,13 +242,19 @@
                     document.getElementById('info-telefono').textContent = datos.telefono || 'No registrado';
                     document.getElementById('info-email-detail').textContent = datos.email;
 
-                    // Cambiar foto si existe en la BD
+                    // Manejo de imagen de perfil
+                    const profileImg = document.getElementById('profile-avatar-img');
+                    const navAvatar = document.getElementById('avatar-btn');
+                    
                     if(datos.foto_perfil && datos.foto_perfil !== 'default_avatar.png') {
-                        document.getElementById('profile-avatar-img').src = datos.foto_perfil;
-                        document.getElementById('avatar-btn').src = datos.foto_perfil;
+                        profileImg.src = datos.foto_perfil;
+                        navAvatar.src = datos.foto_perfil;
                     }
 
-                    // 2. Cargar Historial de Pedidos usando el id_usuario obtenido
+                    // Fallback si la imagen falla
+                    profileImg.onerror = () => profileImg.src = "../../Imagenes/miku.png.jpg";
+                    navAvatar.onerror = () => navAvatar.src = "../../Imagenes/miku.png.jpg";
+
                     cargarHistorialPedidos(datos.id_usuario);
                 }
             } catch (error) {
@@ -223,7 +266,6 @@
             const container = document.getElementById('pedidos-container');
 
             try {
-                // Consulta SQL con JOIN a través de tu API
                 const respuesta = await fetch(`/api/pedidos/usuario/${idUsuario}`);
                 const pedidos = await respuesta.json();
 
@@ -245,7 +287,7 @@
                             </span>
                         </div>
                         <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Fecha:</strong> ${new Date(pedido.fecha_pedido).toLocaleDateString()}</p>
-                        <p style="margin: 5px 0; font-size: 0.9rem; color: #555;"><strong>Libros:</strong> ${pedido.libros_comprados}</p>
+                        <p style="margin: 5px 0; font-size: 0.9rem; color: #555;"><strong>Libros:</strong> ${pedido.libros_comprados || 'Detalle no disponible'}</p>
                         <div style="text-align: right; margin-top: 10px;">
                             <span style="font-size: 1.1rem; font-weight: bold; color: #d32f2f;">Total: $${pedido.total}</span>
                         </div>
@@ -279,10 +321,13 @@
             document.getElementById('avatar-dropdown').classList.toggle('show');
         }
 
+        // Cerrar menús al hacer clic fuera
         window.onclick = function(event) {
-            if (!event.target.matches('.avatar')) {
+            if (!event.target.matches('.avatar') && !event.target.matches('.hamburger-btn') && !event.target.closest('.hamburger-btn')) {
                 const dropdown = document.getElementById("avatar-dropdown");
+                const mobileNav = document.getElementById("mobile-nav");
                 if (dropdown && dropdown.classList.contains('show')) dropdown.classList.remove('show');
+                if (mobileNav && mobileNav.classList.contains('active')) mobileNav.classList.remove('active');
             }
         }
 

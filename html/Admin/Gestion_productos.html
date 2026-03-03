@@ -3,62 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Lechuza Lectora - Gestión de Productos</title>
+    <title>La Lechuza Lectora - Registro de Libros</title>
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         .form-container-admin {
-            max-width: 600px;
+            max-width: 650px;
             background-color: #fdf5e6; 
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            margin: 20px auto;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            margin: 30px auto;
             position: relative;
             z-index: 5;
+            border-top: 6px solid #5d4037;
         }
 
-        @media (max-width: 600px) {
-            .form-container-admin { width: 95%; padding: 20px; }
-            .responsive-grid { grid-template-columns: 1fr !important; }
-        }
-
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; font-weight: 700; color: #5d4037; margin-bottom: 5px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 700; color: #5d4037; margin-bottom: 8px; font-size: 0.9rem; }
+        
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; box-sizing: border-box; 
+            width: 100%; padding: 12px; border: 1px solid #d7ccc8; border-radius: 6px; 
+            font-size: 1rem; box-sizing: border-box; transition: border 0.3s;
         }
+
+        .form-group input:focus { border-color: #5d4037; outline: none; }
 
         .btn-save-product {
-            background-color: #5d4037; color: white; border: none; padding: 15px;
-            border-radius: 5px; font-weight: 700; cursor: pointer; width: 100%;
-            transition: background 0.3s; font-size: 1.1em;
+            background-color: #5d4037; color: white; border: none; padding: 16px;
+            border-radius: 6px; font-weight: 700; cursor: pointer; width: 100%;
+            transition: all 0.3s; font-size: 1.1rem; margin-top: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .btn-save-product:hover { background-color: #4e342e; }
+
+        .btn-save-product:hover { background-color: #3e2723; transform: translateY(-2px); }
+        .btn-save-product:disabled { background-color: #a1887f; cursor: not-allowed; }
 
         .preview-box {
-            width: 120px; height: 160px; border: 2px dashed #ccc; margin: 10px auto;
+            width: 140px; height: 190px; border: 2px dashed #d7ccc8; margin: 10px 0;
             display: flex; align-items: center; justify-content: center;
-            color: #888; border-radius: 5px; background: #fff;
+            color: #8d6e63; border-radius: 8px; background: #fff; overflow: hidden;
         }
         .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .inventory-header { display: flex; align-items: center; margin-bottom: 25px; color: #5d4037; }
+        
+        @media (max-width: 600px) {
+            .form-container-admin { width: 92%; padding: 20px; }
+            .responsive-grid { grid-template-columns: 1fr !important; }
+        }
     </style>
 </head>
 <body class="dashboard-page">
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
         <nav class="nav-links">
             <button class="hamburger-btn" id="hamburger-btn">
-        <div class="burger-icon">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+                <div class="burger-icon"><span></span><span></span><span></span></div>
             </button>
             <div class="menu-items" id="menu-items">
                 <a href="panel_de_admin.html">Dashboard</a>
@@ -68,35 +74,38 @@
         </nav>
 
         <div class="auth-actions user-actions">
-            <a href="panel_de_admin.html"><i class="fa-solid fa-house"></i></a>
-            <span class="admin-label">Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar Admin" class="avatar" style="object-fit: cover; border-radius: 50%; width: 35px; height: 35px;">
+            <a href="panel_de_admin.html" class="icon-button"><i class="fa-solid fa-house"></i></a>
+            <span class="admin-label" id="admin-display-name">Admin</span>
+            <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
         </div>
     </header>
 
     <main class="main-content inventory-main">
-        <div class="background-overlay dashboard-bg" style="filter: brightness(0.6);"></div>
+        <div class="background-overlay dashboard-bg" style="filter: brightness(0.5);"></div>
 
         <div class="form-container-admin">
             <div class="inventory-header">
-                <i class="fa-solid fa-arrow-left" onclick="location.href='panel_de_admin.html'" style="cursor: pointer; margin-right: 10px;"></i>
-                <h2 class="dashboard-title">Registrar Nuevo Libro</h2>
+                <a href="panel_de_admin.html" style="color: inherit; text-decoration: none;">
+                    <i class="fa-solid fa-circle-chevron-left fa-2xl" style="margin-right: 15px; cursor: pointer;"></i>
+                </a>
+                <h2 style="margin: 0;">Registrar Nuevo Libro</h2>
             </div>
 
             <form id="productForm">
                 <div class="form-group">
-                    <label for="nombre">Título del Libro:</label>
-                    <input type="text" id="nombre" placeholder="Ej: El Quijote" required>
+                    <label for="titulo">Título del Libro:</label>
+                    <input type="text" id="titulo" placeholder="Ej: Las Crónicas de Narnia" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="descripcion">Autor / Descripción:</label>
-                    <textarea id="descripcion" placeholder="Nombre del autor o breve reseña" rows="2" style="width: 100%; border-radius: 5px; border: 1px solid #ccc; padding: 10px;"></textarea>
+                    <label for="autor">Autor / Escritor:</label>
+                    <input type="text" id="autor" placeholder="Ej: C.S. Lewis" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="categoria">Categoría:</label>
-                    <select id="categoria">
+                    <label for="categoria">Categoría del Catálogo:</label>
+                    <select id="categoria" required>
+                        <option value="" disabled selected>Selecciona una categoría</option>
                         <option value="Terror">Terror</option>
                         <option value="Fantasía">Fantasía</option>
                         <option value="Clásicos">Clásicos</option>
@@ -106,94 +115,89 @@
 
                 <div class="form-group responsive-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
-                        <label for="precio">Precio ($):</label>
-                        <input type="number" id="precio" placeholder="0.00" step="0.01" required>
+                        <label for="precio">Precio Unitario ($):</label>
+                        <input type="number" id="precio" placeholder="0.00" step="0.01" min="0" required>
                     </div>
                     <div>
-                        <label for="stock">Stock inicial:</label>
-                        <input type="number" id="stock" placeholder="Cantidad" required>
+                        <label for="stock">Stock Inicial (Uds):</label>
+                        <input type="number" id="stock" placeholder="0" min="0" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Portada (Opcional):</label>
-                    <input type="file" id="imagen" accept="image/*" onchange="previewImage(event)">
-                    <div class="preview-box" id="imagePreview"><span>Vista previa</span></div>
+                    <label>Imagen de Portada (URL o Nombre de archivo):</label>
+                    <input type="text" id="imagen_url" placeholder="../../Imagenes/Libros/libro_nuevo.jpg">
+                    <div class="preview-box" id="imagePreview">
+                        <i class="fa-solid fa-image fa-2x"></i>
+                    </div>
+                    <small style="color: #888;">Por ahora, ingresa la ruta del archivo que subiste a tu carpeta Imagenes.</small>
                 </div>
 
                 <button type="submit" class="btn-save-product" id="btnGuardar">
-                    <i class="fa-solid fa-floppy-disk"></i> Guardar en Base de Datos
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Registrar Libro en DB
                 </button>
             </form>
         </div>
     </main>
 
     <script>
-        // 1. SEGURIDAD
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-        if (!usuario || usuario.rol !== 'admin') {
-            window.location.href = '../Inicio_de_sesion/Inicio_sesion_admin.html';
+        // 1. Verificación de Seguridad
+        const user = JSON.parse(localStorage.getItem('usuario'));
+        if (!user || user.rol !== 'admin') {
+            window.location.href = '../Inicio_de_sesion/Inicio_sesion.html';
+        } else {
+            document.getElementById('admin-display-name').innerText = user.nombre;
         }
 
-        // 2. VISTA PREVIA IMAGEN
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function(){
-                const output = document.getElementById('imagePreview');
-                output.innerHTML = `<img src="${reader.result}">`;
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
-
-        // 3. GUARDAR PRODUCTO (CONEXIÓN REAL)
+        // 2. Lógica de Envío a la API
         document.getElementById('productForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const btn = document.getElementById('btnGuardar');
             btn.disabled = true;
-            btn.innerText = "Guardando...";
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
 
-            const nuevoProducto = {
-                nombre: document.getElementById('nombre').value,
-                descripcion: document.getElementById('descripcion').value,
+            // Mapeo exacto para index.js
+            const datosLibro = {
+                titulo: document.getElementById('titulo').value,
+                autor: document.getElementById('autor').value,
                 precio: parseFloat(document.getElementById('precio').value),
                 stock: parseInt(document.getElementById('stock').value),
-                categoria: document.getElementById('categoria').value
+                categoria: document.getElementById('categoria').value,
+                imagen_url: document.getElementById('imagen_url').value || "../../Imagenes/Libros/default.jpg"
             };
 
             try {
                 const response = await fetch('http://localhost:3000/api/productos', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(nuevoProducto)
+                    body: JSON.stringify(datosLibro)
                 });
 
-                const data = await response.json();
+                const resultado = await response.json();
 
-                if (data.success) {
-                    alert("¡Libro registrado correctamente en el sistema!");
-                    window.location.href = 'Gestion_de_inventario.html'; // Redirigir a la tabla
+                if (response.ok) {
+                    alert(`✅ ¡Éxito! El libro "${datosLibro.titulo}" ha sido guardado.`);
+                    window.location.href = 'Gestion_de_inventario.html'; 
                 } else {
-                    alert("Error al guardar: " + data.error);
+                    throw new Error(resultado.error || "Error al registrar");
                 }
             } catch (error) {
-                console.error("Error:", error);
-                alert("No se pudo conectar con el servidor.");
+                console.error("Error API:", error);
+                alert("❌ Error: " + error.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar en Base de Datos';
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Registrar Libro en DB';
             }
         });
 
-        // Menú hamburguesa
+        // Menú Hamburguesa
         const btnHamburguesa = document.getElementById('hamburger-btn');
         const menuDesplegable = document.getElementById('menu-items');
-        if (btnHamburguesa) {
-            btnHamburguesa.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menuDesplegable.classList.toggle('show-menu');
-            });
-        }
+        btnHamburguesa?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuDesplegable.classList.toggle('show-menu');
+        });
     </script>
 </body>
 </html>

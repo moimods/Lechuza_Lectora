@@ -6,125 +6,126 @@
     <title>La Lechuza Lectora - Contacto</title>
     <link rel="icon" type="image/png" href="../Imagenes/logo.png">
     <link rel="stylesheet" href="../Estilos/Estilo1.css">
-    
-    <script src="../JS/Boton_Ini.js" defer></script>
-    <script src="../JS/Boton_Inicio_Sesion_html.js" defer></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
     <style>
-        /* ESTILOS DEL MENÚ HAMBURGUESA */
+        /* --- ESTILOS DE ESTRUCTURA --- */
+        body { margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+
         .hamburger-btn {
-            display: none; /* Oculto en PC */
+            display: none;
             background: none;
             border: none;
             color: #5d4037;
             font-size: 1.8rem;
             cursor: pointer;
-            order: 2;
         }
 
-        /* AJUSTES RESPONSIVOS CRÍTICOS */
-        @media (max-width: 768px) {
-            .navbar {
-                flex-wrap: wrap;
-                justify-content: space-between;
-                height: auto !important;
-                padding: 10px 20px !important;
-            }
-
-            .hamburger-btn {
-                display: block; /* Aparece en móvil */
-            }
-
-            .logo-container { order: 1; }
-            .auth-actions { order: 3; width: auto !important; margin: 0 !important; }
-
-            .nav-links {
-                display: none; /* Se oculta para el menú hamburguesa */
-                flex-direction: column;
-                width: 100%;
-                order: 4;
-                background: rgba(244, 236, 226, 0.98);
-                padding: 15px 0;
-                text-align: center;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                margin-top: 10px;
-            }
-
-            .nav-links.active {
-                display: flex !important;
-            }
-
-            .nav-links a {
-                padding: 12px;
-                width: 100%;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-            }
-
-            .contact-container {
-                width: 95% !important;
-                padding: 20px 15px !important;
-                margin: 20px auto !important;
-            }
-
-            .contact-grid {
-                grid-template-columns: 1fr !important;
-                gap: 30px !important;
-            }
-
-            .map-wrapper { height: 300px !important; }
-            .map-custom-marker { width: 45px !important; }
-            input, textarea { font-size: 16px !important; }
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .contact-container {
+            background: rgba(255, 250, 240, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            margin: 40px auto;
+            max-width: 1000px;
+            position: relative;
+            z-index: 5;
+            backdrop-filter: blur(5px);
         }
 
-        /* Estabilización del Mapa y Fondo */
-        .map-container-relative { position: relative; width: 100%; }
+        /* --- FORMULARIO E INPUTS --- */
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .contact-form input:focus, .contact-form textarea:focus {
+            border-color: #5d4037;
+            outline: none;
+            box-shadow: 0 0 8px rgba(93, 64, 55, 0.2);
+        }
+
+        .btn-send {
+            background: #5d4037;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn-send:hover { background: #4e342e; }
+
+        /* --- MAPA Y UBICACIÓN --- */
         .map-wrapper {
             width: 100%;
-            border-radius: 15px;
+            height: 350px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 3px solid #5d4037;
-        }
-
-        .map-custom-marker {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -100%); 
-            width: 65px;
-            z-index: 10;
-            pointer-events: none; 
-            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.6));
-            animation: bounce 2s infinite; 
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translate(-50%, -100%); }
-            50% { transform: translate(-50%, -115%); }
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .background-overlay {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
+        }
+
+        /* --- RESPONSIVIDAD --- */
+        @media (max-width: 768px) {
+            .navbar { padding: 10px 15px !important; height: auto !important; }
+            .hamburger-btn { display: block; order: 1; }
+            .logo-container { order: 2; margin-right: auto; }
+            .auth-actions { order: 3; }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%; left: 0; width: 100%;
+                flex-direction: column;
+                background: #f4ece2;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+
+            .nav-links.active { display: flex; }
+
+            .contact-container { width: 92%; padding: 25px 20px; margin: 20px auto; }
+            .contact-grid { grid-template-columns: 1fr !important; gap: 30px !important; }
+            
+            .social-info-card { text-align: center; }
+            .social-icons-contact { justify-content: center; }
         }
     </style>
 </head>
 <body>
 
     <header class="navbar detail-navbar">
-        <div class="logo-container">
-            <a href="../index.html" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                <img src="../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
-                <span class="site-name">LA LECHUZA LECTORA</span>
-            </a>
-        </div>
-
         <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
             <i class="fa-solid fa-bars"></i>
         </button>
+
+        <div class="logo-container">
+            <a href="../index.html" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                <img src="../Imagenes/logo.png" alt="Logo" class="logo"> 
+                <span class="site-name">LA LECHUZA LECTORA</span>
+            </a>
+        </div>
         
         <nav class="nav-links" id="mobile-nav">
             <a href="Acerca_de.html">Acerca de</a>
@@ -133,82 +134,111 @@
             <a href="Catalogo.html">Catálogo</a>
         </nav>
         
-        <div class="auth-actions user-actions">
+        <div class="auth-actions">
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
+            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; padding: 10px 18px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
         </div>
     </header>
 
-    <main class="main-content contact-main">
+    <main class="main-content">
         <div class="background-overlay"></div>
 
-        <div class="contact-container" style="background: rgba(240, 231, 203, 0.95); border-radius: 12px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin: 40px auto; max-width: 1100px; position: relative; z-index: 5;">
-            <h1 class="page-title" style="color: #5d4037; text-align: center; margin-bottom: 10px;">Contáctanos</h1>
-            <p class="page-subtitle" style="text-align: center; color: #8d6e63; margin-bottom: 40px;">Hablemos de libros. Utiliza el formulario o visítanos.</p>
+        <div class="contact-container">
+            <h1 style="color: #5d4037; text-align: center; margin: 0;">Ponte en Contacto</h1>
+            <p style="text-align: center; color: #795548; margin-bottom: 35px;">¿Tienes dudas sobre un pedido o quieres recomendarnos un libro?</p>
 
-            <div class="contact-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
-                <div class="contact-form-wrapper" style="position: relative; background: white; padding: 25px; border-radius: 10px; border: 1px solid #ddd;">
+            <div class="contact-grid" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px;">
+                
+                <div class="contact-form-wrapper">
                     <form class="contact-form" id="form-contacto">
-                        <label style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Nombre</label>
-                        <input type="text" name="nombre" placeholder="Tu nombre" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label style="font-weight: bold; color: #5d4037; display: block; margin-bottom: 8px;">Nombre</label>
+                                <input type="text" name="nombre" placeholder="Ej: Juan Pérez" required>
+                            </div>
+                            <div>
+                                <label style="font-weight: bold; color: #5d4037; display: block; margin-bottom: 8px;">Asunto</label>
+                                <input type="text" name="asunto" placeholder="Ej: Consulta de stock" required>
+                            </div>
+                        </div>
                         
-                        <label style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Correo</label>
-                        <input type="email" name="email" placeholder="correo@ejemplo.com" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+                        <label style="font-weight: bold; color: #5d4037; display: block; margin-bottom: 8px;">Correo Electrónico</label>
+                        <input type="email" name="email" placeholder="tu@email.com" required>
 
-                        <label style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 5px;">Mensaje</label>
-                        <textarea name="mensaje" placeholder="¿Cómo podemos ayudarte?" rows="5" required style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px; resize: none;"></textarea>
+                        <label style="font-weight: bold; color: #5d4037; display: block; margin-bottom: 8px;">Tu Mensaje</label>
+                        <textarea name="mensaje" placeholder="Escribe aquí tu mensaje detallado..." rows="6" required style="resize: none;"></textarea>
 
-                        <button type="submit" class="btn-send" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">Enviar</button>
+                        <button type="submit" class="btn-send">
+                            <i class="fa-solid fa-paper-plane" style="margin-right: 10px;"></i> Enviar Mensaje
+                        </button>
                     </form>
                 </div>
 
-                <div class="social-info-card" style="background: white; padding: 25px; border-radius: 10px; border: 1px solid #ddd; height: fit-content;">
-                    <h2 style="color: #5d4037; font-size: 1.2rem; margin-bottom: 15px;">Redes Sociales</h2>
-                    <div class="social-icons-contact" style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 1.5rem;">
-                        <a href="#" style="color: #5d4037;"><i class="fa-brands fa-x-twitter"></i></a>
-                        <a href="#" style="color: #5d4037;"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" style="color: #5d4037;"><i class="fa-brands fa-youtube"></i></a>
+                <div class="contact-info-column">
+                    <div class="social-info-card" style="margin-bottom: 30px;">
+                        <h2 style="color: #5d4037; font-size: 1.3rem; margin-top: 0;">Nuestros Datos</h2>
+                        <p style="color: #666; font-size: 0.95rem;">
+                            <i class="fa-solid fa-envelope" style="color: #5d4037; width: 25px;"></i> soporte@lechuza.com<br>
+                            <i class="fa-solid fa-phone" style="color: #5d4037; width: 25px;"></i> +52 (55) 1234-5678<br>
+                            <i class="fa-solid fa-location-dot" style="color: #5d4037; width: 25px;"></i> Campus Iztapalapa, CDMX.
+                        </p>
+                        
+                        <h2 style="color: #5d4037; font-size: 1.1rem; margin-top: 25px;">Síguenos</h2>
+                        <div class="social-icons-contact" style="display: flex; gap: 15px; font-size: 1.5rem;">
+                            <a href="#" style="color: #5d4037;"><i class="fa-brands fa-facebook"></i></a>
+                            <a href="#" style="color: #5d4037;"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="#" style="color: #5d4037;"><i class="fa-brands fa-whatsapp"></i></a>
+                        </div>
                     </div>
-                    <address style="font-style: normal; font-size: 0.9rem; line-height: 1.6; color: #666;">
-                        <i class="fa-solid fa-location-dot" style="color: #5d4037;"></i> <strong>Campus Iztapalapa</strong><br>
-                        Av Telecomunicaciones, CDMX.
-                    </address>
+
+                    <div class="map-wrapper">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m13!1d15055.934833216853!2d-99.074464!3d19.369871!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1fd98476606f7%3A0x6b10705f4265007!2sIztapalapa%2C%20CDMX!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx" 
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                        </iframe>
+                    </div>
                 </div>
             </div>
-
-            <section class="location-section" style="margin-top: 50px;">
-                <h2 style="text-align: center; color: #5d4037; margin-bottom: 20px;">Ubicación</h2>
-                <div class="map-container-relative">
-                    <img src="../Imagenes/logo.png" alt="Marcador" class="map-custom-marker">
-                    <div class="map-wrapper">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.5518210328225!2d-99.0573!3d19.38!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDIyJzQ4LjAiTiA5OcKwMDMnMjYuMyJX!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
-                </div>
-            </section>
         </div>
     </main>
 
+    <footer style="text-align: center; padding: 25px; color: #5d4037;">
+        <div class="copyright">© 2026 La Lechuza Lectora | Pasión por la lectura</div>
+    </footer>
+
     <script>
-        // FUNCIÓN MENÚ HAMBURGUESA
+        // Función Menú Móvil
         function toggleMobileMenu() {
             const nav = document.getElementById('mobile-nav');
             nav.classList.toggle('active');
         }
 
+        // Manejo del Formulario
+        document.getElementById('form-contacto').onsubmit = function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const originalText = btn.innerHTML;
+            
+            // Simulación de envío
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Enviando...';
+            
+            setTimeout(() => {
+                alert("¡Gracias! Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo pronto.");
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                this.reset();
+            }, 1500);
+        };
+
         // Cerrar menú al hacer clic fuera
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', (e) => {
             const nav = document.getElementById('mobile-nav');
             const hamburger = document.getElementById('hamburger-btn');
-            if (nav && hamburger && !hamburger.contains(event.target) && !nav.contains(event.target)) {
+            if (nav.classList.contains('active') && !hamburger.contains(e.target) && !nav.contains(e.target)) {
                 nav.classList.remove('active');
             }
         });
-
-        document.getElementById('form-contacto').onsubmit = function(e) {
-            e.preventDefault();
-            alert("¡Mensaje enviado con éxito!");
-            this.reset();
-        };
     </script>
 </body>
 </html>

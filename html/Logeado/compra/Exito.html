@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Compra Exitosa! - La Lechuza Lectora</title>
+    <link rel="stylesheet" href="../../../Estilos/Estilo1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 80px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        .order-number {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed #5d4037;
+            display: inline-block;
+            margin: 20px 0;
+            color: #5d4037;
+            font-weight: bold;
+        }
+
+        .btn-home {
+            display: inline-block;
+            background: #5d4037;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-home:hover {
+            background: #fbc02d;
+            color: #2c2c2c;
+            transform: scale(1.05);
+        }
+
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('../../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="form-page">
+    <div class="background-overlay"></div>
+
+    <main class="success-container">
+        <i class="fas fa-check-circle success-icon"></i>
+        
+        <h1 style="color: #5d4037; margin-bottom: 10px;">¡Gracias por tu compra!</h1>
+        <p style="color: #666; font-size: 1.1rem;">
+            Tu pedido ha sido registrado correctamente. Pronto recibirás un correo con los detalles del envío.
+        </p>
+
+        <div class="order-number">
+            ID DE OPERACIÓN: <span id="display-order-id">#LL-000000</span>
+        </div>
+
+        <p style="color: #888; font-size: 0.9rem;">
+            Puedes revisar el estado de tus libros en la sección "Mis Pedidos" dentro de tu perfil.
+        </p>
+
+        <div style="margin-top: 30px;">
+            <a href="../Catalogo_Logeado.html" class="btn-home">
+                <i class="fas fa-book-open"></i> Seguir Explorando Libros
+            </a>
+            <br>
+            <a href="../perfil.html" style="display:inline-block; margin-top:15px; color:#5d4037; text-decoration:none; font-size:0.9rem;">
+                Ir a mi perfil →
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // Pequeño script para generar un número visual aleatorio si el servidor no lo envió
+        document.addEventListener('DOMContentLoaded', () => {
+            const randomID = Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('display-order-id').innerText = `#LL-${randomID}`;
+            
+            // Asegurarnos de que el carrito esté realmente vacío
+            localStorage.removeItem('cart');
+            localStorage.removeItem('id_direccion_pedido');
+            localStorage.removeItem('compra_en_progreso');
+        });
+    </script>
+</body>
+</html>

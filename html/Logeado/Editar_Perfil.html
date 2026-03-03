@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Perfil - La Lechuza Lectora</title>
+    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <style>
         /* AJUSTES RESPONSIVOS */
         @media (max-width: 768px) {
-            .edit-profile-container { width: 95% !important; padding: 20px 15px !important; }
-            .form-actions { flex-direction: column !important; }
+            .edit-profile-container { width: 90% !important; padding: 25px 20px !important; margin: 20px auto !important; }
+            .form-actions { flex-direction: column !important; gap: 10px; }
             .form-actions button { width: 100% !important; }
+            .nav-links { display: none; } /* Ocultar links en móvil para simplificar */
         }
 
         /* Dropdown Avatar */
@@ -28,13 +30,26 @@
             padding: 10px 0;
             border: 1px solid #ddd;
         }
+        .dropdown-menu.show { display: block; }
+        .dropdown-menu a {
+            color: #5d4037 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+        }
+
         .avatar { border-radius: 50%; width: 40px; height: 40px; object-fit: cover; cursor: pointer; border: 2px solid #5d4037; }
+        
+        /* Efecto hover en botones */
+        .btn-save:hover { background: #4b342c !important; }
+        .btn-cancel:hover { background: #bbb !important; }
     </style>
 </head>
 <body class="form-page">
     
     <header class="navbar detail-navbar">
-        <div class="logo-container">
+        <div class="logo-container" onclick="window.location.href='Catalogo_Logeado.html'" style="cursor:pointer;">
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
@@ -49,7 +64,7 @@
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
             <div class="avatar-dropdown-container" style="position: relative;">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn">
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
                     <a href="../../index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
@@ -59,107 +74,93 @@
     </header>
     
     <main class="main-content">
-        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
+        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
         
-        <div class="profile-main-wrapper" style="position: relative; z-index: 5; margin-top: 50px; padding-bottom: 50px;">
-            <h1 style="color: #ffffff; text-align: center; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Editar Mi Información</h1>
+        <div class="profile-main-wrapper" style="position: relative; z-index: 5; margin-top: 40px; padding-bottom: 50px;">
+            <h1 style="color: #ffffff; text-align: center; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Editar Perfil</h1>
 
-            <div class="edit-profile-container" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto;">
+            <div class="edit-profile-container" style="background: rgba(240, 231, 203, 0.98); padding: 35px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 500px; margin: 0 auto;">
                 <form id="edit-profile-form">
                     <div class="edit-photo-section" style="text-align: center; margin-bottom: 25px;">
-                        <img src="../../Imagenes/miku.png.jpg" alt="Avatar actual" id="preview-avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #5d4037;">
-                        <div style="margin-top: 15px;">
-                            <label for="file-upload" style="cursor: pointer; background: #5d4037; color: white; padding: 10px 20px; border-radius: 5px; font-size: 0.9rem; font-weight: bold; display: inline-block;">
-                                <i class="fas fa-camera"></i> Cambiar Foto
+                        <div style="position: relative; display: inline-block;">
+                            <img src="../../Imagenes/miku.png.jpg" alt="Avatar actual" id="preview-avatar" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #5d4037; background: white;">
+                            <label for="file-upload" style="position: absolute; bottom: 5px; right: 5px; background: #5d4037; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid white;">
+                                <i class="fas fa-camera"></i>
                             </label>
                             <input id="file-upload" type="file" style="display:none;" accept="image/*">
                         </div>
+                        <p style="font-size: 0.8rem; color: #5d4037; margin-top: 10px;">Haz clic en la cámara para subir una nueva imagen</p>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 15px; text-align: left;">
-                        <label style="display: block; color: #5d4037; font-weight: bold; margin-bottom: 5px;">Nombre Completo</label>
-                        <input type="text" id="edit-nombre" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; color: #5d4037; font-weight: bold; margin-bottom: 8px;">Nombre Completo</label>
+                        <input type="text" id="edit-nombre" placeholder="Tu nombre" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 25px; text-align: left;">
-                        <label style="display: block; color: #5d4037; font-weight: bold; margin-bottom: 5px;">Correo Electrónico (No editable)</label>
-                        <input type="email" id="edit-email" readonly style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; background: #f5f5f5; color: #777; cursor: not-allowed;">
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; color: #5d4037; font-weight: bold; margin-bottom: 8px;">Correo Electrónico</label>
+                        <input type="email" id="edit-email" readonly style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #eee; color: #777; cursor: not-allowed; box-sizing: border-box;">
                     </div>
 
-                    <div class="form-actions" style="display: flex; gap: 15px; justify-content: flex-end;">
-                        <button type="button" onclick="window.location.href='perfil.html'" style="background: #ccc; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #333;">Cancelar</button>
-                        <button type="submit" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">Guardar Cambios</button>
+                    <div class="form-actions" style="display: flex; gap: 15px; justify-content: center;">
+                        <button type="button" class="btn-cancel" onclick="window.location.href='perfil.html'" style="background: #ccc; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; color: #333; flex: 1;">Cancelar</button>
+                        <button type="submit" class="btn-save" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; flex: 1;">Guardar</button>
                     </div>
                 </form>
             </div>
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #ffffff;">
+    <footer style="text-align: center; padding: 20px; color: #ffffff; font-weight: bold;">
         <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
     <script>
-        const userEmail = localStorage.getItem('userEmail');
+        // Lógica de carga y guardado local (simulada)
+        const userEmail = localStorage.getItem('userEmail') || "usuario@ejemplo.com";
+        const userName = localStorage.getItem('userName') || "Nombre de Usuario";
 
-        // Cargar datos actuales
-        async function prellenarFormulario() {
-            if (!userEmail) return;
-            try {
-                const respuesta = await fetch(`/api/usuario/${userEmail}`);
-                const datos = await respuesta.json();
-                if (datos) {
-                    document.getElementById('edit-nombre').value = datos.nombre_completo;
-                    document.getElementById('edit-email').value = datos.email;
-                }
-            } catch (error) {
-                console.error("Error al obtener datos:", error);
-            }
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('edit-nombre').value = userName;
+            document.getElementById('edit-email').value = userEmail;
+        });
 
         // Guardar cambios
-        document.getElementById('edit-profile-form').addEventListener('submit', async function(e) {
+        document.getElementById('edit-profile-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const nuevoNombre = document.getElementById('edit-nombre').value;
-
-            try {
-                const respuesta = await fetch('/api/usuario/actualizar', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: userEmail, nombre: nuevoNombre })
-                });
-
-                if (respuesta.ok) {
-                    alert('¡Información actualizada!');
-                    window.location.href = 'perfil.html';
-                } else {
-                    alert('Error al actualizar.');
-                }
-            } catch (error) {
-                console.error("Error:", error);
-            }
+            
+            // Simulamos guardado en LocalStorage
+            localStorage.setItem('userName', nuevoNombre);
+            
+            alert('¡Perfil actualizado con éxito!');
+            window.location.href = 'perfil.html';
         });
 
-        // Previsualización de imagen
+        // Previsualización de imagen REAL
         document.getElementById('file-upload').addEventListener('change', function(e) {
-            const reader = new FileReader();
-            reader.onload = function() { document.getElementById('preview-avatar').src = reader.result; }
-            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-        });
-
-        // Menú Avatar
-        function forceToggleMenu() {
-            const menu = document.getElementById('avatar-dropdown');
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        }
-
-        document.addEventListener('click', (e) => {
-            if (!document.getElementById('avatar-btn').contains(e.target)) {
-                document.getElementById('avatar-dropdown').style.display = 'none';
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('preview-avatar').src = event.target.result;
+                }
+                reader.readAsDataURL(file);
             }
         });
 
-        document.addEventListener('DOMContentLoaded', prellenarFormulario);
+        // Menú Avatar Refinado
+        const avatarBtn = document.getElementById('avatar-btn');
+        const dropdown = document.getElementById('avatar-dropdown');
+
+        avatarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        });
+
+        window.addEventListener('click', () => {
+            dropdown.classList.remove('show');
+        });
     </script>
 </body>
 </html>

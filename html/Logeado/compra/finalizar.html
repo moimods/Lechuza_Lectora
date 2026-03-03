@@ -14,42 +14,15 @@
                 padding: 20px 15px !important;
                 margin: 20px auto !important;
             }
-
-            .checkout-title {
-                font-size: 1.4rem !important;
-                margin-bottom: 20px !important;
-            }
-
-            .final-summary-area {
-                padding: 15px !important;
-            }
-
-            .final-section h3 {
-                font-size: 1rem !important;
-            }
-
-            .final-section p {
-                font-size: 0.9rem !important;
-            }
-
-            .final-totals strong {
-                font-size: 1.8rem !important;
-            }
-
-            /* Apilamiento vertical de botones para facilitar el clic */
-            .navigation-actions {
-                flex-direction: column !important;
-                gap: 12px !important;
-            }
-
-            .btn-primary, .btn-dark-action {
-                width: 100% !important;
-                padding: 14px !important;
-                font-size: 1rem !important;
-            }
+            .checkout-title { font-size: 1.4rem !important; margin-bottom: 20px !important; }
+            .final-summary-area { padding: 15px !important; }
+            .final-section h3 { font-size: 1rem !important; }
+            .final-section p { font-size: 0.9rem !important; }
+            .final-totals strong { font-size: 1.8rem !important; }
+            .navigation-actions { flex-direction: column !important; gap: 12px !important; }
+            .btn-primary, .btn-dark-action { width: 100% !important; padding: 14px !important; font-size: 1rem !important; }
         }
 
-        /* Fondo consistente */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('../../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
@@ -59,11 +32,17 @@
             z-index: -1;
         }
 
-        /* Estilo del modal para móviles */
         .modal-content {
             width: 90% !important;
             max-width: 400px;
             padding: 25px !important;
+        }
+
+        /* Estilo para estado de carga en botón */
+        .btn-loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -72,7 +51,7 @@
     <main class="main-content cart-main">
         <div class="background-overlay"></div>
 
-        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+        <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-width: 800px; margin: 40px auto;">
             <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 30px;">4. Confirmar y Finalizar Compra</h1>
             
             <div class="checkout-step-content">
@@ -80,27 +59,27 @@
                 
                 <div class="final-summary-area" style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 30px;">
                     <div class="final-section" style="margin-bottom: 20px;">
-                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Dirección de Envío:</h3>
-                        <p id="final-address" style="color: #555; margin: 0;">Av. Los Pinos #123, Col. Centro, CDMX, 01000.</p>
+                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;"><i class="fa-solid fa-location-dot me-2"></i>Dirección de Envío:</h3>
+                        <p id="final-address" style="color: #555; margin: 0; font-style: italic;">Cargando dirección...</p>
                     </div>
                     
                     <div class="final-section" style="margin-bottom: 20px;">
-                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Método de Pago:</h3>
-                        <p id="final-payment" style="color: #555; margin: 0;">PayPal (usuario@ejemplo.com)</p>
+                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;"><i class="fa-solid fa-credit-card me-2"></i>Método de Pago:</h3>
+                        <p id="final-payment" style="color: #555; margin: 0; text-transform: uppercase;">Cargando método...</p>
                     </div>
                     
                     <div class="final-section final-totals" style="padding-top: 15px; border-top: 2px dashed #eee; text-align: right;">
-                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Total del Pedido:</h3>
-                        <strong id="final-total" style="color: #d32f2f; font-size: 2.2rem; display: block;">$457.00</strong>
+                        <h3 style="color: #5d4037; font-size: 1.1rem; margin-bottom: 5px;">Total a Pagar:</h3>
+                        <strong id="final-total" style="color: #d32f2f; font-size: 2.2rem; display: block;">$0.00</strong>
                     </div>
                 </div>
                 
                 <div class="navigation-actions" style="display: flex; justify-content: space-between; gap: 15px;">
-                    <button class="btn-dark-action btn-prev-step" onclick="window.history.back()" style="background: #555; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                        ← Regresar
+                    <button class="btn-dark-action" onclick="window.history.back()" style="background: #555; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                        ← REGRESAR
                     </button>
 
-                    <button class="btn-primary" id="btn-finalizar-compra" onclick="mostrarExito()" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
+                    <button class="btn-primary" id="btn-finalizar-compra" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
                         PAGAR Y FINALIZAR COMPRA
                     </button>
                 </div>
@@ -108,11 +87,11 @@
         </div>
 
         <div id="compra-success-modal" class="modal-backdrop" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
-            <div class="modal-content" style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
-                <i class="fa-solid fa-circle-check" style="font-size: 50px; color: #388e3c; margin-bottom: 15px;"></i>
-                <h2 style="color: #5d4037;">¡Compra Finalizada!</h2>
-                <p style="color: #666; margin-bottom: 25px;">Tu pedido ha sido procesado con éxito. Recibirás una confirmación por correo.</p>
-                <button id="btn-modal-compra-accept" onclick="window.location.href='../perfil.html'" style="background: #5d4037; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Continuar</button>
+            <div class="modal-content" style="background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+                <i class="fa-solid fa-circle-check" style="font-size: 60px; color: #388e3c; margin-bottom: 15px;"></i>
+                <h2 style="color: #5d4037; font-weight: bold;">¡Compra Exitosa!</h2>
+                <p style="color: #666; margin-bottom: 25px;">Tu pedido ha sido procesado con éxito. <br> ¡Gracias por confiar en La Lechuza Lectora! 🦉</p>
+                <button onclick="irAPerfil()" style="background: #5d4037; color: white; padding: 12px 40px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">IR A MIS PEDIDOS</button>
             </div>
         </div>
     </main>
@@ -123,10 +102,103 @@
         </div>
     </footer>
 
-    <script>
-        function mostrarExito() {
-            document.getElementById('compra-success-modal').style.display = 'flex';
+<script>
+/**
+ * LÓGICA DE FINALIZACIÓN ROBUSTA
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Configuración de Claves (Sincronizadas con CheckoutManager)
+    const CART_KEY = 'laLechuzaLectoraCart';
+    const CHECKOUT_KEY = 'laLechuzaCheckoutData';
+    const USER_KEY = 'userId'; // Cambiado para coincidir con tu sistema de login
+
+    // 2. Elementos de la UI
+    const addrDisplay = document.getElementById('final-address');
+    const payDisplay = document.getElementById('final-payment');
+    const totalDisplay = document.getElementById('final-total');
+    const btnFinalizar = document.getElementById('btn-finalizar-compra');
+
+    // 3. Obtener Datos
+    const cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    const checkoutData = JSON.parse(localStorage.getItem(CHECKOUT_KEY)) || {};
+    const userId = localStorage.getItem(USER_KEY);
+
+    // 4. Validación de Seguridad inicial
+    if (!userId || cart.length === 0) {
+        alert("Sesión expirada o carrito vacío.");
+        window.location.href = '../../../index.html';
+        return;
+    }
+
+    // 5. Renderizar Resumen
+    // Nota: El CheckoutManager guarda el ID, aquí podrías hacer un fetch 
+    // pero por ahora mostramos el estado guardado para rapidez UX.
+    addrDisplay.innerText = checkoutData.selectedAddress ? `ID de Dirección Seleccionada: ${checkoutData.selectedAddress}` : "No seleccionada";
+    payDisplay.innerText = checkoutData.selectedPayment || "PayPal";
+
+    // Calcular Total con manejo de errores de tipo
+    const totalPedido = cart.reduce((sum, item) => {
+        const precio = parseFloat(item.precio || item.price || 0);
+        const cantidad = parseInt(item.cantidad || item.quantity || 1);
+        return sum + (precio * cantidad);
+    }, 0);
+
+    totalDisplay.innerText = `$${totalPedido.toFixed(2)}`;
+
+    // 6. Evento de Envío
+    btnFinalizar.addEventListener('click', async () => {
+        // Feedback visual
+        btnFinalizar.disabled = true;
+        btnFinalizar.classList.add('btn-loading');
+        btnFinalizar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> PROCESANDO...';
+
+        const ventaPayload = {
+            id_usuario: parseInt(userId),
+            id_direccion: parseInt(checkoutData.selectedAddress),
+            total: totalPedido,
+            metodo_pago: checkoutData.selectedPayment,
+            productos: cart.map(item => ({
+                id_libro: item.id_libro || item.id,
+                cantidad: item.cantidad || item.quantity,
+                precio: item.precio || item.price
+            }))
+        };
+
+        try {
+            const response = await fetch('http://localhost:3000/api/pedidos/crear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ventaPayload)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // LIMPIEZA TOTAL DE COMPRA
+                localStorage.removeItem(CART_KEY);
+                localStorage.removeItem(CHECKOUT_KEY);
+                
+                // Mostrar Modal
+                document.getElementById('compra-success-modal').style.display = 'flex';
+            } else {
+                throw new Error(result.error || "Error en el servidor");
+            }
+
+        } catch (error) {
+            console.error("Error crítico:", error);
+            alert("❌ No se pudo completar la compra: " + error.message);
+            
+            // Revertir botón
+            btnFinalizar.disabled = false;
+            btnFinalizar.classList.remove('btn-loading');
+            btnFinalizar.innerHTML = 'PAGAR Y FINALIZAR COMPRA';
         }
-    </script>
+    });
+});
+
+function irAPerfil() {
+    window.location.href = '../../perfil/mis_pedidos.html';
+}
+</script>
 </body>
 </html>

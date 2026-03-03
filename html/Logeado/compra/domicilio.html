@@ -8,12 +8,10 @@
     <link rel="stylesheet" href="../../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
-    <script src="../../../JS/checkoutManager.js" defer></script>
-    
     <style>
         @media (max-width: 768px) {
             .checkout-container { width: 95% !important; padding: 20px 15px !important; margin: 20px auto !important; }
-            .address-option { padding: 20px !important; display: flex; align-items: center; gap: 10px; }
+            .address-card { padding: 15px !important; }
             .navigation-actions { flex-direction: column !important; gap: 12px !important; }
             .btn-next-step, .btn-prev-step, .btn-add-address { width: 100% !important; }
         }
@@ -27,10 +25,34 @@
             z-index: -1;
         }
 
-        /* Estilo para la opción seleccionada */
-        .address-option.selected {
+        .address-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .address-card:hover { border-color: #fbc02d; transform: translateY(-2px); }
+
+        /* Clase para cuando el usuario selecciona una dirección */
+        .address-card.selected {
             border: 2px solid #fbc02d !important;
             background-color: #fffefb !important;
+        }
+
+        .address-card i.check-icon {
+            color: #ddd;
+            font-size: 1.5rem;
+        }
+
+        .address-card.selected i.check-icon {
+            color: #fbc02d;
         }
     </style>
 </head>
@@ -49,17 +71,17 @@
                     <p style="text-align: center; color: #666;">Cargando tus direcciones...</p>
                 </div>
 
-                <button class="btn-secondary btn-add-address" onclick="window.location.href='Agregar_domicilio.html'" style="margin-top: 20px; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                <button class="btn-secondary btn-add-address" onclick="window.location.href='../Registro_Domicilio.html'" style="margin-top: 20px; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                     <i class="fas fa-plus-circle"></i> Agregar Nuevo Domicilio
                 </button>
                 
                 <div class="navigation-actions" style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
-                    <button class="btn-dark-action btn-prev-step" data-prev-step="resumen_compra" style="background: #555; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                        ← Regresar
+                    <button class="btn-prev-step" onclick="window.location.href='../carrito.html'" style="background: #555; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                        ← Regresar al Carrito
                     </button>
 
-                    <button class="btn-primary btn-next-step" data-next-step="pago" style="background: #5d4037; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                        Continuar a Método de Pago →
+                    <button class="btn-primary btn-next-step" onclick="continuarAlPago()" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                        Continuar a Pago →
                     </button>
                 </div>
             </div>
@@ -70,5 +92,82 @@
         <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
+ <script>
+    let direccionSeleccionadaObjeto = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Obtenemos el objeto completo del usuario guardado en el login
+        const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+        
+        if (!usuario || !usuario.id_usuario) {
+            alert("Sesión no detectada. Por favor, inicia sesión.");
+            window.location.href = '../../Inicio_de_sesion/Inicio_sesion.html';
+            return;
+        }
+
+        cargarDirecciones(usuario.id_usuario);
+    });
+
+    async function cargarDirecciones(idUsuario) {
+        const container = document.getElementById('addresses-list-container');
+
+        try {
+            // Llamada a tu API (asegúrate que el endpoint coincida con tu index.js)
+            const response = await fetch(`/api/direcciones/usuario/${idUsuario}`);
+            const direcciones = await response.json();
+
+            if (!direcciones || direcciones.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:20px;">
+                        <p>No tienes direcciones guardadas.</p>
+                        <p>Por favor, agrega una para continuar con tu compra.</p>
+                    </div>`;
+                return;
+            }
+
+            // Renderizamos las tarjetas de dirección
+            container.innerHTML = direcciones.map(dir => `
+                <div class="address-card" id="dir-${dir.id_direccion}" 
+                     onclick='seleccionarDireccion(${JSON.stringify(dir)})'>
+                    <i class="fas fa-check-circle check-icon"></i>
+                    <div style="flex-grow: 1;">
+                        <strong>${dir.tipo_domicilio || 'Domicilio'}</strong><br>
+                        <small>${dir.calle || dir.direccion_texto}, Col. ${dir.colonia}</small><br>
+                        <small>${dir.municipio_alcaldia || dir.ciudad}, ${dir.estado}. CP: ${dir.cp}</small>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            console.error("Error al cargar direcciones:", error);
+            container.innerHTML = "<p style='color:red; text-align:center;'>Error al conectar con el servidor.</p>";
+        }
+    }
+
+    function seleccionarDireccion(direccionObj) {
+        // 1. Quitar selección visual previa
+        document.querySelectorAll('.address-card').forEach(card => card.classList.remove('selected'));
+        
+        // 2. Marcar la tarjeta actual como seleccionada
+        const card = document.getElementById(`dir-${direccionObj.id_direccion}`);
+        if(card) card.classList.add('selected');
+        
+        // 3. Guardar el objeto para usarlo en el siguiente paso
+        direccionSeleccionadaObjeto = direccionObj;
+        
+        // Guardamos tanto el ID como el objeto para el resumen final (Paso 4)
+        localStorage.setItem('id_direccion_pedido', direccionObj.id_direccion);
+        localStorage.setItem('direccion_envio', JSON.stringify(direccionObj));
+    }
+
+    function continuarAlPago() {
+        if (!direccionSeleccionadaObjeto) {
+            alert("Por favor, selecciona una dirección para continuar.");
+            return;
+        }
+        // Redirigir al siguiente paso (Paso 3: Método de Pago o directamente al Checkout)
+        window.location.href = 'Checkout.html'; 
+    }
+</script>
 </body>
 </html>

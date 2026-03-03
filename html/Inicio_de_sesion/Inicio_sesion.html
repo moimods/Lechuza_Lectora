@@ -116,11 +116,13 @@
 document.getElementById('form-login-usuario').addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    // Obtener valores de los inputs
     const email = document.getElementById('correo').value;
     const password = document.getElementById('contrasena').value;
 
     try {
-        const response = await fetch('http://localhost:3000/api/login', {
+        // Petición al servidor (Ruta definida en server.js)
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -129,15 +131,24 @@ document.getElementById('form-login-usuario').addEventListener('submit', async (
         const data = await response.json();
 
         if (data.success) {
-            localStorage.setItem('usuario', JSON.stringify(data.user));
-            alert("¡Bienvenido, " + data.user.nombre + "!");
-            window.location.href = '../../index.html'; 
+            // --- 1. GUARDAR DATOS COMPATIBLES CON INICIO_LOGEADO ---
+            localStorage.setItem('userId', data.user.id_usuario);
+            localStorage.setItem('userName', data.user.nombre);
+            localStorage.setItem('userRole', data.user.rol);
+            // Opcional: guardar todo el objeto si lo necesitas después
+            localStorage.setItem('usuarioCompleto', JSON.stringify(data.user));
+
+            // --- 2. REDIRECCIÓN A LA RUTA PROTEGIDA ---
+            // Usamos /inicio que es la ruta que sirve el Inicio_Logeado.html
+            window.location.href = '/inicio'; 
+            
         } else {
-            alert("Error: " + data.error);
+            // Mostrar error amigable del servidor
+            alert("❌ " + data.error);
         }
     } catch (error) {
-        console.error("Error:", error);
-        alert("No se pudo conectar con el servidor. Verifica que Node.js esté activo.");
+        console.error("Error de conexión:", error);
+        alert("⚠️ No se pudo conectar con el servidor. Asegúrate de que el servidor Node.js esté corriendo.");
     }
 });
 </script>

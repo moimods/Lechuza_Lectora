@@ -4,52 +4,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>La Lechuza Lectora - Agregar Tarjeta</title>
+    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
     <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* AJUSTES PARA MÓVIL (Android/iPhone) */
+        /* AJUSTES PARA MÓVIL */
         @media (max-width: 768px) {
             .form-card.card-payment-form {
-                width: 95% !important;
-                padding: 25px 15px !important;
-                margin: 20px auto;
+                width: 90% !important;
+                padding: 25px 20px !important;
+                margin: 40px auto !important;
             }
-
-            .payment-grid {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 15px !important;
+            .half-row-mobile {
+                flex-direction: row !important; /* Mantenemos MM/AA y CVV juntos */
             }
-
-            /* Permitimos que fecha y CVV compartan fila en pantallas no tan pequeñas */
-            .half-width {
-                width: 100% !important;
-            }
-
-            /* En móviles un poco más anchos (como iPhone Pro Max), mantenemos el split */
-            @media (min-width: 480px) {
-                .half-row-mobile {
-                    display: flex;
-                    gap: 10px;
-                }
-                .half-row-mobile .input-group {
-                    flex: 1;
-                }
-            }
-
             input {
-                padding: 12px !important;
-                font-size: 16px !important; /* Evita zoom automático en iOS */
-            }
-
-            .btn-confirm-card {
-                width: 100% !important;
-                padding: 15px !important;
-                margin-top: 10px !important;
+                font-size: 16px !important; /* Evita zoom molesto en iOS */
             }
         }
 
-        /* Estabilización del fondo */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
@@ -64,21 +37,32 @@
             margin-bottom: 5px;
             font-weight: bold;
             color: #5d4037;
-            text-align: left;
         }
 
         .input-group input {
             width: 100%;
             border: 1px solid #ccc;
             border-radius: 5px;
+            padding: 12px;
             box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #5d4037;
+            box-shadow: 0 0 5px rgba(93, 64, 55, 0.2);
+        }
+
+        .btn-confirm-card:hover {
+            background: #4b342c !important;
         }
     </style>
 </head>
 <body class="form-page">
 
     <header class="navbar-minimal" style="padding: 15px; background: rgba(240, 231, 203, 0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-        <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer; display: flex; align-items: center;">
+        <div class="logo-container" onclick="window.location.href='Pagina_principal.html'" style="cursor: pointer; display: flex; align-items: center;">
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo" style="height: 35px; margin-right: 10px;"> 
             <span class="site-name" style="font-weight: bold; color: #5d4037;">LA LECHUZA LECTORA</span>
         </div>
@@ -87,24 +71,24 @@
     <main class="main-content form-main">
         <div class="background-overlay"></div>
 
-        <div class="form-card card-payment-form" style="background: rgba(245, 245, 245, 0.95); border-radius: 12px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 500px; margin: 0 auto;">
-            <h1 style="color: #5d4037; margin-bottom: 25px; text-align: center; font-size: 1.5rem;">Agregar Tarjeta</h1> 
+        <div class="form-card card-payment-form" style="background: rgba(245, 245, 245, 0.98); border-radius: 12px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 450px; margin: 60px auto;">
+            <h1 style="color: #5d4037; margin-bottom: 25px; text-align: center; font-size: 1.5rem;">Información de Tarjeta</h1> 
             
-            <form class="payment-grid">
+            <form id="payment-form">
                 <div class="input-group">
                     <label for="numero_tarjeta">Número de tarjeta</label>
-                    <input type="text" id="numero_tarjeta" placeholder="0000 0000 0000 0000" required>
+                    <input type="text" id="numero_tarjeta" placeholder="0000 0000 0000 0000" maxlength="19" required>
                 </div>
                 
                 <div class="input-group" style="margin-top: 15px;">
                     <label for="nombre_titular">Nombre del titular</label>
-                    <input type="text" id="nombre_titular" placeholder="Como aparece en la tarjeta" required>
+                    <input type="text" id="nombre_titular" placeholder="COMO APARECE EN LA TARJETA" required style="text-transform: uppercase;">
                 </div>
                 
                 <div class="half-row-mobile" style="display: flex; gap: 15px; margin-top: 15px;">
                     <div class="input-group" style="flex: 1;">
                         <label for="fecha_expiracion">Expiración</label>
-                        <input type="text" id="fecha_expiracion" placeholder="MM/AA" required>
+                        <input type="text" id="fecha_expiracion" placeholder="MM/AA" maxlength="5" required>
                     </div>
                     
                     <div class="input-group" style="flex: 1;">
@@ -118,20 +102,59 @@
                     <input type="text" id="direccion_titular" placeholder="Calle, número y colonia" required>
                 </div>
 
-                <button type="submit" class="btn-confirm-card" style="width: 100%; background: #5d4037; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 25px;">
-                    Guardar tarjeta
+                <button type="submit" class="btn-confirm-card" style="width: 100%; background: #5d4037; color: white; border: none; padding: 14px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 25px; font-size: 1rem;">
+                    Guardar y Finalizar Compra
                 </button>
                 
-                <button type="button" onclick="window.history.back()" style="width: 100%; background: transparent; border: 1px solid #555; color: #555; padding: 10px; border-radius: 5px; margin-top: 10px; cursor: pointer;">
-                    Cancelar
+                <button type="button" onclick="window.location.href='Metodo_Pago.html'" style="width: 100%; background: transparent; border: 1px solid #888; color: #555; padding: 10px; border-radius: 5px; margin-top: 10px; cursor: pointer;">
+                    Regresar
                 </button>
             </form>
         </div>
     </main>
 
-    <footer class="site-footer" style="text-align: center; padding: 20px; color: #5d4037; font-size: 0.8em;">
-        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
+    <footer class="site-footer" style="text-align: center; padding: 20px; color: white; font-size: 0.9em;">
+        © 2026 La Lechuza Lectora. Pago 100% Seguro.
     </footer>
 
+    <script>
+        // MÁSCARA PARA NÚMERO DE TARJETA (Agrega espacios automáticamente)
+        document.getElementById('numero_tarjeta').addEventListener('input', function (e) {
+            let v = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let matches = v.match(/\d{4,16}/g);
+            let match = matches && matches[0] || '';
+            let parts = [];
+            for (let i=0, len=match.length; i<len; i+=4) {
+                parts.push(match.substring(i, i+4));
+            }
+            if (parts.length) {
+                e.target.value = parts.join(' ');
+            } else {
+                e.target.value = v;
+            }
+        });
+
+        // MÁSCARA PARA FECHA (MM/AA)
+        document.getElementById('fecha_expiracion').addEventListener('input', function (e) {
+            let v = e.target.value.replace(/[^0-9]/gi, '');
+            if (v.length >= 2) {
+                e.target.value = v.substring(0, 2) + '/' + v.substring(2, 4);
+            } else {
+                e.target.value = v;
+            }
+        });
+
+        // VALIDACIÓN AL ENVIAR
+        document.getElementById('payment-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Simulación de validación de éxito
+            alert("¡Tarjeta guardada con éxito! Procesando tu pedido...");
+            
+            // Aquí podrías limpiar el carrito y redirigir
+            localStorage.removeItem('carrito'); 
+            window.location.href = 'Pagina_principal.html'; 
+        });
+    </script>
 </body>
 </html>

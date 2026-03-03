@@ -1,22 +1,23 @@
 let currentPage = 1;
 const totalPages = 68;
 const MAX_PAGES_VISIBLE = 7;
-const getCorrectPath = () => {
 
+const getCorrectPath = () => {
     return window.location.pathname.includes('Logeado') ? '../../' : '../';
 };
 
 const pathPrefix = getCorrectPath();
 
+// 1. Ampliamos los datos de los libros con categorías para los filtros
 const misLibrosReales = [
-    { id: 1, titulo: "Sister brothers", autor: "Roald Dahl", precio: 3, img: `${pathPrefix}Imagenes/Libro1.png` },
-    { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 356, img: `${pathPrefix}Imagenes/Libro2.png` },
-    { id: 3, titulo: "Diario de ana frank", autor: "Stephen King", precio: 456, img: `${pathPrefix}Imagenes/Libro3.png` },
-    { id: 4, titulo: "Julio verde", autor: "Adam Nevill", precio: 764, img: `${pathPrefix}Imagenes/Libro4.png` },
-    { id: 5, titulo: "Cine de Terror", autor: "Antonio José", precio: 412, img: `${pathPrefix}Imagenes/Libro5.png` },
-    { id: 6, titulo: "Stephen King", autor: "Lázaro Berber", precio: 342, img: `${pathPrefix}Imagenes/Libro6.png` },
-    { id: 7, titulo: "El hobbit", autor: "By Mart", precio: 755, img: `${pathPrefix}Imagenes/Libro7.png` },
-    { id: 8, titulo: "cuando resolvamos la historia", autor: "J.R. Johansson", precio: 432, img: `${pathPrefix}Imagenes/Libro8.png` }
+    { id: 1, titulo: "Sister brothers", autor: "Roald Dahl", precio: 3, img: `${pathPrefix}Imagenes/Libro1.png`, genero: "Fantasía", paginas: 150, color: "azul" },
+    { id: 2, titulo: "Perfume", autor: "Joe Hill", precio: 356, img: `${pathPrefix}Imagenes/Libro2.png`, genero: "Terror", paginas: 400, color: "negro" },
+    { id: 3, titulo: "Diario de ana frank", autor: "Stephen King", precio: 456, img: `${pathPrefix}Imagenes/Libro3.png`, genero: "Historia", paginas: 250, color: "blanco" },
+    { id: 4, titulo: "Julio verne", autor: "Adam Nevill", precio: 764, img: `${pathPrefix}Imagenes/Libro4.png`, genero: "Aventura", paginas: 500, color: "verde" },
+    { id: 5, titulo: "Cine de Terror", autor: "Antonio José", precio: 412, img: `${pathPrefix}Imagenes/Libro5.png`, genero: "Terror", paginas: 320, color: "rojo" },
+    { id: 6, titulo: "Stephen King", autor: "Lázaro Berber", precio: 342, img: `${pathPrefix}Imagenes/Libro6.png`, genero: "Terror", paginas: 600, color: "negro" },
+    { id: 7, titulo: "El hobbit", autor: "By Mart", precio: 755, img: `${pathPrefix}Imagenes/Libro7.png`, genero: "Fantasía", paginas: 310, color: "dorado" },
+    { id: 8, titulo: "cuando resolvamos la historia", autor: "J.R. Johansson", precio: 432, img: `${pathPrefix}Imagenes/Libro8.png`, genero: "Misterio", paginas: 280, color: "azul" }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const paginationContainer = document.querySelector('.carousel-nav.catalog-pagination');
 
     if (!productsContainer || !paginationContainer) {
-        console.error("No se encontró el contenedor 'products-container'. Revisa tu HTML.");
+        console.error("No se encontraron los contenedores necesarios.");
         return;
     }
     
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = paginationContainer.querySelector('#next-page-btn');
     const paginationDiv = paginationContainer.querySelector('.pagination');
 
+    // --- FUNCIÓN DE CARGA ---
     function loadProducts(page) {
         if (page < 1 || page > totalPages) return;
         currentPage = page;
@@ -45,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             productsContainer.innerHTML = generateProducts(page);
             updatePaginationView();
+            // Si tienes el script de filtros activo, ejecutamos el filtrado tras cargar la página
+            if (typeof applyFilters === 'function') applyFilters(); 
         }, 300);
     }
     
@@ -61,7 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     id: mockId,
                     titulo: `Libro de Terror #${mockId}`,
                     precio: 399 + (i * 10),
-                    img: `${pathPrefix}Imagenes/Libro${(i % 8) + 1}.png`
+                    img: `${pathPrefix}Imagenes/Libro${(i % 8) + 1}.png`,
+                    genero: "Terror",
+                    paginas: 300 + (i * 20),
+                    color: "negro"
                 };
                 html += crearHtmlTarjeta(libroSimulado, i);
             }
@@ -69,21 +76,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return html;
     }
 
+    // --- GENERACIÓN DE TARJETA CON DATA-ATTRIBUTES ---
     function crearHtmlTarjeta(libro, index) {
-        // Ajustamos la ruta del botón comprar para que funcione dentro de Logeado o fuera
         const buyRedirect = window.location.pathname.includes('Logeado') 
             ? 'compra/CargandoArticulo.html' 
             : 'Logeado/compra/CargandoArticulo.html';
 
+        // Incorporamos data-attributes para el motor de filtros
         return `
-            <div class="book-product-card" id="card-${libro.id}" style="opacity: 0; animation: entradaCascada 0.6s ease forwards ${index * 0.1}s; background-color: rgba(240, 231, 203, 0.9); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; position: relative; overflow: hidden;">
+            <div class="book-product-card" 
+                 id="card-${libro.id}" 
+                 data-price="${libro.precio}" 
+                 data-pages="${libro.paginas || 200}" 
+                 data-genre="${libro.genero || 'General'}" 
+                 data-color="${libro.color || 'otro'}"
+                 style="opacity: 0; animation: entradaCascada 0.6s ease forwards ${index * 0.1}s; background-color: rgba(240, 231, 203, 0.9); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; position: relative; overflow: hidden;">
                 
                 <div class="card-loader" id="loader-${libro.id}" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 10; flex-direction: column; justify-content: center; align-items: center;">
                     <div class="spinner-mini"></div>
-                    <p>La Lechuza está buscando tu libro<br>en la estantería...</p>
+                    <p>La Lechuza está buscando tu libro...</p>
                 </div>
 
-                <span class="book-tag-grid" style="background-color: #fbc02d; color: white; padding: 3px 10px; border-radius: 8px 0; position: absolute; top: 0; left: 0; font-size: 0.8em;">Oferta</span>
+                <span class="book-tag-grid" style="background-color: #fbc02d; color: white; padding: 3px 10px; border-radius: 8px 0; position: absolute; top: 0; left: 0; font-size: 0.8em;">${libro.genero || 'Oferta'}</span>
                 <img src="${libro.img}" alt="${libro.titulo}" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 4px;"> 
                 <p class="book-title-grid" style="font-weight: bold; margin: 10px 0; color: #5d4037;">${libro.titulo}</p>
                 <div class="rating-small" style="color: #fbc02d; margin-bottom: 5px;">
@@ -107,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
+    // --- CARRITO ---
     window.agregarAlCarritoClick = function(id, titulo, precio, imagen) {
         const loader = document.getElementById(`loader-${id}`);
         if (loader) {
@@ -114,12 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof addToCart === 'function') {
                 addToCart({ id: id, name: titulo, price: precio, image: imagen }, false);
             }
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 2000);
+            setTimeout(() => { loader.style.display = 'none'; }, 2000);
         }
     };
 
+    // --- PAGINACIÓN ---
     function updatePaginationView() {
         const pages = calculatePaginationRange();
         let html = '';
@@ -149,7 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function attachPaginationListeners() {
         document.querySelectorAll('.page-number').forEach(span => {
-            span.onclick = () => loadProducts(parseInt(span.dataset.page));
+            span.onclick = () => {
+                // Al cambiar de página, desplazamos al inicio del contenedor
+                productsContainer.scrollIntoView({ behavior: 'smooth' });
+                loadProducts(parseInt(span.dataset.page));
+            };
         });
         if (prevBtn) prevBtn.onclick = () => loadProducts(currentPage - 1);
         if (nextBtn) nextBtn.onclick = () => loadProducts(currentPage + 1);
