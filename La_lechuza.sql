@@ -1,4 +1,7 @@
--- 1. TABLA DE USUARIOS
+-- 1. LIMPIEZA TOTAL (Esto borra las tablas si existen para crearlas desde cero)
+DROP TABLE IF EXISTS Detalles_Ventas, Ventas, Productos, Categorias, Metodos_Pago, Direcciones, Usuarios CASCADE;
+
+-- 2. TABLA DE USUARIOS
 CREATE TABLE Usuarios (
     id_usuario SERIAL PRIMARY KEY,
     nombre_completo VARCHAR(150) NOT NULL,
@@ -10,7 +13,7 @@ CREATE TABLE Usuarios (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. TABLA DE DIRECCIONES
+-- 3. TABLA DE DIRECCIONES
 CREATE TABLE Direcciones (
     id_direccion SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
@@ -22,7 +25,7 @@ CREATE TABLE Direcciones (
     CONSTRAINT fk_usuario_direccion FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE
 );
 
--- 3. TABLA DE MÉTODOS DE PAGO
+-- 4. TABLA DE MÉTODOS DE PAGO
 CREATE TABLE Metodos_Pago (
     id_metodo SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
@@ -33,14 +36,14 @@ CREATE TABLE Metodos_Pago (
     CONSTRAINT fk_usuario_pago FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE
 );
 
--- 4. TABLA DE CATEGORÍAS
+-- 5. TABLA DE CATEGORÍAS
 CREATE TABLE Categorias (
     id_categoria SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE,
     descripcion TEXT
 );
 
--- 5. TABLA DE PRODUCTOS (Libros)
+-- 6. TABLA DE PRODUCTOS (Libros)
 CREATE TABLE Productos (
     id_producto SERIAL PRIMARY KEY,
     id_categoria INT,
@@ -55,7 +58,7 @@ CREATE TABLE Productos (
     CONSTRAINT fk_categoria_producto FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria) ON DELETE SET NULL
 );
 
--- 6. TABLA DE VENTAS (Cabecera)
+-- 7. TABLA DE VENTAS (Cabecera)
 CREATE TABLE Ventas (
     id_venta SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
@@ -69,7 +72,7 @@ CREATE TABLE Ventas (
     CONSTRAINT fk_metodo_pago_venta FOREIGN KEY (id_metodo_pago) REFERENCES Metodos_Pago(id_metodo) ON DELETE SET NULL
 );
 
--- 7. TABLA DETALLES DE VENTAS
+-- 8. TABLA DETALLES DE VENTAS
 CREATE TABLE Detalles_Ventas (
     id_detalle SERIAL PRIMARY KEY,
     id_venta INT NOT NULL,
@@ -81,7 +84,7 @@ CREATE TABLE Detalles_Ventas (
     CONSTRAINT fk_producto_detalle FOREIGN KEY (id_producto) REFERENCES Productos(id_producto) ON DELETE CASCADE
 );
 
--- 8. DATOS INICIALES (Para probar tu sistema de inmediato)
+-- 9. DATOS INICIALES (Asegúrate de ejecutar esto para tener qué mostrar)
 INSERT INTO Categorias (nombre) VALUES ('Fantasía'), ('Clásicos'), ('Terror');
 
 INSERT INTO Productos (titulo, autor, precio, stock, id_categoria, imagen_url) 
@@ -89,3 +92,5 @@ VALUES ('Harry Potter y la Piedra Filosofal', 'J.K. Rowling', 350.00, 10, 1, '/I
 
 INSERT INTO Usuarios (nombre_completo, email, password_hash, rol) 
 VALUES ('Juan Perez', 'juan@ejemplo.com', '123456', 'cliente');
+
+select * from usuarios;

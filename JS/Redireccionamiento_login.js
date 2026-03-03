@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const TO_SUCCESS_PAGE_URL = '../Logeado/Pagina_principal.html'; 
     const TO_REGISTER_URL = 'Registro.html'; 
     const TO_RECOVERY_URL = 'Recuperacion.html';
+    const API_BASE_URL = 'http://localhost:3000/api';
 
     // Función de validación de formato
     function isValidEmail(email) {
@@ -34,36 +35,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // --- INTEGRACIÓN CON BACKEND (Simulación o Real) ---
-            // IMPORTANTE: Aquí deberías hacer un fetch a tu API de Node.js
-            /*
+            // Mostrar carga
+            loginSubmitButton.disabled = true;
+            loginSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+
             try {
-                const response = await fetch('http://localhost:3000/api/auth/login', {
+                // --- LLAMADA REAL AL BACKEND ---
+                const response = await fetch(`${API_BASE_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
+
                 const data = await response.json();
                 
-                if (response.ok) {
-                    // Guardamos los datos que PayPal y el Carrito necesitarán después
-                    localStorage.setItem('userId', data.user.id);
+                if (response.ok && data.success) {
+                    // ✅ LOGIN EXITOSO - Guardamos datos del usuario
+                    localStorage.setItem('userId', data.user.id_usuario);
                     localStorage.setItem('userName', data.user.nombre);
-                    window.location.href = TO_SUCCESS_PAGE_URL;
+                    localStorage.setItem('userRole', data.user.rol);
+                    localStorage.setItem('usuario', JSON.stringify(data.user)); // Para compatibilidad con Acciones_Admin.js
+
+                    // Redirigir según el rol
+                    if (data.user.rol === 'admin') {
+                        window.location.href = '../../admin/panel';
+                    } else {
+                        window.location.href = TO_SUCCESS_PAGE_URL;
+                    }
                 } else {
-                    alert(data.message || "Credenciales incorrectas");
+                    // ❌ LOGIN FALLIDO
+                    alert(data.error || "Credenciales incorrectas");
+                    loginSubmitButton.disabled = false;
+                    loginSubmitButton.innerHTML = 'Iniciar Sesión';
                 }
             } catch (error) {
                 console.error("Error en login:", error);
+                alert("Error al conectar con el servidor. Intenta más tarde.");
+                loginSubmitButton.disabled = false;
+                loginSubmitButton.innerHTML = 'Iniciar Sesión';
             }
-            */
-
-            // POR AHORA (Simulación para que tus filtros y pago funcionen):
-            console.log("Accediendo como usuario simulado...");
-            localStorage.setItem('userId', '12345'); // ID Ficticio para pruebas
-            localStorage.setItem('userName', 'Lector Afortunado');
-            
-            window.location.href = TO_SUCCESS_PAGE_URL;
         });
     }
 

@@ -90,13 +90,13 @@
                     const fecha = new Date(p.fecha_pedido).toLocaleDateString('es-MX');
                     tbody.innerHTML += `
                         <tr>
-                            <td><strong>#${p.id_pedido}</strong></td>
+                            <td><strong>#${p.id_venta}</strong></td>
                             <td>${p.nombre_cliente}</td>
                             <td>${fecha}</td>
                             <td>$${parseFloat(p.total).toFixed(2)}</td>
                             <td><span class="status-badge status-${p.estado}">${p.estado}</span></td>
                             <td>
-                                <button class="btn-view" onclick="verDetalle(${p.id_pedido})">
+                                <button class="btn-view" onclick="verDetalle(${p.id_venta})">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
                             </td>
@@ -109,8 +109,8 @@
             }
         }
 
-        function verDetalle(id) {
-            alert("Detalle del pedido #" + id + "\nPróximamente: Lista de libros comprados.");
+        function verDetalle(idVenta) {
+            alert("Detalle de la venta #" + idVenta + "\nPróximamente: Lista de libros comprados.");
         }
 
         document.addEventListener('DOMContentLoaded', cargarPedidos);

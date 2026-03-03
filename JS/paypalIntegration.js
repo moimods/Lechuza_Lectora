@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const PAYPAL_CONTAINER = '#paypal-button-container';
     
-    // Verificamos que el contenedor exista para evitar errores en otras páginas
     if (!document.querySelector(PAYPAL_CONTAINER)) return;
 
     paypal.Buttons({
@@ -13,14 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         createOrder: function(data, actions) {
-            // 1. Obtener el total del elemento visible (final-total)
             const totalElement = document.getElementById('final-total');
             const totalText = totalElement ? totalElement.innerText : "0";
-            
-            // Limpieza robusta: elimina todo lo que no sea número o punto
             const totalValue = totalText.replace(/[^0-9.]/g, '').trim();
 
-            // 2. Validaciones previas al cobro
             const userId = localStorage.getItem('userId');
             if (!userId) {
                 alert("🦉 Debes iniciar sesión para completar la compra.");
@@ -32,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return actions.reject();
             }
 
-            // 3. Crear la orden en PayPal
             return actions.order.create({
                 purchase_units: [{
                     description: "Compra de Libros - La Lechuza Lectora",
@@ -45,23 +39,25 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         onApprove: function(data, actions) {
-            // Bloqueamos el botón o mostramos un loader mientras procesamos
             const container = document.querySelector(PAYPAL_CONTAINER);
             container.style.pointerEvents = 'none';
             container.style.opacity = '0.5';
 
             return actions.order.capture().then(async function(details) {
                 
-                // Extraer datos necesarios del almacenamiento local
+                // Cargar carrito y normalizar datos
                 const cart = JSON.parse(localStorage.getItem('laLechuzaLectoraCart')) || [];
                 const userId = localStorage.getItem('userId');
                 const checkoutData = JSON.parse(localStorage.getItem('laLechuzaCheckoutData')) || {};
 
-                // Mapeo seguro de productos: asegura que los nombres coincidan con tu API
+                // Normalizar productos para que coincidan con la API
                 const productosProcesados = cart.map(item => ({
-                    id_libro: item.id_libro || item.id, // Soporta ambos nombres
+                    id_producto: item.id_producto || item.id,
+                    id: item.id || item.id_producto,
                     cantidad: item.cantidad || item.quantity || 1,
-                    precio: item.precio || item.price
+                    cantidad: item.cantidad || item.quantity || 1,
+                    precio: item.precio || item.price,
+                    price: item.price || item.precio
                 }));
 
                 const pedidoFinal = {
@@ -69,13 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     id_direccion: checkoutData.selectedAddress ? parseInt(checkoutData.selectedAddress) : null,
                     total: details.purchase_units[0].amount.value,
                     metodo_pago: 'PayPal',
-                    id_transaccion: details.id, // Folio de PayPal
+                    id_transaccion: details.id,
                     productos: productosProcesados
                 };
 
                 try {
-                    // Enviar al Backend (Node.js)
-                    const response = await fetch('http://localhost:3000/api/pedidos/crear', {
+                    const response = await fetch('http://localhost:3000/api/ventas/registrar', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(pedidoFinal)
@@ -84,21 +79,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     const result = await response.json();
 
                     if (response.ok && result.success) {
-                        // LIMPIEZA POST-VENTA
                         localStorage.removeItem('laLechuzaLectoraCart');
                         localStorage.removeItem('laLechuzaCheckoutData');
-                        
-                        // Guardar el ID de transacción para mostrarlo en la confirmación
                         sessionStorage.setItem('lastOrderId', details.id);
-
-                        // Redirigir a la página de éxito
                         window.location.href = "confirmacion_pago.html";
                     } else {
                         throw new Error(result.error || "Error al registrar el pedido");
                     }
                 } catch (error) {
-                    console.error("Error crítico en el flujo de pago:", error);
-                    alert("⚠️ El pago se realizó en PayPal (ID: " + details.id + "), pero hubo un error al guardarlo en nuestra base de datos. Por favor, toma captura de este mensaje y contáctanos.");
+                    console.error("Error en flujo de pago:", error);
+                    alert("⚠️ El pago se realizó (ID: " + details.id + "), pero hubo un error. Contacta soporte.");
+                    container.style.pointerEvents = 'auto';
+                    container.style.opacity = '1';
                 }
             });
         },
@@ -108,8 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         onError: function(err) {
-            console.error('Error técnico de PayPal SDK:', err);
-            alert('Hubo un error con la conexión de PayPal. Intenta de nuevo.');
+            console.error('Error de PayPal:', err);
+            alert('Hubo un error con PayPal. Intenta de nuevo.');
         }
     }).render(PAYPAL_CONTAINER);
 });

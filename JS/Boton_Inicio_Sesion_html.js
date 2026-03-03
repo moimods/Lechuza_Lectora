@@ -1,29 +1,40 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Definimos la ruta centralizada
-    const USER_LOGIN_URL = '/html/Inicio_de_sesion/Inicio_sesion.html';
+/**
+ * BOTÓN DE INICIO DE SESIÓN - VERSIÓN CONSOLIDADA
+ * Maneja todas las variantes de botones de login
+ */
 
-    // 1. Selector por ID (El más seguro y rápido)
-    const btnLoginRedirect = document.getElementById('btn-login-redirect');
-    if (btnLoginRedirect) {
-        btnLoginRedirect.addEventListener('click', () => {
-            window.location.href = USER_LOGIN_URL;
+document.addEventListener('DOMContentLoaded', () => {
+    // Rutas centralizadas
+    const LOGIN_URL = '/html/Inicio_de_sesion/Inicio_sesion.html';
+    
+    // --- ESTRATEGIA 1: Por ID ---
+    const loginIconBtn = document.getElementById('btn-login-redirect');
+    if (loginIconBtn) {
+        loginIconBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = LOGIN_URL;
         });
     }
 
-    // 2. Selector para botones del Header (Usamos una clase específica si es posible)
-    // Tip: En tu HTML añade la clase 'btn-login-trigger' a esos botones
-    const loginButtons = document.querySelectorAll('.btn-primary, .btn-login-trigger');
-
-    loginButtons.forEach(button => {
-        // Lógica de respaldo por texto (con limpieza de espacios y minúsculas)
+    // --- ESTRATEGIA 2: Por Clase (Botones Primarios) ---
+    const primaryButtons = document.querySelectorAll('.btn-primary');
+    primaryButtons.forEach(button => {
         const text = button.textContent.trim().toLowerCase();
         
-        if (text === 'iniciar sesión' || button.classList.contains('btn-login-trigger')) {
+        if (text.includes('iniciar sesión') || text.includes('login')) {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log("Redirigiendo al Login de usuario...");
-                window.location.href = USER_LOGIN_URL;
+                window.location.href = LOGIN_URL;
             });
         }
+    });
+
+    // --- ESTRATEGIA 3: Por atributo data ---
+    const dataButtons = document.querySelectorAll('[data-action="login"]');
+    dataButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = LOGIN_URL;
+        });
     });
 });

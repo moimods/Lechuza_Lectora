@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>
+        // Verificación de sesión antes de cargar el resto de la página
+        document.addEventListener('DOMContentLoaded', () => {
+            const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+            if (!usuario || !usuario.id_usuario) {
+                alert("Debes estar logeado para agregar un domicilio");
+                window.location.href = '../../Inicio_de_sesion/Inicio_sesion.html';
+                return;
+            }
+        });
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Agregar Domicilio</title>
@@ -158,26 +170,20 @@
     document.getElementById('address-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // 1. Obtener ID del usuario desde LocalStorage
-        // Usamos la clave 'usuario_logeado' que es común en tus scripts anteriores
         const usuarioJson = localStorage.getItem('usuario_logeado');
         const usuario = usuarioJson ? JSON.parse(usuarioJson) : null;
-        const idUsuario = usuario ? usuario.id_usuario : localStorage.getItem('userId');
+        const idUsuario = usuario ? usuario.id_usuario : null;
 
         if (!idUsuario) {
-            alert("No se encontró una sesión activa. Por favor, inicia sesión de nuevo.");
+            alert("No se encontró una sesión activa.");
             window.location.href = '../../Inicio_de_sesion/Inicio_sesion.html';
             return;
         }
 
-        // 2. Recolectar datos del formulario de forma limpia
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
-        
-        // 3. Añadir el ID del usuario al objeto de datos
         data.id_usuario = idUsuario;
 
-        // 4. Mostrar estado de carga en el botón
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerText;
         submitBtn.innerText = "Guardando...";
@@ -193,7 +199,6 @@
             const result = await response.json();
 
             if (result.success) {
-                // Mostrar modal de éxito
                 document.getElementById('custom-success-modal').style.display = 'flex';
             } else {
                 alert("Error: " + (result.error || "No se pudo guardar el domicilio."));
@@ -202,16 +207,13 @@
             }
         } catch (error) {
             console.error("Error al enviar:", error);
-            alert("Hubo un error al conectar con el servidor. Verifica que tu API esté encendida.");
+            alert("Hubo un error al conectar con el servidor.");
             submitBtn.innerText = originalText;
             submitBtn.disabled = false;
         }
     });
 
-    // Acción al presionar "Aceptar" en el modal
     document.getElementById('btn-modal-accept-success').onclick = () => {
-        // Redirigimos a domicilio.html para que el usuario pueda ver su nueva dirección en la lista de compra
-        // O a perfil.html si prefieres que regrese a su cuenta.
         window.location.href = 'domicilio.html'; 
     };
     </script>
