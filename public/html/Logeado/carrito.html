@@ -1,266 +1,191 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>La Lechuza Lectora - Carrito</title>
-    <link rel="stylesheet" href="/Estilos/Estilo1.css">
+    <title>Catálogo - La Lechuza Lectora</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../../Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-        /* --- ESTILOS CRÍTICOS PARA EL CARRITO --- */
-        .cart-item {
-            display: flex;
-            align-items: center;
+        body {
+            background: #f5f5f5;
+        }
+
+        .catalog-container {
+            padding: 40px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .catalog-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #5d4037;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
-            padding: 15px 0;
-            border-bottom: 1px solid #ddd;
-            transition: background 0.2s;
-        }
-        .cart-item:hover { background: rgba(0,0,0,0.02); }
-        
-        .quantity-controls button {
-            padding: 5px 12px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            background: #fff;
-            border-radius: 4px;
         }
 
-        .btn-continuar {
-            width: 100%;
-            background: #fbc02d;
-            color: #2c2c2c;
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            transition: transform 0.2s;
-        }
-        .btn-continuar:active { transform: scale(0.98); }
-
-        /* Ajustes para el Avatar y Dropdown */
-        .avatar-dropdown-container { position: relative; }
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 50px;
+        .book-product-card {
             background: white;
-            min-width: 180px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 15px;
             border-radius: 8px;
-            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: 0.3s;
         }
-        .dropdown-menu.show { display: block; }
-        .dropdown-menu a {
-            display: block;
-            padding: 12px 15px;
-            color: #333;
-            text-decoration: none;
-            border-bottom: 1px solid #eee;
-        }
-        .dropdown-menu a:hover { background: #f5f5f5; }
 
-        @media (max-width: 768px) {
-            .cart-container { flex-direction: column !important; padding: 10px; }
-            .cart-summary-wrapper { width: 100% !important; max-width: none !important; }
+        .book-product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .book-product-card h3 {
+            font-size: 0.9rem;
+            color: #5d4037;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #d32f2f;
+            display: block;
+            margin: 8px 0;
+        }
+
+        .btn-add {
+            background: #5d4037;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.85rem;
+        }
+
+        .btn-add:hover {
+            background: #3e2723;
+        }
+
+        .top-bar {
+            background: #5d4037;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .logout {
+            cursor: pointer;
         }
     </style>
 </head>
-<body class="form-page">
+<body>
 
-    <header class="navbar user-navbar">
-        <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
-            <span class="site-name">LA LECHUZA LECTORA</span>
+    <!-- Barra superior -->
+    <div class="top-bar">
+        <div>
+            <i class="fas fa-book"></i> La Lechuza Lectora
         </div>
-
-        <button class="hamburger-btn" id="hamburger-btn">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        
-        <nav class="nav-links" id="mobile-nav">
-            <a href="Catalogo_Logeado.html">Catálogo</a>
-            <a href="Contacto.html">Contacto</a>
-            <a href="Ayuda.html">Ayuda</a>
-        </nav>
-        
-        <div class="auth-actions user-actions">
-            <button class="icon-button cart-button">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span class="cart-badge" id="cart-count">0</span> 
-            </button>
-            
-            <div class="avatar-dropdown-container">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" id="avatar-btn">
-                <div class="dropdown-menu" id="avatar-dropdown">
-                    <a href="perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
-                    <a href="#" id="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
-                </div>
-            </div>
-            <div id="carritoLista"></div>
-
-<h2>Total: <span id="totalCarrito">$0</span></h2>
-
-<button onclick="vaciarCarrito()">Vaciar carrito</button>
-
+        <div>
+            <a href="carrito.html"><i class="fas fa-shopping-cart"></i> Carrito</a>
+            <a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
         </div>
-    </header>
+    </div>
 
-    <main class="main-content">
-        <div class="background-overlay" style="filter: brightness(0.7);"></div>
+    <!-- Catálogo -->
+    <div class="catalog-container">
+        <h2 class="catalog-title">
+            <i class="fas fa-store"></i> Catálogo de Libros
+        </h2>
 
-        <div class="cart-container" style="display: flex; gap: 30px; margin: 40px auto; max-width: 1200px; position: relative; z-index: 5;">
-            
-            <div class="cart-items-list" style="background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; flex: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                <h1 style="color: #5d4037; border-bottom: 2px solid #fbc02d; padding-bottom: 10px;">Tu Carrito</h1>
-                <div id="cart-items-container">
-                    </div>
-                <div id="empty-cart-message" style="text-align: center; padding: 40px; display: none;">
-                    <i class="fa-solid fa-box-open" style="font-size: 3rem; color: #ccc;"></i>
-                    <p style="margin-top: 15px; color: #666;">Tu carrito está vacío. ¡Hay muchas historias esperando!</p>
-                    <a href="Catalogo_Logeado.html" class="btn-secondary" style="display: inline-block; margin-top: 10px; text-decoration: none; color: #fbc02d;">Ir al catálogo</a>
-                </div>
-            </div>
-
-            <div class="cart-summary-wrapper" style="flex: 1; min-width: 320px;">
-                <div class="cart-summary" style="background: #2c2c2c; color: white; padding: 25px; border-radius: 12px; position: sticky; top: 20px;">
-                    <h3 style="margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 10px;">Resumen</h3>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                        <span>Subtotal</span>
-                        <strong id="total-display" style="color: #fbc02d; font-size: 1.2rem;">$0.00</strong>
-                    </div>
-                    <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 20px;">* El costo de envío se calculará en el siguiente paso.</p>
-
-                    <button class="btn-continuar" id="btn-checkout">
-                        Elegir dirección de envío
-                    </button>
-                    <button onclick="window.location.href='Catalogo_Logeado.html'" style="width: 100%; background: transparent; border: 1px solid #666; color: #fff; padding: 10px; cursor: pointer; border-radius: 5px;">
-                        Seguir navegando
-                    </button>
-                </div>
-            </div>
+        <div id="products-container" class="products-grid">
+            <!-- Productos cargados dinámicamente -->
         </div>
-    </main>
+    </div>
+
+    <!-- SOLO carrito.js (necesario para agregarAlCarrito) -->
+    <script src="../../JS/carrito.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // --- 1. LÓGICA DEL CARRITO ---
-            function renderizarCarrito() {
-                const contenedor = document.getElementById('cart-items-container');
-                const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-                const totalDisplay = document.getElementById('total-display');
-                const emptyMsg = document.getElementById('empty-cart-message');
-                const badge = document.getElementById('cart-count');
 
-                if (carrito.length === 0) {
-                    contenedor.innerHTML = '';
-                    emptyMsg.style.display = 'block';
-                    totalDisplay.innerText = '$0.00';
-                    badge.innerText = '0';
-                    return;
-                }
+            const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
 
-                emptyMsg.style.display = 'none';
-                let html = '';
-                let total = 0;
-                let totalArticulos = 0;
-
-                carrito.forEach((item, index) => {
-                    const subtotal = item.precio * item.cantidad;
-                    total += subtotal;
-                    totalArticulos += item.cantidad;
-                    html += `
-                        <div class="cart-item">
-                            <img src="${item.imagen}" style="width: 70px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-                            <div style="flex: 2;">
-                                <h4 style="margin: 0; color: #5d4037;">${item.titulo}</h4>
-                                <p style="margin: 5px 0; font-size: 0.9rem; color: #666;">$${item.precio.toLocaleString()} c/u</p>
-                            </div>
-                            <div class="quantity-controls" style="display: flex; align-items: center; gap: 10px;">
-                                <button onclick="cambiarCantidad(${index}, -1)">-</button>
-                                <span style="font-weight: bold; min-width: 20px; text-align: center;">${item.cantidad}</span>
-                                <button onclick="cambiarCantidad(${index}, 1)">+</button>
-                            </div>
-                            <div style="flex: 1; text-align: right; font-weight: bold; color: #2c2c2c;">
-                                $${subtotal.toLocaleString()}
-                            </div>
-                            <button onclick="eliminarDelCarrito(${index})" style="background: none; border: none; color: #d32f2f; cursor: pointer; font-size: 1.1rem;">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    `;
-                });
-
-                contenedor.innerHTML = html;
-                totalDisplay.innerText = `$${total.toLocaleString()}`;
-                badge.innerText = totalArticulos;
-                localStorage.setItem('total_compra', total);
+            if (!usuario) {
+                alert("Debes iniciar sesión para acceder al catálogo.");
+                window.location.href = '../Inicio_de_sesion/Inicio_sesion.html';
+                return;
             }
 
-            // Funciones globales para los botones onclick
-            window.cambiarCantidad = (index, delta) => {
-                let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-                carrito[index].cantidad += delta;
-                if (carrito[index].cantidad <= 0) return eliminarDelCarrito(index);
-                localStorage.setItem('carrito', JSON.stringify(carrito));
-                renderizarCarrito();
-            };
+            cargarProductos();
+        });
 
-            window.eliminarDelCarrito = (index) => {
-                let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-                carrito.splice(index, 1);
-                localStorage.setItem('carrito', JSON.stringify(carrito));
-                renderizarCarrito();
-            };
+        async function cargarProductos() {
 
-            // --- 2. NAVEGACIÓN Y CIERRE DE SESIÓN ---
-            const avatarBtn = document.getElementById('avatar-btn');
-            const dropdown = document.getElementById('avatar-dropdown');
-            const logoutBtn = document.getElementById('btn-logout');
-            const btnCheckout = document.getElementById('btn-checkout');
+            const container = document.getElementById('products-container');
 
-            // Toggle Dropdown
-            avatarBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('show');
-            });
+            try {
+                const response = await fetch('/api/productos');
+                const productos = await response.json();
 
-            document.addEventListener('click', () => dropdown.classList.remove('show'));
+                container.innerHTML = "";
 
-            // Logout con lógica de seguridad
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.clear(); // Limpia carrito y sesión
-                window.location.replace('../../index.html');
-            });
+                productos.forEach(libro => {
 
-            // Validación de compra
-            btnCheckout.addEventListener('click', () => {
-                const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-                // IMPORTANTE: Ajusta 'isLogged' según cómo guardes tu sesión
-                const isLogged = localStorage.getItem('isLogged') === 'true';
+                    const card = document.createElement('div');
+                    card.className = 'book-product-card';
 
-                if (carrito.length === 0) {
-                    alert("🦉 Tu nido está vacío. Agrega libros para continuar.");
-                    return;
-                }
+                    card.innerHTML = `
+                        <img src="../../Imagenes/Libros/${libro.id_producto}.jpg"
+                             onerror="this.src='../../Imagenes/Libros/default.jpg'">
 
-                // Si no está logeado, mandarlo al inicio de sesión
-                // (Aunque este HTML parece ser ya de la carpeta 'logeado')
-                window.location.href = 'domicilio.html';
-            });
+                        <h3>${libro.titulo}</h3>
 
-            // Renderizado inicial
-            renderizarCarrito();
+                        <span class="price">$${libro.precio}</span>
+
+                        <button class="btn-add"
+                            onclick="agregarAlCarrito(${libro.id_producto}, '${libro.titulo.replace(/'/g, "\\'")}', ${libro.precio})">
+                            <i class="fas fa-cart-plus"></i> Añadir
+                        </button>
+                    `;
+
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error cargando productos:", error);
+                container.innerHTML = "<p>Error al conectar con el servidor.</p>";
+            }
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('usuario_logeado');
+            window.location.href = '../../index.html';
         });
     </script>
-    <script src="../../JS/config.js"></script>
-<script src="../../JS/carrito.js"></script>
+
 </body>
 </html>

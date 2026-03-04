@@ -167,34 +167,37 @@
         <div class="copyright">© 2026 La Lechuza Lectora ©</div>
     </footer>
 
-    <script>
-        // TOGGLE MENÚ MÓVIL
-        function toggleMobileMenu() {
-            document.getElementById('mobile-nav').classList.toggle('active');
-        }
+    <script src="../../JS/api.js"></script>
+<script src="../../JS/carrito.js"></script>
 
-        // TOGGLE DROPDOWN AVATAR
-        const avatarBtn = document.getElementById('avatar-btn');
-        const dropdownMenu = document.getElementById('avatar-dropdown');
+<script>
+    // TOGGLE MENÚ MÓVIL
+    function toggleMobileMenu() {
+        document.getElementById('mobile-nav').classList.toggle('active');
+    }
 
-        if (avatarBtn) {
-            avatarBtn.onclick = function(e) {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('show');
-            };
-        }
+    // TOGGLE DROPDOWN AVATAR
+    const avatarBtn = document.getElementById('avatar-btn');
+    const dropdownMenu = document.getElementById('avatar-dropdown');
 
-        // CERRAR MENÚS AL HACER CLIC FUERA
-        window.onclick = function(event) {
-            if (!event.target.matches('#avatar-btn')) {
-                if (dropdownMenu.classList.contains('show')) {
-                    dropdownMenu.classList.remove('show');
-                }
+    if (avatarBtn) {
+        avatarBtn.onclick = function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        };
+    }
+
+    // CERRAR MENÚS AL HACER CLIC FUERA
+    window.onclick = function(event) {
+        if (!event.target.matches('#avatar-btn')) {
+            if (dropdownMenu.classList.contains('show')) {
+                dropdownMenu.classList.remove('show');
             }
-            if (!event.target.closest('#hamburger-btn') && !event.target.closest('#mobile-nav')) {
-                document.getElementById('mobile-nav').classList.remove('active');
-            }
         }
-    </script>
+        if (!event.target.closest('#hamburger-btn') && !event.target.closest('#mobile-nav')) {
+            document.getElementById('mobile-nav').classList.remove('active');
+        }
+    }
+</script>
 </body>
 </html>

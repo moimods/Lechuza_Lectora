@@ -38,9 +38,11 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .address-card:hover { border-color: #fbc02d; transform: translateY(-2px); }
+        .address-card:hover { 
+            border-color: #fbc02d; 
+            transform: translateY(-2px); 
+        }
 
-        /* Clase para cuando el usuario selecciona una dirección */
         .address-card.selected {
             border: 2px solid #fbc02d !important;
             background-color: #fffefb !important;
@@ -56,31 +58,44 @@
         }
     </style>
 </head>
+
 <body class="form-page">
     
     <main class="main-content cart-main">
         <div class="background-overlay"></div>
 
         <div class="checkout-container" style="background: rgba(245, 245, 245, 0.95); border-radius: 10px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-width: 800px; margin: 40px auto;">
-            <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 30px;">2. Seleccionar Domicilio</h1>
+            
+            <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 30px;">
+                2. Seleccionar Domicilio
+            </h1>
             
             <div class="checkout-step-content">
-                <h2 style="font-size: 1.2rem; color: #5d4037; margin-bottom: 15px; border-bottom: 2px solid #fbc02d; padding-bottom: 5px;">Direcciones Guardadas</h2>
                 
-                <div id="addresses-list-container" class="address-list" style="display: flex; flex-direction: column; gap: 15px;">
+                <h2 style="font-size: 1.2rem; color: #5d4037; margin-bottom: 15px; border-bottom: 2px solid #fbc02d; padding-bottom: 5px;">
+                    Direcciones Guardadas
+                </h2>
+                
+                <div id="addresses-list-container" style="display: flex; flex-direction: column; gap: 15px;">
                     <p style="text-align: center; color: #666;">Cargando tus direcciones...</p>
                 </div>
 
-                <button class="btn-secondary btn-add-address" onclick="window.location.href='../Registro_Domicilio.html'" style="margin-top: 20px; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                <button class="btn-secondary btn-add-address"
+                        onclick="window.location.href='../Registro_Domicilio.html'"
+                        style="margin-top: 20px; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                     <i class="fas fa-plus-circle"></i> Agregar Nuevo Domicilio
                 </button>
                 
-                <div class="navigation-actions" style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
-                    <button class="btn-prev-step" onclick="window.location.href='../carrito.html'" style="background: #555; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                <div class="navigation-actions"
+                     style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    
+                    <button onclick="window.location.href='../carrito.html'"
+                            style="background: #555; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                         ← Regresar al Carrito
                     </button>
 
-                    <button class="btn-primary btn-next-step" onclick="continuarAlPago()" style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                    <button onclick="continuarAlPago()"
+                            style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                         Continuar a Pago →
                     </button>
                 </div>
@@ -89,85 +104,93 @@
     </main>
     
     <footer class="site-footer" style="text-align: center; padding: 20px; background: rgba(44, 44, 44, 0.9); color: white;">
-        <div class="copyright">© 2026 La Lechuza Lectora ©</div>
+        © 2026 La Lechuza Lectora ©
     </footer>
 
- <script>
-    let direccionSeleccionadaObjeto = null;
+<script>
+let direccionSeleccionadaObjeto = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // Obtenemos el objeto completo del usuario guardado en el login
-        const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
-        
-        if (!usuario || !usuario.id_usuario) {
-            alert("Sesión no detectada. Por favor, inicia sesión.");
-            window.location.href = '../../Inicio_de_sesion/Inicio_sesion.html';
+document.addEventListener('DOMContentLoaded', () => {
+    const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+    
+    if (!usuario || !usuario.id_usuario) {
+        alert("Sesión no detectada. Por favor, inicia sesión.");
+        window.location.href = '../../Inicio_de_sesion/Inicio_sesion.html';
+        return;
+    }
+
+    cargarDirecciones(usuario.id_usuario);
+});
+
+async function cargarDirecciones(idUsuario) {
+    const container = document.getElementById('addresses-list-container');
+
+    try {
+        const response = await fetch(`/api/direcciones/usuario/${idUsuario}`);
+
+        if (!response.ok) {
+            throw new Error("Error en la respuesta del servidor");
+        }
+
+        const direcciones = await response.json();
+
+        if (!direcciones || direcciones.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:20px;">
+                    <p>No tienes direcciones guardadas.</p>
+                    <p>Por favor, agrega una para continuar con tu compra.</p>
+                </div>`;
             return;
         }
 
-        cargarDirecciones(usuario.id_usuario);
-    });
-
-    async function cargarDirecciones(idUsuario) {
-        const container = document.getElementById('addresses-list-container');
-
-        try {
-            // Llamada a tu API (asegúrate que el endpoint coincida con tu index.js)
-            const response = await fetch(`/api/direcciones/usuario/${idUsuario}`);
-            const direcciones = await response.json();
-
-            if (!direcciones || direcciones.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding:20px;">
-                        <p>No tienes direcciones guardadas.</p>
-                        <p>Por favor, agrega una para continuar con tu compra.</p>
-                    </div>`;
-                return;
-            }
-
-            // Renderizamos las tarjetas de dirección
-            container.innerHTML = direcciones.map(dir => `
-                <div class="address-card" id="dir-${dir.id_direccion}" 
-                     onclick='seleccionarDireccion(${JSON.stringify(dir)})'>
-                    <i class="fas fa-check-circle check-icon"></i>
-                    <div style="flex-grow: 1;">
-                        <strong>${dir.tipo_domicilio || 'Domicilio'}</strong><br>
-                        <small>${dir.calle || dir.direccion_texto}, Col. ${dir.colonia}</small><br>
-                        <small>${dir.municipio_alcaldia || dir.ciudad}, ${dir.estado}. CP: ${dir.cp}</small>
-                    </div>
+        container.innerHTML = direcciones.map(dir => `
+            <div class="address-card" 
+                 id="dir-${dir.id_direccion}" 
+                 data-direccion='${JSON.stringify(dir)}'>
+                <i class="fas fa-check-circle check-icon"></i>
+                <div style="flex-grow: 1;">
+                    <strong>${dir.tipo_domicilio || 'Domicilio'}</strong><br>
+                    <small>${dir.calle || dir.direccion_texto}, Col. ${dir.colonia}</small><br>
+                    <small>${dir.municipio_alcaldia || dir.ciudad}, ${dir.estado}. CP: ${dir.cp}</small>
                 </div>
-            `).join('');
+            </div>
+        `).join('');
 
-        } catch (error) {
-            console.error("Error al cargar direcciones:", error);
-            container.innerHTML = "<p style='color:red; text-align:center;'>Error al conectar con el servidor.</p>";
-        }
+        document.querySelectorAll('.address-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const direccionObj = JSON.parse(card.dataset.direccion);
+                seleccionarDireccion(direccionObj);
+            });
+        });
+
+    } catch (error) {
+        console.error("Error al cargar direcciones:", error);
+        container.innerHTML = "<p style='color:red; text-align:center;'>Error al conectar con el servidor.</p>";
+    }
+}
+
+function seleccionarDireccion(direccionObj) {
+    document.querySelectorAll('.address-card')
+        .forEach(card => card.classList.remove('selected'));
+
+    const card = document.getElementById(`dir-${direccionObj.id_direccion}`);
+    if (card) card.classList.add('selected');
+
+    direccionSeleccionadaObjeto = direccionObj;
+
+    localStorage.setItem('id_direccion_pedido', direccionObj.id_direccion);
+    localStorage.setItem('direccion_envio', JSON.stringify(direccionObj));
+}
+
+function continuarAlPago() {
+    if (!direccionSeleccionadaObjeto) {
+        alert("Por favor, selecciona una dirección para continuar.");
+        return;
     }
 
-    function seleccionarDireccion(direccionObj) {
-        // 1. Quitar selección visual previa
-        document.querySelectorAll('.address-card').forEach(card => card.classList.remove('selected'));
-        
-        // 2. Marcar la tarjeta actual como seleccionada
-        const card = document.getElementById(`dir-${direccionObj.id_direccion}`);
-        if(card) card.classList.add('selected');
-        
-        // 3. Guardar el objeto para usarlo en el siguiente paso
-        direccionSeleccionadaObjeto = direccionObj;
-        
-        // Guardamos tanto el ID como el objeto para el resumen final (Paso 4)
-        localStorage.setItem('id_direccion_pedido', direccionObj.id_direccion);
-        localStorage.setItem('direccion_envio', JSON.stringify(direccionObj));
-    }
-
-    function continuarAlPago() {
-        if (!direccionSeleccionadaObjeto) {
-            alert("Por favor, selecciona una dirección para continuar.");
-            return;
-        }
-        // Redirigir al siguiente paso (Paso 3: Método de Pago o directamente al Checkout)
-        window.location.href = 'Checkout.html'; 
-    }
+    window.location.href = 'Checkout.html';
+}
 </script>
+
 </body>
 </html>

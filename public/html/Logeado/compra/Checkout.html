@@ -1,197 +1,170 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalizar Compra - La Lechuza Lectora</title>
-    <link rel="stylesheet" href="/Estilos/Estilo1.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        .checkout-container { 
-            max-width: 600px; 
-            margin: 60px auto; 
-            padding: 30px; 
-            background: rgba(255, 255, 255, 0.98); 
-            border-radius: 15px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            position: relative;
-            z-index: 10;
-        }
-        .resumen-box { border-bottom: 1px solid #eee; padding: 15px 0; margin-bottom: 15px; }
-        .producto-linea { display: flex; justify-content: space-between; margin-bottom: 8px; color: #444; }
-        .total-row { 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 1.6rem; 
-            font-weight: bold; 
-            color: #5d4037; 
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px solid #fbc02d;
-        }
-        .btn-pagar { 
-            width: 100%; 
-            background: #27ae60; 
-            color: white; 
-            padding: 18px; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 1.3rem; 
-            font-weight: bold;
-            cursor: pointer; 
-            transition: 0.3s; 
-            margin-top: 25px;
-        }
-        .btn-pagar:hover { background: #219150; transform: scale(1.02); }
-        .background-overlay {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
-            background-size: cover;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finalizar Compra - La Lechuza Lectora</title>
+<link rel="stylesheet" href="/Estilos/Estilo1.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+.checkout-container { 
+    max-width: 600px; 
+    margin: 60px auto; 
+    padding: 30px; 
+    background: rgba(255, 255, 255, 0.98); 
+    border-radius: 15px; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+}
+.producto-linea { display:flex; justify-content:space-between; margin-bottom:8px; }
+.total-row { 
+    display:flex; 
+    justify-content:space-between; 
+    font-size:1.6rem; 
+    font-weight:bold; 
+    margin-top:20px; 
+    border-top:2px solid #fbc02d; 
+    padding-top:15px;
+}
+.btn-pagar { 
+    width:100%; 
+    background:#27ae60; 
+    color:white; 
+    padding:18px; 
+    border:none; 
+    border-radius:8px; 
+    font-size:1.3rem; 
+    font-weight:bold;
+    cursor:pointer; 
+    margin-top:25px;
+}
+.btn-pagar:disabled { background:#ccc; cursor:not-allowed; }
+</style>
 </head>
-<body class="form-page">
-    <div class="background-overlay"></div>
 
-    <div class="checkout-container">
-        <h2 style="color: #5d4037; text-align: center; margin-bottom: 25px;">
-            <i class="fas fa-shopping-check"></i> Paso 3: Confirmar Pedido
-        </h2>
-        
-        <div class="resumen-box">
-            <h4 style="color: #5d4037; margin-bottom: 15px;"><i class="fas fa-book"></i> Libros en tu pedido:</h4>
-            <div id="resumen-productos">
-                </div>
-        </div>
+<body>
 
-        <div class="resumen-box">
-            <h4 style="margin-bottom: 5px; color: #5d4037;"><i class="fas fa-truck"></i> Destino:</h4>
-            <p id="direccion-texto" style="color: #666; font-size: 0.95rem;">Cargando dirección...</p>
-        </div>
+<div class="checkout-container">
+<h2 style="text-align:center;">Paso 3: Confirmar Pedido</h2>
 
-        <div class="total-row">
-            <span>Total final:</span>
-            <span id="monto-total">$0.00</span>
-        </div>
+<div id="resumen-productos"></div>
 
-        <p style="font-size: 0.85rem; color: #777; text-align: center; margin-top: 25px; font-style: italic;">
-            * Al confirmar, se generará tu número de guía y el pedido aparecerá en tu perfil.
-        </p>
+<div class="total-row">
+    <span>Total final:</span>
+    <span id="monto-total">$0.00</span>
+</div>
 
-        <button class="btn-pagar" id="btn-finalizar" onclick="registrarVentaSimulada()">
-            <i class="fas fa-lock"></i> Finalizar Compra
-        </button>
+<p id="direccion-texto" style="margin-top:15px;"></p>
 
-        <button onclick="window.history.back()" style="width:100%; background:transparent; border:none; color:#777; margin-top:15px; cursor:pointer;">
-            <i class="fas fa-arrow-left"></i> Modificar datos
-        </button>
-    </div>
+<button class="btn-pagar" id="btn-finalizar" onclick="registrarVenta()">
+Finalizar Compra
+</button>
+
+</div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // 1. Recuperar datos (Usamos 'carrito' y 'usuario' como quedaron en los pasos anteriores)
-        const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-        const idDireccion = localStorage.getItem('id_direccion_pedido');
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-        
-        // Redirigir si no hay datos críticos
-        if (carrito.length === 0) {
-            alert("El carrito está vacío.");
-            window.location.href = "../carrito.html";
-            return;
-        }
-        if (!usuario) {
-            window.location.href = "../../login.html";
-            return;
-        }
+document.addEventListener('DOMContentLoaded', () => {
 
-        // 2. Mostrar productos y calcular total
-        let total = 0;
-        const container = document.getElementById('resumen-productos');
-        container.innerHTML = ''; // Limpiar por si acaso
-        
-        carrito.forEach(item => {
-            const subtotal = item.precio * item.cantidad;
-            total += subtotal;
-            container.innerHTML += `
-                <div class="producto-linea">
-                    <span>${item.titulo} <strong>(x${item.cantidad})</strong></span>
-                    <span>$${subtotal.toFixed(2)}</span>
-                </div>`;
-        });
+    const carrito = JSON.parse(localStorage.getItem('laLechuzaLectoraCart')) || [];
+    const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+    const idDireccion = localStorage.getItem('id_direccion_pedido');
 
-        document.getElementById('monto-total').innerText = `$${total.toFixed(2)}`;
-        
-        // 3. Validar Dirección
-        const dirTexto = document.getElementById('direccion-texto');
-        if (idDireccion) {
-            dirTexto.innerHTML = `<i class="fas fa-check" style="color:green;"></i> Dirección confirmada (ID #${idDireccion}). El envío se calculará al procesar.`;
-        } else {
-            dirTexto.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-triangle"></i> No has seleccionado una dirección.</span>`;
-            document.getElementById('btn-finalizar').disabled = true;
-            document.getElementById('btn-finalizar').style.background = "#ccc";
-        }
+    if(carrito.length === 0){
+        alert("Carrito vacío.");
+        window.location.href="../carrito.html";
+        return;
+    }
+
+    if(!usuario){
+        window.location.href="../../Inicio_de_sesion/Inicio_sesion.html";
+        return;
+    }
+
+    if(!idDireccion){
+        alert("No seleccionaste dirección.");
+        window.location.href="Domicilio.html";
+        return;
+    }
+
+    let total = 0;
+    const container = document.getElementById("resumen-productos");
+
+    carrito.forEach(item=>{
+        const subtotal = parseFloat(item.price) * item.quantity;
+        total += subtotal;
+
+        container.innerHTML += `
+        <div class="producto-linea">
+            <span>${item.title} (x${item.quantity})</span>
+            <span>$${subtotal.toFixed(2)}</span>
+        </div>`;
     });
 
-    async function registrarVentaSimulada() {
-        const btn = document.getElementById('btn-finalizar');
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-        const idDireccion = localStorage.getItem('id_direccion_pedido');
-        const carrito = JSON.parse(localStorage.getItem('carrito'));
+    document.getElementById("monto-total").innerText = `$${total.toFixed(2)}`;
+    document.getElementById("direccion-texto").innerHTML =
+        `<strong>Dirección ID:</strong> ${idDireccion}`;
+});
 
-        // Bloquear botón para evitar doble clic
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando tu pedido...';
 
-        const totalVenta = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+async function registrarVenta(){
 
-        // Estructura EXACTA para el endpoint del servidor (index.js)
-        const datosVenta = {
-            id_usuario: usuario.id_usuario,
-            id_direccion: parseInt(idDireccion),
-            total: totalVenta,
-            id_metodo_pago: 1, // 1 = Simulado/Tarjeta (ajustar según tu tabla Metodos_Pago)
-            productos: carrito.map(p => ({
-                id_producto: p.id,
-                cantidad: p.cantidad,
-                precio_unitario: p.precio
-            }))
-        };
+    const btn = document.getElementById("btn-finalizar");
+    btn.disabled = true;
+    btn.innerText = "Procesando...";
 
-        try {
-            const response = await fetch('http://localhost:3000/api/ventas/registrar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosVenta)
-            });
+    const carrito = JSON.parse(localStorage.getItem('laLechuzaLectoraCart'));
+    const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+    const idDireccion = localStorage.getItem('id_direccion_pedido');
 
-            const result = await response.json();
-            
-            if(response.ok) {
-                // LIMPIEZA POST-VENTA
-                localStorage.removeItem('carrito');
-                localStorage.removeItem('id_direccion_pedido');
-                localStorage.removeItem('compra_en_progreso');
-                
-                // Efecto visual de éxito antes de redirigir
-                btn.style.background = "#27ae60";
-                btn.innerHTML = '<i class="fas fa-check"></i> ¡Venta Exitosa!';
-                
-                setTimeout(() => {
-                    window.location.href = 'Exito.html';
-                }, 1500);
-            } else {
-                throw new Error(result.error || "Error al registrar la venta");
-            }
-        } catch (error) {
-            alert("🦉 La Lechuza dice: Hubo un problema con tu pedido: " + error.message);
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-lock"></i> Finalizar Compra';
+    const totalVenta = carrito.reduce(
+        (sum,item)=> sum + (parseFloat(item.price)*item.quantity),
+        0
+    );
+
+    const datosVenta = {
+        id_usuario: usuario.id_usuario,
+        id_direccion: parseInt(idDireccion),
+        total: totalVenta,
+        id_metodo_pago: 1,
+        productos: carrito.map(p=>({
+            id_producto: p.id,
+            cantidad: p.quantity,
+            precio_unitario: p.price
+        }))
+    };
+
+    try{
+
+        const response = await fetch('http://localhost:3000/api/ventas/registrar',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(datosVenta)
+        });
+
+        const result = await response.json();
+
+        if(response.ok){
+
+            localStorage.removeItem('laLechuzaLectoraCart');
+            localStorage.removeItem('id_direccion_pedido');
+
+            btn.innerText = "¡Compra Exitosa!";
+
+            setTimeout(()=>{
+                window.location.href="Exito.html";
+            },1500);
+
+        }else{
+            throw new Error(result.error);
         }
+
+    }catch(error){
+        alert("Error al registrar venta: "+error.message);
+        btn.disabled=false;
+        btn.innerText="Finalizar Compra";
     }
+}
 </script>
+
 </body>
 </html>

@@ -105,10 +105,6 @@
         </div>
     </footer>
     
-    <script src="../../../Js/cartManager.js"></script>
-    <script src="../../../Js/checkoutManager.js"></script>
-    <script src="../../../Js/cartManager.js"></script>
-<script src="../../../Js/checkoutManager.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -120,7 +116,6 @@ function renderizarResumen() {
     const subtotalDisplay = document.getElementById('subtotal-display');
     const totalDisplay = document.getElementById('total-display');
     
-    // Obtener carrito del localStorage (usando la clave de tu cartManager)
     const carrito = JSON.parse(localStorage.getItem('laLechuzaLectoraCart')) || [];
 
     if (carrito.length === 0) {
@@ -134,7 +129,7 @@ function renderizarResumen() {
     }
 
     let subtotal = 0;
-    container.innerHTML = ''; // Limpiar cargando
+    container.innerHTML = '';
 
     carrito.forEach(item => {
         const itemTotal = parseFloat(item.price) * item.quantity;
