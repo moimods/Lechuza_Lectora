@@ -53,21 +53,8 @@ async function eliminarProducto(id) {
 // ===============================
 
 async function cargarProductos() {
-
-    const productos = await obtenerProductos();
-
-    const contenedor = document.getElementById("listaProductos");
-
- contenedor.innerHTML = productos.map(p => `
-    <div class="producto">
-        <h3>${p.titulo}</h3>
-        <p>$${p.precio}</p>
-
-        <button onclick='agregarAlCarrito(${JSON.stringify(p)})'>
-            🛒 Agregar
-        </button>
-    </div>
-`).join('');
+    const productos = await apiRequest("/api/productos");
+    mostrar(productos);
 }
 
 // ===============================

@@ -1,14 +1,23 @@
+/* =====================================================
+   VARIABLES DE ENTORNO
+===================================================== */
 require('dotenv').config();
 
+/* =====================================================
+   IMPORTS
+===================================================== */
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 
+/* =====================================================
+   APP INIT
+===================================================== */
 const app = express();
 
 /* =====================================================
-   CONFIGURACIÓN BASE
+   CONFIGURACIÓN BASE / MIDDLEWARES
 ===================================================== */
 app.use(cors());
 app.use(express.json());
@@ -39,17 +48,19 @@ pool.connect()
     .catch(err => console.error("❌ Error DB:", err));
 
 /* =====================================================
-   LOGIN
+   ================== RUTAS API ========================
 ===================================================== */
-app.post('/api/login', async (req, res) => {
 
+/* ================= LOGIN ================= */
+
+app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password)
-        return res.status(400).json({ success:false, error:"Datos incompletos" });
+    if (!email || !password) {
+        return res.status(400).json({ success: false, error: "Datos incompletos" });
+    }
 
     try {
-
         const result = await pool.query(`
             SELECT id_usuario,
                    nombre_completo AS nombre,
@@ -57,64 +68,63 @@ app.post('/api/login', async (req, res) => {
                    rol,
                    password_hash
             FROM Usuarios
-            WHERE email=$1
-        `,[email]);
+            WHERE email = $1
+        `, [email]);
 
-        if(result.rows.length === 0)
-            return res.status(401).json({ success:false, error:"Credenciales incorrectas" });
-
-        if(result.rows[0].password_hash !== password)
-            return res.status(401).json({ success:false, error:"Credenciales incorrectas" });
+        if (result.rows.length === 0 ||
+            result.rows[0].password_hash !== password) {
+            return res.status(401).json({
+                success: false,
+                error: "Credenciales incorrectas"
+            });
+        }
 
         delete result.rows[0].password_hash;
 
         res.json({
-            success:true,
+            success: true,
             user: result.rows[0]
         });
 
-    } catch(err){
+    } catch (err) {
         console.error(err);
-        res.status(500).json({ error:"Error interno" });
+        res.status(500).json({ error: "Error interno" });
     }
 });
 
-/* =====================================================
-   LOGOUT
-===================================================== */
-app.post('/api/logout', (req,res)=>{
-    res.json({success:true});
+/* ================= LOGOUT ================= */
+
+app.post('/api/logout', (req, res) => {
+    res.json({ success: true });
 });
 
-/* =====================================================
-   USUARIO
-===================================================== */
-app.get('/api/usuario/:email', async (req,res)=>{
+/* ================= USUARIO ================= */
 
-    try{
+app.get('/api/usuario/:email', async (req, res) => {
+    try {
         const result = await pool.query(`
-            SELECT id_usuario,nombre_completo,email,telefono
+            SELECT id_usuario, nombre_completo, email, telefono
             FROM Usuarios
-            WHERE email=$1
-        `,[req.params.email]);
+            WHERE email = $1
+        `, [req.params.email]);
 
-        if(result.rows.length===0)
-            return res.status(404).json({error:"Usuario no encontrado"});
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
 
         res.json(result.rows[0]);
 
-    }catch(err){
+    } catch (err) {
         console.error(err);
-        res.status(500).json({error:"Error servidor"});
+        res.status(500).json({ error: "Error servidor" });
     }
 });
 
-/* =====================================================
-   PRODUCTOS (READ)
-===================================================== */
-app.get('/api/productos', async (req,res)=>{
+/* ================= PRODUCTOS ================= */
 
-    try{
+/* ---- READ ALL ---- */
+app.get('/api/productos', async (req, res) => {
+    try {
         const result = await pool.query(`
             SELECT p.id_producto,
                    p.titulo,
@@ -125,97 +135,101 @@ app.get('/api/productos', async (req,res)=>{
                    c.nombre AS categoria
             FROM Productos p
             LEFT JOIN Categorias c
-            ON p.id_categoria=c.id_categoria
+            ON p.id_categoria = c.id_categoria
             ORDER BY p.id_producto
         `);
 
         res.json(result.rows);
 
-    }catch(err){
+    } catch (err) {
         console.error(err);
-        res.status(500).json({error:"Error productos"});
+        res.status(500).json({ error: "Error productos" });
     }
 });
 
-app.get('/api/productos/:id', async (req,res)=>{
-
-    try{
+/* ---- READ ONE ---- */
+app.get('/api/productos/:id', async (req, res) => {
+    try {
         const result = await pool.query(
-            'SELECT * FROM Productos WHERE id_producto=$1',
+            'SELECT * FROM Productos WHERE id_producto = $1',
             [req.params.id]
         );
 
-        if(result.rows.length===0)
-            return res.status(404).json({error:"Producto no encontrado"});
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "Producto no encontrado" });
+        }
 
         res.json(result.rows[0]);
 
-    }catch(err){
-        res.status(500).json({error:"Error servidor"});
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error servidor" });
     }
 });
 
-/* =====================================================
-   PRODUCTOS (CREATE)
-===================================================== */
-app.post('/api/productos', async (req,res)=>{
-
+/* ---- CREATE ---- */
+app.post('/api/productos', async (req, res) => {
     const { titulo, autor, precio, stock, categoria, imagen_url } = req.body;
 
-    if(!titulo || !autor)
-        return res.status(400).json({error:"Datos incompletos"});
+    if (!titulo || !autor) {
+        return res.status(400).json({ error: "Datos incompletos" });
+    }
 
-    try{
-
+    try {
         const cat = await pool.query(
-            'SELECT id_categoria FROM Categorias WHERE nombre=$1',
+            'SELECT id_categoria FROM Categorias WHERE nombre = $1',
             [categoria]
         );
 
-        if(cat.rows.length===0)
-            return res.status(400).json({error:"Categoría inválida"});
+        if (cat.rows.length === 0) {
+            return res.status(400).json({ error: "Categoría inválida" });
+        }
 
         await pool.query(`
             INSERT INTO Productos
-            (titulo,autor,precio,stock,id_categoria,imagen_url)
-            VALUES ($1,$2,$3,$4,$5,$6)
-        `,[titulo,autor,precio,stock,cat.rows[0].id_categoria,imagen_url]);
+            (titulo, autor, precio, stock, id_categoria, imagen_url)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        `, [
+            titulo,
+            autor,
+            precio,
+            stock,
+            cat.rows[0].id_categoria,
+            imagen_url
+        ]);
 
-        res.json({success:true});
+        res.json({ success: true });
 
-    }catch(err){
+    } catch (err) {
         console.error(err);
-        res.status(500).json({error:"Error al crear producto"});
+        res.status(500).json({ error: "Error al crear producto" });
     }
 });
 
-/* =====================================================
-   PRODUCTOS (UPDATE)
-===================================================== */
-app.put('/api/productos/:id', async (req,res)=>{
-
+/* ---- UPDATE ---- */
+app.put('/api/productos/:id', async (req, res) => {
     const { titulo, autor, precio, stock, categoria, imagen_url } = req.body;
 
-    try{
-
+    try {
         const cat = await pool.query(
-            "SELECT id_categoria FROM Categorias WHERE nombre=$1",
+            "SELECT id_categoria FROM Categorias WHERE nombre = $1",
             [categoria]
         );
 
-        if(cat.rows.length === 0)
-            return res.status(400).json({error:"Categoría inválida"});
+        if (cat.rows.length === 0) {
+            return res.status(400).json({ error: "Categoría inválida" });
+        }
 
         await pool.query(`
             UPDATE Productos
-            SET titulo=$1,
-                autor=$2,
-                precio=$3,
-                stock=$4,
-                id_categoria=$5,
-                imagen_url=$6
-            WHERE id_producto=$7
-        `,[
+            SET titulo = $1,
+                autor = $2,
+                precio = $3,
+                stock = $4,
+                id_categoria = $5,
+                imagen_url = $6
+            WHERE id_producto = $7
+        `, [
             titulo,
             autor,
             precio,
@@ -225,128 +239,98 @@ app.put('/api/productos/:id', async (req,res)=>{
             req.params.id
         ]);
 
-        res.json({success:true});
+        res.json({ success: true });
 
-    }catch(err){
+    } catch (err) {
         console.error(err);
-        res.status(500).json({error:"Error al actualizar"});
+        res.status(500).json({ error: "Error al actualizar" });
     }
 });
 
-/* =====================================================
-   PRODUCTOS (DELETE)
-===================================================== */
-app.delete('/api/productos/:id', async (req,res)=>{
-
-    try{
-
+/* ---- DELETE ---- */
+app.delete('/api/productos/:id', async (req, res) => {
+    try {
         await pool.query(
-            'DELETE FROM Productos WHERE id_producto=$1',
+            'DELETE FROM Productos WHERE id_producto = $1',
             [req.params.id]
         );
 
-        res.json({success:true});
+        res.json({ success: true });
 
-    }catch(err){
-
+    } catch (err) {
         console.error(err);
-
         res.status(400).json({
-            error:"No se puede eliminar: producto relacionado a ventas"
+            error: "No se puede eliminar: producto relacionado a ventas"
         });
     }
 });
 
-/* =====================================================
-   PRODUCTO PARA EDITAR
-===================================================== */
-app.get('/api/producto-editar/:id', async (req,res)=>{
+/* ================= DIRECCIONES ================= */
 
-    try{
-
+app.get('/api/direcciones/usuario/:id', async (req, res) => {
+    try {
         const result = await pool.query(`
-            SELECT p.*, c.nombre AS categoria
-            FROM Productos p
-            LEFT JOIN Categorias c
-            ON p.id_categoria = c.id_categoria
-            WHERE id_producto = $1
-        `,[req.params.id]);
-
-        res.json(result.rows[0]);
-
-    }catch(err){
-        console.error(err);
-        res.status(500).json({error:"Error"});
-    }
-});
-
-/* =====================================================
-   DIRECCIONES
-===================================================== */
-app.get('/api/direcciones/usuario/:id', async (req,res)=>{
-
-    try{
-        const result = await pool.query(`
-            SELECT * FROM Direcciones
-            WHERE id_usuario=$1
+            SELECT *
+            FROM Direcciones
+            WHERE id_usuario = $1
             ORDER BY id_direccion DESC
-        `,[req.params.id]);
+        `, [req.params.id]);
 
         res.json(result.rows);
 
-    }catch(err){
-        res.status(500).json({error:"Error direcciones"});
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error direcciones" });
     }
 });
 
-/* =====================================================
-   VENTAS
-===================================================== */
-app.post('/api/ventas/registrar', async (req,res)=>{
+/* ================= VENTAS ================= */
 
-    const { id_usuario,id_direccion,total,productos } = req.body;
+app.post('/api/ventas/registrar', async (req, res) => {
+    const { id_usuario, id_direccion, total, productos } = req.body;
 
-    if(!productos?.length)
-        return res.status(400).json({error:"Sin productos"});
+    if (!productos?.length) {
+        return res.status(400).json({ error: "Sin productos" });
+    }
 
     const client = await pool.connect();
 
-    try{
-
+    try {
         await client.query('BEGIN');
 
         const venta = await client.query(`
             INSERT INTO Ventas
-            (id_usuario,id_direccion,total,fecha_venta,estado)
-            VALUES ($1,$2,$3,NOW(),'completado')
+            (id_usuario, id_direccion, total, fecha_venta, estado)
+            VALUES ($1, $2, $3, NOW(), 'completado')
             RETURNING id_venta
-        `,[id_usuario,id_direccion||null,total]);
+        `, [id_usuario, id_direccion || null, total]);
 
         const idVenta = venta.rows[0].id_venta;
 
-        for(const prod of productos){
+        for (const prod of productos) {
 
             await client.query(`
                 INSERT INTO Detalles_Ventas
-                (id_venta,id_producto,cantidad,precio_unitario)
-                VALUES ($1,$2,$3,$4)
-            `,[idVenta,prod.id_producto,prod.cantidad,prod.precio]);
+                (id_venta, id_producto, cantidad, precio_unitario)
+                VALUES ($1, $2, $3, $4)
+            `, [idVenta, prod.id_producto, prod.cantidad, prod.precio]);
 
             await client.query(`
                 UPDATE Productos
                 SET stock = stock - $1
-                WHERE id_producto=$2
-            `,[prod.cantidad,prod.id_producto]);
+                WHERE id_producto = $2
+            `, [prod.cantidad, prod.id_producto]);
         }
 
         await client.query('COMMIT');
 
-        res.status(201).json({success:true,id_venta:idVenta});
+        res.status(201).json({ success: true, id_venta: idVenta });
 
-    }catch(err){
+    } catch (err) {
         await client.query('ROLLBACK');
-        res.status(500).json({error:err.message});
-    }finally{
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    } finally {
         client.release();
     }
 });
@@ -354,19 +338,19 @@ app.post('/api/ventas/registrar', async (req,res)=>{
 /* =====================================================
    404
 ===================================================== */
-app.use((req,res)=>{
+app.use((req, res) => {
     res.status(404).json({
-        error:"Ruta no encontrada",
-        path:req.path
+        error: "Ruta no encontrada",
+        path: req.path
     });
 });
 
 /* =====================================================
    ERRORES GLOBALES
 ===================================================== */
-app.use((err,req,res,next)=>{
+app.use((err, req, res, next) => {
     console.error(err);
-    res.status(500).json({error:"Error interno"});
+    res.status(500).json({ error: "Error interno" });
 });
 
 /* =====================================================
@@ -374,7 +358,7 @@ app.use((err,req,res,next)=>{
 ===================================================== */
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     console.clear();
     console.log("🦉 LA LECHUZA LECTORA ONLINE");
     console.log(`http://localhost:${PORT}`);
