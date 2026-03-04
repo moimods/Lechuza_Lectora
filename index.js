@@ -52,7 +52,6 @@ pool.connect()
 ===================================================== */
 
 /* ================= LOGIN ================= */
-
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -67,7 +66,7 @@ app.post('/api/login', async (req, res) => {
                    email,
                    rol,
                    password_hash
-            FROM Usuarios
+            FROM usuarios
             WHERE email = $1
         `, [email]);
 
@@ -93,18 +92,16 @@ app.post('/api/login', async (req, res) => {
 });
 
 /* ================= LOGOUT ================= */
-
 app.post('/api/logout', (req, res) => {
     res.json({ success: true });
 });
 
 /* ================= USUARIO ================= */
-
 app.get('/api/usuario/:email', async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT id_usuario, nombre_completo, email, telefono
-            FROM Usuarios
+            FROM usuarios
             WHERE email = $1
         `, [req.params.email]);
 
@@ -133,8 +130,8 @@ app.get('/api/productos', async (req, res) => {
                    p.stock,
                    p.imagen_url,
                    c.nombre AS categoria
-            FROM Productos p
-            LEFT JOIN Categorias c
+            FROM productos p
+            LEFT JOIN categorias c
             ON p.id_categoria = c.id_categoria
             ORDER BY p.id_producto
         `);
@@ -151,7 +148,7 @@ app.get('/api/productos', async (req, res) => {
 app.get('/api/productos/:id', async (req, res) => {
     try {
         const result = await pool.query(
-            'SELECT * FROM Productos WHERE id_producto = $1',
+            'SELECT * FROM productos WHERE id_producto = $1',
             [req.params.id]
         );
 
@@ -177,7 +174,7 @@ app.post('/api/productos', async (req, res) => {
 
     try {
         const cat = await pool.query(
-            'SELECT id_categoria FROM Categorias WHERE nombre = $1',
+            'SELECT id_categoria FROM categorias WHERE nombre = $1',
             [categoria]
         );
 
@@ -186,7 +183,7 @@ app.post('/api/productos', async (req, res) => {
         }
 
         await pool.query(`
-            INSERT INTO Productos
+            INSERT INTO productos
             (titulo, autor, precio, stock, id_categoria, imagen_url)
             VALUES ($1, $2, $3, $4, $5, $6)
         `, [
@@ -212,7 +209,7 @@ app.put('/api/productos/:id', async (req, res) => {
 
     try {
         const cat = await pool.query(
-            "SELECT id_categoria FROM Categorias WHERE nombre = $1",
+            "SELECT id_categoria FROM categorias WHERE nombre = $1",
             [categoria]
         );
 
@@ -221,7 +218,7 @@ app.put('/api/productos/:id', async (req, res) => {
         }
 
         await pool.query(`
-            UPDATE Productos
+            UPDATE productos
             SET titulo = $1,
                 autor = $2,
                 precio = $3,
@@ -251,7 +248,7 @@ app.put('/api/productos/:id', async (req, res) => {
 app.delete('/api/productos/:id', async (req, res) => {
     try {
         await pool.query(
-            'DELETE FROM Productos WHERE id_producto = $1',
+            'DELETE FROM productos WHERE id_producto = $1',
             [req.params.id]
         );
 
@@ -266,12 +263,11 @@ app.delete('/api/productos/:id', async (req, res) => {
 });
 
 /* ================= DIRECCIONES ================= */
-
 app.get('/api/direcciones/usuario/:id', async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT *
-            FROM Direcciones
+            FROM direcciones
             WHERE id_usuario = $1
             ORDER BY id_direccion DESC
         `, [req.params.id]);
@@ -285,7 +281,6 @@ app.get('/api/direcciones/usuario/:id', async (req, res) => {
 });
 
 /* ================= VENTAS ================= */
-
 app.post('/api/ventas/registrar', async (req, res) => {
     const { id_usuario, id_direccion, total, productos } = req.body;
 
@@ -299,7 +294,7 @@ app.post('/api/ventas/registrar', async (req, res) => {
         await client.query('BEGIN');
 
         const venta = await client.query(`
-            INSERT INTO Ventas
+            INSERT INTO ventas
             (id_usuario, id_direccion, total, fecha_venta, estado)
             VALUES ($1, $2, $3, NOW(), 'completado')
             RETURNING id_venta
@@ -310,13 +305,13 @@ app.post('/api/ventas/registrar', async (req, res) => {
         for (const prod of productos) {
 
             await client.query(`
-                INSERT INTO Detalles_Ventas
+                INSERT INTO detalles_ventas
                 (id_venta, id_producto, cantidad, precio_unitario)
                 VALUES ($1, $2, $3, $4)
             `, [idVenta, prod.id_producto, prod.cantidad, prod.precio]);
 
             await client.query(`
-                UPDATE Productos
+                UPDATE productos
                 SET stock = stock - $1
                 WHERE id_producto = $2
             `, [prod.cantidad, prod.id_producto]);
@@ -334,6 +329,10 @@ app.post('/api/ventas/registrar', async (req, res) => {
         client.release();
     }
 });
+
+pool.query("SELECT current_database()")
+  .then(res => console.log("📌 Conectado a DB:", res.rows[0].current_database))
+  .catch(err => console.error(err));
 
 /* =====================================================
    404

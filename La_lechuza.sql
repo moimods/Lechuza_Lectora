@@ -1,8 +1,12 @@
--- 1. LIMPIEZA TOTAL (Esto borra las tablas si existen para crearlas desde cero)
-DROP TABLE IF EXISTS Detalles_Ventas, Ventas, Productos, Categorias, Metodos_Pago, Direcciones, Usuarios CASCADE;
+-- =========================================
+-- LIMPIEZA TOTAL
+-- =========================================
+DROP TABLE IF EXISTS detalles_ventas, ventas, productos, categorias, metodos_pago, direcciones, usuarios CASCADE;
 
--- 2. TABLA DE USUARIOS
-CREATE TABLE Usuarios (
+-- =========================================
+-- TABLA USUARIOS
+-- =========================================
+CREATE TABLE usuarios (
     id_usuario SERIAL PRIMARY KEY,
     nombre_completo VARCHAR(150) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -13,8 +17,10 @@ CREATE TABLE Usuarios (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. TABLA DE DIRECCIONES
-CREATE TABLE Direcciones (
+-- =========================================
+-- TABLA DIRECCIONES
+-- =========================================
+CREATE TABLE direcciones (
     id_direccion SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
     calle_numero VARCHAR(255) NOT NULL,
@@ -22,75 +28,121 @@ CREATE TABLE Direcciones (
     codigo_postal VARCHAR(10),
     ciudad_estado VARCHAR(150),
     es_principal BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_usuario_direccion FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 );
 
--- 4. TABLA DE MÉTODOS DE PAGO
-CREATE TABLE Metodos_Pago (
+-- =========================================
+-- TABLA MÉTODOS DE PAGO
+-- =========================================
+CREATE TABLE metodos_pago (
     id_metodo SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
     tipo VARCHAR(50) CHECK (tipo IN ('tarjeta', 'paypal')),
-    token_pago VARCHAR(255), 
-    last_four VARCHAR(4),    
+    token_pago VARCHAR(255),
+    last_four VARCHAR(4),
     es_principal BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_usuario_pago FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 );
 
--- 5. TABLA DE CATEGORÍAS
-CREATE TABLE Categorias (
+-- =========================================
+-- TABLA CATEGORÍAS
+-- =========================================
+CREATE TABLE categorias (
     id_categoria SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE,
     descripcion TEXT
 );
 
--- 6. TABLA DE PRODUCTOS (Libros)
-CREATE TABLE Productos (
+-- =========================================
+-- TABLA PRODUCTOS
+-- =========================================
+CREATE TABLE productos (
     id_producto SERIAL PRIMARY KEY,
     id_categoria INT,
     titulo VARCHAR(255) NOT NULL,
     autor VARCHAR(150),
     isbn VARCHAR(20) UNIQUE,
-    precio DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
-    stock INT NOT NULL DEFAULT 0, 
+    precio DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    stock INT NOT NULL DEFAULT 0,
     stock_minimo INT DEFAULT 5,
     imagen_url VARCHAR(255),
     descripcion TEXT,
-    CONSTRAINT fk_categoria_producto FOREIGN KEY (id_categoria) REFERENCES Categorias(id_categoria) ON DELETE SET NULL
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria) ON DELETE SET NULL
 );
 
--- 7. TABLA DE VENTAS (Cabecera)
-CREATE TABLE Ventas (
+-- =========================================
+-- TABLA VENTAS
+-- =========================================
+CREATE TABLE ventas (
     id_venta SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
     id_direccion INT,
     id_metodo_pago INT,
     fecha_venta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total DECIMAL(10, 2) NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
     estado VARCHAR(50) CHECK (estado IN ('pendiente', 'completado', 'enviado', 'entregado', 'cancelado')) DEFAULT 'completado',
-    CONSTRAINT fk_usuario_venta FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE,
-    CONSTRAINT fk_direccion_venta FOREIGN KEY (id_direccion) REFERENCES Direcciones(id_direccion) ON DELETE SET NULL,
-    CONSTRAINT fk_metodo_pago_venta FOREIGN KEY (id_metodo_pago) REFERENCES Metodos_Pago(id_metodo) ON DELETE SET NULL
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_direccion) REFERENCES direcciones(id_direccion) ON DELETE SET NULL,
+    FOREIGN KEY (id_metodo_pago) REFERENCES metodos_pago(id_metodo) ON DELETE SET NULL
 );
 
--- 8. TABLA DETALLES DE VENTAS
-CREATE TABLE Detalles_Ventas (
+-- =========================================
+-- TABLA DETALLES DE VENTAS
+-- =========================================
+CREATE TABLE detalles_ventas (
     id_detalle SERIAL PRIMARY KEY,
     id_venta INT NOT NULL,
     id_producto INT NOT NULL,
     cantidad INT NOT NULL CHECK (cantidad > 0),
-    precio_unitario DECIMAL(10, 2) NOT NULL,
-    subtotal_item DECIMAL(10, 2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
-    CONSTRAINT fk_venta_detalle FOREIGN KEY (id_venta) REFERENCES Ventas(id_venta) ON DELETE CASCADE,
-    CONSTRAINT fk_producto_detalle FOREIGN KEY (id_producto) REFERENCES Productos(id_producto) ON DELETE CASCADE
+    precio_unitario DECIMAL(10,2) NOT NULL,
+    subtotal_item DECIMAL(10,2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
+    FOREIGN KEY (id_venta) REFERENCES ventas(id_venta) ON DELETE CASCADE,
+    FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE CASCADE
 );
 
--- 9. DATOS INICIALES (Asegúrate de ejecutar esto para tener qué mostrar)
-INSERT INTO Categorias (nombre) VALUES ('Fantasía'), ('Clásicos'), ('Terror');
+-- =========================================
+-- DATOS INICIALES
+-- =========================================
 
-INSERT INTO Productos (titulo, autor, precio, stock, id_categoria, imagen_url) 
-VALUES ('Harry Potter y la Piedra Filosofal', 'J.K. Rowling', 350.00, 10, 1, '/Imagenes/Libros/hp1.jpg');
+-- Categorías
+INSERT INTO categorias (nombre) VALUES 
+('Fantasía'),
+('Clásicos'),
+('Terror');
 
-INSERT INTO Usuarios (nombre_completo, email, password_hash, rol) 
-VALUES ('Juan Perez', 'juan@ejemplo.com', '123456', 'cliente');
+-- Productos
+INSERT INTO productos (titulo, autor, precio, stock, id_categoria, imagen_url, descripcion) VALUES 
+('Harry Potter y la Piedra Filosofal', 'J.K. Rowling', 350.00, 10, 1, '/Imagenes/Libros/hp1.jpg', 'El inicio de la saga mágica.'),
+('Drácula', 'Bram Stoker', 280.00, 8, 3, '/Imagenes/Libros/dracula.jpg', 'Clásico del terror gótico.'),
+('Orgullo y Prejuicio', 'Jane Austen', 300.00, 5, 2, '/Imagenes/Libros/orgullo.jpg', 'Clásico romántico.');
 
-select * from usuarios;
+-- Usuario Cliente
+INSERT INTO usuarios (nombre_completo, email, password_hash, telefono, rol) VALUES
+('Juan Perez', 'juan@ejemplo.com', '123456', '1234567890', 'cliente');
+
+-- Usuario Admin
+INSERT INTO usuarios (nombre_completo, email, password_hash, telefono, rol) VALUES
+('Moi Admin', 'admin@lechuza.com', '123456789', '9999999999', 'admin');
+
+SELECT current_database();
+SELECT table_name 
+FROM information_schema.tables 
+WHERE table_schema = 'public'
+ORDER BY table_name;
+
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'usuarios';
+
+SELECT
+    tc.table_name, 
+    kcu.column_name, 
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name
+FROM 
+    information_schema.table_constraints AS tc 
+JOIN information_schema.key_column_usage AS kcu
+  ON tc.constraint_name = kcu.constraint_name
+JOIN information_schema.constraint_column_usage AS ccu
+  ON ccu.constraint_name = tc.constraint_name
+WHERE tc.constraint_type = 'FOREIGN KEY';
