@@ -1,23 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>
-        // --- PROTECCIÓN DE RUTA (Antes de cargar el DOM) ---
-        (function() {
-            const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
-            if (!usuario) {
-                // Redirigir si no hay sesión. Ajustamos la ruta según tu servidor
-                window.location.href = '/inicio'; 
-                return;
-            }
-        })();
-    </script>
+
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>La Lechuza Lectora - Catálogo</title>
 
-    <link rel="stylesheet" href="/Estilos/Estilo1.css"> 
+    <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
@@ -260,6 +250,17 @@
         </div>
     </main>
 
+        <script>
+        // --- PROTECCIÓN DE RUTA (Antes de cargar el DOM) ---
+        (function() {
+            const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+            if (!usuario) {
+                // Redirigir si no hay sesión. Ajustamos la ruta según tu servidor
+                window.location.href = '/inicio'; 
+                return;
+            }
+        })();
+    </script>
     <script>
         // --- LOGICA DE CATALOGO ---
         let allProducts = [];
@@ -340,5 +341,8 @@
 
         initializePage();
     </script>
+    <script src="../../JS/config.js"></script>
+<script src="../../JS/carrito.js"></script>
+<script src="../../JS/cargarProductos.js"></script>
 </body>
 </html>

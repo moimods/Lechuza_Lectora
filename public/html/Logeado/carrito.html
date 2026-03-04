@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>La Lechuza Lectora - Carrito</title>
-    <link rel="stylesheet" href="../../Estilos/Estilo1.css">
+    <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
@@ -102,6 +102,12 @@
                     <a href="#" id="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
+            <div id="carritoLista"></div>
+
+<h2>Total: <span id="totalCarrito">$0</span></h2>
+
+<button onclick="vaciarCarrito()">Vaciar carrito</button>
+
         </div>
     </header>
 
@@ -254,5 +260,7 @@
             renderizarCarrito();
         });
     </script>
+    <script src="../../JS/config.js"></script>
+<script src="../../JS/carrito.js"></script>
 </body>
 </html>

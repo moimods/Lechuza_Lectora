@@ -1,16 +1,127 @@
-async function cargarProductos(){
+// ===============================
+// FUNCION GLOBAL API
+// ===============================
+const API = async (endpoint, options = {}) => {
 
-    const res = await fetch('/api/productos');
-    const productos = await res.json();
+    const response = await fetch(`${APP_CONFIG.API_BASE}${endpoint}`, {
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+        },
+        ...options
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error || "Error API");
+    }
+
+    return data;
+};
+
+// ===============================
+// CRUD PRODUCTOS
+// ===============================
+
+async function obtenerProductos() {
+    return await API("/productos");
+}
+
+async function agregarProducto(producto) {
+    return await API("/productos", {
+        method: "POST",
+        body: JSON.stringify(producto)
+    });
+}
+
+async function actualizarProducto(id, producto) {
+    return await API(`/productos/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(producto)
+    });
+}
+
+async function eliminarProducto(id) {
+    return await API(`/productos/${id}`, {
+        method: "DELETE"
+    });
+}
+
+// ===============================
+// CARGAR PRODUCTOS
+// ===============================
+
+async function cargarProductos() {
+
+    const productos = await obtenerProductos();
 
     const contenedor = document.getElementById("listaProductos");
 
-    contenedor.innerHTML = productos.map(p => `
-        <div class="producto">
-            <h3>${p.titulo}</h3>
-            <p>$${p.precio}</p>
-        </div>
-    `).join('');
+ contenedor.innerHTML = productos.map(p => `
+    <div class="producto">
+        <h3>${p.titulo}</h3>
+        <p>$${p.precio}</p>
+
+        <button onclick='agregarAlCarrito(${JSON.stringify(p)})'>
+            🛒 Agregar
+        </button>
+    </div>
+`).join('');
 }
 
+// ===============================
+// AGREGAR PRODUCTO (FORM)
+// ===============================
+
+const form = document.getElementById("formProducto");
+
+if (form) {
+    form.addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+        const producto = {
+            nombre: document.getElementById("nombre").value,
+            precio: document.getElementById("precio").value,
+            imagen: document.getElementById("imagen").value
+        };
+
+        await agregarProducto(producto);
+
+        alert("Producto agregado");
+        cargarProductos();
+        form.reset();
+    });
+}
+
+// ===============================
+// ELIMINAR
+// ===============================
+
+async function borrar(id) {
+    await eliminarProducto(id);
+    cargarProductos();
+}
+
+// ===============================
+// EDITAR
+// ===============================
+
+async function editar(id) {
+
+    const productoActualizado = {
+        nombre: prompt("Nuevo nombre"),
+        precio: prompt("Nuevo precio")
+    };
+
+    await actualizarProducto(id, productoActualizado);
+
+    alert("Producto actualizado");
+    cargarProductos();
+}
+
+// ===============================
+// INIT
+// ===============================
 cargarProductos();

@@ -1,8 +1,9 @@
-const API = async (url, options = {}) => {
+const API = async (endpoint, options = {}) => {
 
-    const response = await fetch(url, {
+    const response = await fetch(`${APP_CONFIG.API_BASE}${endpoint}`, {
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            ...(options.headers || {})
         },
         ...options
     });
