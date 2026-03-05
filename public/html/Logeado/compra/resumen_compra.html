@@ -108,6 +108,19 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const usuario = JSON.parse(
+        localStorage.getItem('usuario_logeado') ||
+        localStorage.getItem('usuario') ||
+        localStorage.getItem('usuarioCompleto') ||
+        'null'
+    );
+
+    if (!usuario) {
+        localStorage.setItem('postLoginRedirect', '/html/Logeado/compra/resumen_compra.html');
+        window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+        return;
+    }
+
     renderizarResumen();
 });
 
@@ -116,7 +129,18 @@ function renderizarResumen() {
     const subtotalDisplay = document.getElementById('subtotal-display');
     const totalDisplay = document.getElementById('total-display');
     
-    const carrito = JSON.parse(localStorage.getItem('laLechuzaLectoraCart')) || [];
+    let carrito = JSON.parse(localStorage.getItem('laLechuzaLectoraCart')) || [];
+    if (!carrito.length) {
+        const legacyCart = JSON.parse(localStorage.getItem('carrito') || '[]');
+        carrito = legacyCart.map((item) => ({
+            id: item.id_producto,
+            title: item.titulo,
+            price: Number(item.precio || 0),
+            quantity: Number(item.cantidad || 1),
+            image: item.imagen_url || `/Imagenes/Libros/${item.id_producto}.jpg`
+        }));
+        localStorage.setItem('laLechuzaLectoraCart', JSON.stringify(carrito));
+    }
 
     if (carrito.length === 0) {
         container.innerHTML = `

@@ -2,190 +2,200 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Catálogo - La Lechuza Lectora</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Lechuza Lectora - Catálogo</title>
 
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
+    <link rel="stylesheet" href="/Estilos/catalogo-shared.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <style>
-        body {
-            background: #f5f5f5;
+        body { margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        .background-overlay {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
         }
-
-        .catalog-container {
-            padding: 40px;
-            max-width: 1200px;
-            margin: auto;
+        .filter-sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            height: fit-content;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 100px;
         }
-
-        .catalog-title {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #5d4037;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
         .book-product-card {
             background: white;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-
-        .book-product-card:hover {
-            transform: translateY(-5px);
-        }
-
+        .book-product-card:hover { transform: translateY(-8px); }
         .book-product-card img {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: contain;
+            border-radius: 5px;
             margin-bottom: 10px;
         }
-
-        .book-product-card h3 {
-            font-size: 0.9rem;
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 48px;
+            background: white;
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            border: 1px solid #eee;
+            z-index: 9999;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-menu a {
             color: #5d4037;
-            height: 40px;
-            overflow: hidden;
-        }
-
-        .price {
-            font-weight: bold;
-            color: #d32f2f;
-            display: block;
-            margin: 8px 0;
-        }
-
-        .btn-add {
-            background: #5d4037;
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 0.85rem;
-        }
-
-        .btn-add:hover {
-            background: #3e2723;
-        }
-
-        .top-bar {
-            background: #5d4037;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-        }
-
-        .top-bar a {
-            color: white;
+            padding: 12px 16px;
             text-decoration: none;
-            margin-left: 15px;
+            display: block;
+            font-weight: 600;
         }
-
-        .logout {
-            cursor: pointer;
+        .dropdown-menu a:hover { background: #f9f9f9; }
+        @media (max-width: 768px) {
+            .catalog-container { display: block !important; padding: 15px !important; }
+            .filter-sidebar {
+                display: none;
+                position: fixed;
+                top: 0; left: 0;
+                width: 280px; height: 100%;
+                z-index: 2000;
+                border-radius: 0;
+            }
+            .filter-sidebar.active { display: block; }
+            .btn-filter-toggle {
+                display: block !important;
+                width: 100%;
+                background: #fbc02d;
+                color: #5d4037;
+                padding: 12px;
+                border: none;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                font-weight: bold;
+                cursor: pointer;
+            }
         }
     </style>
 </head>
-<body>
+<body class="catalog-page"
+      data-catalog-mode="logged"
+      data-catalog-login-path="/html/Inicio_de_sesion/Inicio_sesion.html"
+      data-catalog-cart-path="/html/Logeado/carrito.html">
 
-    <!-- Barra superior -->
-    <div class="top-bar">
-        <div>
-            <i class="fas fa-book"></i> La Lechuza Lectora
+    <header class="navbar detail-navbar">
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Abrir menú" aria-expanded="false">
+            <span class="burger-icon"><span></span><span></span><span></span></span>
+        </button>
+
+        <div class="logo-container">
+            <img src="../../Imagenes/logo.png" alt="Logo" class="logo">
+            <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
-        <div>
-            <a href="/html/Logeado/carrito.html"><i class="fas fa-shopping-cart"></i> Carrito</a>
-            <a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+
+        <div class="search-bar detail-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="main-search" placeholder="Buscar por título o autor...">
         </div>
-    </div>
 
-    <!-- Catálogo -->
-    <div class="catalog-container">
-        <h2 class="catalog-title">
-            <i class="fas fa-store"></i> Catálogo de Libros
-        </h2>
+        <nav class="nav-links" id="mobile-nav">
+            <a href="/html/Logeado/Acerca%20de.html">Acerca de</a>
+            <a href="/html/Logeado/Contacto.html">Contacto</a>
+            <a href="/html/Logeado/Ayuda.html">Ayuda</a>
+            <a href="#" class="active-link">Catálogo</a>
+        </nav>
 
-        <div id="products-container" class="products-grid">
-            <!-- Productos cargados dinámicamente -->
+        <div class="auth-actions user-actions">
+            <button class="icon-button" onclick="window.location.href='/html/Logeado/Inicio_Logeado.html'"><i class="fa-solid fa-house"></i></button>
+            <a href="/html/Logeado/carrito.html" class="icon-link cart-button" style="position: relative;">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="cart-badge" id="cart-count">0</span>
+            </a>
+            <div class="avatar-dropdown-container" style="position: relative;">
+                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" style="width:40px;height:40px;border-radius:50%;cursor:pointer;object-fit:cover;">
+                <div class="dropdown-menu" id="avatar-dropdown">
+                    <a href="/html/Logeado/perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
+                    <a href="/index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <!-- SOLO carrito.js (necesario para agregarAlCarrito) -->
+    <main class="main-content catalog-main">
+        <div class="background-overlay"></div>
+
+        <div class="catalog-container" style="display: grid; grid-template-columns: 260px 1fr; gap: 30px; padding: 40px; max-width: 1400px; margin: 0 auto;">
+            <button id="filter-toggle" class="btn-filter-toggle" style="display: none;">
+                <i class="fa-solid fa-filter"></i> Filtrar Libros
+            </button>
+
+            <aside class="filter-sidebar" id="filter-sidebar">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #5d4037; margin: 0;">Filtros</h2>
+                    <button id="sidebar-close-btn" class="hamburger-btn" style="display: block; color: #d32f2f;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Categorías</h3>
+                    <div class="filter-options" id="categories-filter"></div>
+                </div>
+
+                <div class="filter-section" style="margin-top: 30px;">
+                    <h3>Rango de Precio</h3>
+                    <div class="filter-options">
+                        <label><input type="radio" name="price" value="all" checked> Todos</label>
+                        <label><input type="radio" name="price" value="0-300"> Hasta $300</label>
+                        <label><input type="radio" name="price" value="300-600"> $300 - $600</label>
+                        <label><input type="radio" name="price" value="600+"> Más de $600</label>
+                    </div>
+                </div>
+            </aside>
+
+            <section>
+                <div class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px;"></div>
+
+                <div class="carousel-nav" style="text-align: center; padding: 50px 0; display: flex; justify-content: center; gap: 15px; align-items: center;">
+                    <button class="btn-primary" id="prev-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">← Anterior</button>
+                    <span id="page-info" style="color: white; font-weight: bold; background: #5d4037; padding: 5px 15px; border-radius: 20px;">Página 1</span>
+                    <button class="btn-primary" id="next-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">Siguiente →</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/JS/cartManager.js"></script>
     <script src="/JS/carrito.js"></script>
-
+    <script src="/JS/catalogo.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        const avatarBtn = document.getElementById('avatar-btn');
+        const avatarDropdown = document.getElementById('avatar-dropdown');
 
-            const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
-
-            if (!usuario) {
-                alert("Debes iniciar sesión para acceder al catálogo.");
-                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
-                return;
-            }
-
-            cargarProductos();
+        avatarBtn?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            avatarDropdown?.classList.toggle('show');
         });
 
-        async function cargarProductos() {
-
-            const container = document.getElementById('products-container');
-
-            try {
-                const response = await fetch('/api/productos');
-                const productos = await response.json();
-
-                container.innerHTML = "";
-
-                productos.forEach(libro => {
-
-                    const card = document.createElement('div');
-                    card.className = 'book-product-card';
-
-                    card.innerHTML = `
-                        <img src="../../Imagenes/Libros/${libro.id_producto}.jpg"
-                             onerror="this.src='../../Imagenes/Libros/default.jpg'">
-
-                        <h3>${libro.titulo}</h3>
-
-                        <span class="price">$${libro.precio}</span>
-
-                        <button class="btn-add"
-                            onclick="agregarAlCarrito(${libro.id_producto}, '${libro.titulo.replace(/'/g, "\\'")}', ${libro.precio})">
-                            <i class="fas fa-cart-plus"></i> Añadir
-                        </button>
-                    `;
-
-                    container.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error("Error cargando productos:", error);
-                container.innerHTML = "<p>Error al conectar con el servidor.</p>";
+        window.addEventListener('click', (event) => {
+            if (avatarDropdown && !avatarBtn?.contains(event.target)) {
+                avatarDropdown.classList.remove('show');
             }
-        }
-
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('usuario_logeado');
-            window.location.href = '/index.html';
         });
     </script>
-
+    <script src="/JS/nav-toggle-global.js"></script>
 </body>
 </html>

@@ -106,7 +106,9 @@
             document.getElementById('display-order-id').innerText = `#LL-${randomID}`;
             
             // Asegurarnos de que el carrito esté realmente vacío
+            localStorage.removeItem('laLechuzaLectoraCart');
             localStorage.removeItem('cart');
+            localStorage.removeItem('carrito');
             localStorage.removeItem('id_direccion_pedido');
             localStorage.removeItem('compra_en_progreso');
         });

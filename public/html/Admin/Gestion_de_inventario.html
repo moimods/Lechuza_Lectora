@@ -78,8 +78,9 @@
             </button>
             <div class="menu-items" id="menu-items">
                 <a href="/html/Admin/panel_de_admin.html">Panel Principal</a>
-                <a href="/html/Admin/Gestion_productos.html">Agregar Producto</a>
-                <a href="/html/Admin/Reporte_de_ventas.html">Reportes</a>
+                <a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
+                <a href="/html/Admin/Reporte_de_ventas.html">Ventas</a>
+                <a href="/html/Admin/Reporte_de_compras.html">Pedidos</a>
                 <a href="/index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
             </div>
         </nav>
@@ -120,6 +121,7 @@
                             <th style="padding: 15px;">ID</th>
                             <th>Libro / Producto</th>
                             <th>Autor</th>
+                            <th>Género</th>
                             <th>Stock</th>
                             <th>Precio</th>
                             <th>Estado</th>
@@ -128,7 +130,7 @@
                     </thead>
                     <tbody id="tabla-inventario">
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px;">
+                            <td colspan="8" style="text-align: center; padding: 40px;">
                                 <i class="fa-solid fa-spinner fa-spin fa-2x" style="color: #5d4037;"></i><br>Conectando al servidor...
                             </td>
                         </tr>
@@ -148,7 +150,12 @@
         let todosLosProductos = []; // Almacén local para búsqueda rápida
 
         document.addEventListener('DOMContentLoaded', () => {
-            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            const usuario = JSON.parse(
+                localStorage.getItem('usuario') ||
+                localStorage.getItem('usuario_logeado') ||
+                localStorage.getItem('usuarioCompleto') ||
+                'null'
+            );
             
             if (!usuario || usuario.rol !== 'admin') {
                 window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html'; 
@@ -157,23 +164,44 @@
 
             document.getElementById('admin-name').innerText = usuario.nombre || 'Administrador';
             
+            cargarCategorias();
             cargarInventario();
             initMenu();
             initSearch();
         });
+
+        async function cargarCategorias() {
+            const selector = document.getElementById('categoria');
+            if (!selector) return;
+
+            try {
+                const response = await fetch('/api/productos/categorias');
+                const payload = await response.json();
+                const categorias = Array.isArray(payload) ? payload : (payload.data || []);
+
+                if (!categorias.length) return;
+
+                selector.innerHTML = categorias
+                    .map(c => `<option value="${c.nombre}">${c.nombre}</option>`)
+                    .join('');
+            } catch (error) {
+                console.warn('No se pudieron cargar categorías', error);
+            }
+        }
 
         async function cargarInventario() {
             try {
                 const response = await fetch('/api/productos');
                 if (!response.ok) throw new Error('Error en servidor');
                 
-                todosLosProductos = await response.json();
+                const payload = await response.json();
+                todosLosProductos = Array.isArray(payload) ? payload : (payload.data || []);
                 renderizarTabla(todosLosProductos);
 
             } catch (error) {
                 console.error("Error de carga:", error);
                 document.getElementById('tabla-inventario').innerHTML = `
-                    <tr><td colspan="7" style="color:red; text-align:center; padding: 30px;">
+                    <tr><td colspan="8" style="color:red; text-align:center; padding: 30px;">
                     <i class="fa-solid fa-triangle-exclamation"></i> Error al conectar con la base de datos.</td></tr>`;
             }
         }
@@ -183,7 +211,7 @@
             const countLabel = document.getElementById('results-count');
             
             if (lista.length === 0) {
-                tablaBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px;">No se encontraron resultados.</td></tr>';
+                tablaBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px;">No se encontraron resultados.</td></tr>';
                 countLabel.innerText = "0";
                 return;
             }
@@ -205,6 +233,7 @@
                         <td style="text-align:center; padding: 12px;">#${prod.id_producto}</td>
                         <td style="font-weight: bold; color: #5d4037;">${prod.titulo}</td>
                         <td>${prod.autor || 'N/A'}</td>
+                        <td>${prod.categoria || 'Sin género'}</td>
                         <td style="text-align:center;">${prod.stock} uds</td>
                         <td style="text-align:center; font-weight: 600;">${precioMXN}</td>
                         <td style="text-align:center;"><span class="status-tag ${claseE}">${textoE}</span></td>
@@ -229,6 +258,7 @@
                 const filtrados = todosLosProductos.filter(p => 
                     p.titulo.toLowerCase().includes(term) || 
                     p.autor?.toLowerCase().includes(term) ||
+                    p.categoria?.toLowerCase().includes(term) ||
                     p.id_producto.toString().includes(term)
                 );
                 renderizarTabla(filtrados);

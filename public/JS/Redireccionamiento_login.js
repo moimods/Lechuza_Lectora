@@ -55,12 +55,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('userName', data.user.nombre);
                     localStorage.setItem('userRole', data.user.rol);
                     localStorage.setItem('usuario', JSON.stringify(data.user)); // Para compatibilidad con Acciones_Admin.js
+                    localStorage.setItem('usuario_logeado', JSON.stringify(data.user));
+                    localStorage.setItem('usuarioCompleto', JSON.stringify(data.user));
 
                     // Redirigir según el rol
                     if (data.user.rol === 'admin') {
                         window.location.href = '../../admin/panel';
                     } else {
-                        window.location.href = TO_SUCCESS_PAGE_URL;
+                        const redirectTo = localStorage.getItem('postLoginRedirect') || '/html/Logeado/Catalogo_Logeado.html';
+                        localStorage.removeItem('postLoginRedirect');
+                        window.location.href = redirectTo;
                     }
                 } else {
                     // ❌ LOGIN FALLIDO

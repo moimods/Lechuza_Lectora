@@ -29,14 +29,22 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.success) {
                 // Guardar usuario en localStorage
                 localStorage.setItem("usuario", JSON.stringify(data.user));
+                localStorage.setItem("usuario_logeado", JSON.stringify(data.user));
+                localStorage.setItem("usuarioCompleto", JSON.stringify(data.user));
+                localStorage.setItem("userId", String(data.user.id_usuario || ""));
+                localStorage.setItem("userName", data.user.nombre || "");
+                localStorage.setItem("userRole", data.user.rol || "cliente");
 
                 alert("Inicio de sesión exitoso");
+
+                const redirectTo = localStorage.getItem("postLoginRedirect") || "/html/Logeado/Catalogo_Logeado.html";
+                localStorage.removeItem("postLoginRedirect");
 
                 // Redirección según rol (opcional)
                 if (data.user.rol === "admin") {
                     window.location.href = "/html/Admin/panel_de_admin.html";
                 } else {
-                    window.location.href = "/html/Logeado/Inicio_Logeado.html";
+                    window.location.href = redirectTo;
                 }
             }
 

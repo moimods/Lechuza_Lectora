@@ -38,7 +38,8 @@ function normalizeApiProducts(payload) {
 }
 
 function getImageSrc(product) {
-  const fallbackById = `/Imagenes/Libros/${product.id_producto}.jpg`;
+  const numericId = Number(product.id_producto || 1);
+  const fallbackById = `/Imagenes/Libro${((numericId - 1) % 8) + 1}.png`;
 
   if (!product.imagen_url || typeof product.imagen_url !== "string") {
     return fallbackById;
@@ -55,11 +56,21 @@ function getImageSrc(product) {
   return fallbackById;
 }
 
+function getProductCategory(product) {
+  return (
+    product.categoria ||
+    product.genero ||
+    product.categoria_nombre ||
+    product.genero_nombre ||
+    ""
+  );
+}
+
 function ensureCategoryFilters(products) {
   const container = document.getElementById("categories-filter");
   if (!container) return;
 
-  const categories = [...new Set(products.map((p) => p.categoria || p.genero).filter(Boolean))];
+  const categories = [...new Set(products.map((p) => getProductCategory(p)).filter(Boolean))];
   if (categories.length === 0) {
     container.innerHTML = "";
     return;
@@ -141,7 +152,7 @@ function applyFilters(products) {
   return products.filter((product) => {
     const title = (product.titulo || "").toLowerCase();
     const author = (product.autor || "").toLowerCase();
-    const category = product.categoria || product.genero || "";
+    const category = getProductCategory(product);
     const price = Number(product.precio || 0);
 
     const matchesTerm = !term || title.includes(term) || author.includes(term);
@@ -159,7 +170,12 @@ function applyFilters(products) {
 function guardCatalogAccess() {
   if (bodyConfig.mode !== "logged") return true;
 
-  const usuario = JSON.parse(localStorage.getItem("usuario_logeado") || "null");
+  const usuario = JSON.parse(
+    localStorage.getItem("usuario_logeado") ||
+    localStorage.getItem("usuario") ||
+    localStorage.getItem("usuarioCompleto") ||
+    "null"
+  );
   if (!usuario) {
     window.location.href = bodyConfig.loginPath;
     return false;
@@ -267,11 +283,7 @@ function setupProductActions() {
     }
 
     if (buyBtn) {
-      if (bodyConfig.mode === "logged") {
-        window.location.href = bodyConfig.cartPath;
-      } else {
-        window.location.href = bodyConfig.loginPath;
-      }
+      window.location.href = bodyConfig.cartPath;
     }
   });
 }

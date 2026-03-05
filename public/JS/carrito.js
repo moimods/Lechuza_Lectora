@@ -130,13 +130,13 @@ function pintarCarrito() {
 function actualizarContador() {
 
     const contador = document.getElementById("cartCount");
-
-    if (!contador) return;
+    const contadorAlt = document.getElementById("cart-count");
 
     const cantidad = obtenerCarrito()
         .reduce((sum, p) => sum + p.cantidad, 0);
 
-    contador.textContent = cantidad;
+    if (contador) contador.textContent = cantidad;
+    if (contadorAlt) contadorAlt.textContent = cantidad;
 }
 
 // ===============================

@@ -1,6 +1,7 @@
 const express = require("express");
 const {
 	obtenerProductos,
+	obtenerCategorias,
 	crearProducto,
 	actualizarProducto,
 	eliminarProducto
@@ -8,6 +9,7 @@ const {
 
 const router = express.Router();
 
+router.get("/categorias", obtenerCategorias);
 router.get("/", obtenerProductos);
 router.post("/", crearProducto);
 router.put("/:id", actualizarProducto);

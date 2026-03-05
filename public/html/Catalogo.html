@@ -6,22 +6,18 @@
     <title>La Lechuza Lectora - Catálogo</title>
 
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
+    <link rel="stylesheet" href="/Estilos/catalogo-shared.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    
     <style>
-        /* --- ESTILOS BASE Y ESTRUCTURA --- */
         body { margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-
         .background-overlay {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
                         url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
         }
-
-        /* --- FILTROS SIDEBAR --- */
         .filter-sidebar {
             background: rgba(255, 255, 255, 0.95);
             padding: 25px;
@@ -31,28 +27,6 @@
             position: sticky;
             top: 100px;
         }
-
-        .filter-section h3 {
-            color: #5d4037;
-            border-bottom: 2px solid #fbc02d;
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .filter-options label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #4e342e;
-            cursor: pointer;
-            transition: 0.2s;
-            padding: 4px 0;
-        }
-
-        .filter-options label:hover { color: #f57c00; }
-
-        /* --- TARJETAS DE PRODUCTO --- */
         .book-product-card {
             background: white;
             padding: 15px;
@@ -64,9 +38,7 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
         .book-product-card:hover { transform: translateY(-8px); }
-
         .book-product-card img {
             width: 100%;
             height: 220px;
@@ -74,55 +46,17 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
-
-        /* --- RESPONSIVIDAD --- */
         @media (max-width: 768px) {
-            .navbar {
-                flex-wrap: wrap;
-                justify-content: space-between;
-                padding: 10px 15px !important;
-                height: auto !important;
-            }
-
-            .hamburger-btn { display: block; order: 1; }
-            .logo-container { order: 2; margin-right: auto; margin-left: 10px; }
-            .auth-actions { order: 3; }
-
-            .search-bar.detail-search {
-                order: 4;
-                width: 100% !important;
-                margin: 10px 0 !important;
-                background: white;
-            }
-
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%; left: 0; width: 100%;
-                flex-direction: column;
-                background: #f4ece2;
-                z-index: 1000;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-            }
-
-            .nav-links.active { display: flex; }
-
-            .catalog-container {
-                display: block !important;
-                padding: 15px !important;
-            }
-
+            .catalog-container { display: block !important; padding: 15px !important; }
             .filter-sidebar {
-                display: none; /* Se oculta y se muestra como modal */
+                display: none;
                 position: fixed;
                 top: 0; left: 0;
                 width: 280px; height: 100%;
                 z-index: 2000;
                 border-radius: 0;
             }
-
             .filter-sidebar.active { display: block; }
-
             .btn-filter-toggle {
                 display: block !important;
                 width: 100%;
@@ -135,25 +69,21 @@
                 font-weight: bold;
                 cursor: pointer;
             }
-
-            .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
-                gap: 15px !important;
-            }
-            
-            .book-product-card img { height: 160px; }
         }
     </style>
 </head>
-<body>
+<body class="catalog-page"
+      data-catalog-mode="public"
+      data-catalog-login-path="/html/Inicio_de_sesion/Inicio_sesion.html"
+      data-catalog-cart-path="/html/Logeado/carrito.html">
 
     <header class="navbar detail-navbar">
-        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
-            <i class="fa-solid fa-bars"></i>
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Abrir menú" aria-expanded="false">
+            <span class="burger-icon"><span></span><span></span><span></span></span>
         </button>
 
         <div class="logo-container">
-            <img src="../Imagenes/logo.png" alt="Logo" class="logo"> 
+            <img src="../Imagenes/logo.png" alt="Logo" class="logo">
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
 
@@ -161,25 +91,28 @@
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="main-search" placeholder="Buscar por título o autor...">
         </div>
-        
+
         <nav class="nav-links" id="mobile-nav">
             <a href="Acerca%20de.html">Acerca de</a>
             <a href="Contacto.html">Contacto</a>
             <a href="Ayuda.html">Ayuda</a>
             <a href="#" class="active-link">Catálogo</a>
         </nav>
-        
+
         <div class="auth-actions">
+            <a href="/html/Logeado/carrito.html" class="icon-link cart-button" style="position: relative;">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="cart-badge" id="cart-count">0</span>
+            </a>
             <button class="icon-button" onclick="window.location.href='../index.html'"><i class="fa-solid fa-house"></i></button>
-            <button class="btn-primary" onclick="window.location.href='Inicio_sesion.html'" style="background: #5d4037; color: white; border: none; padding: 10px 18px; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
+            <button class="btn-primary" onclick="window.location.href='/html/Inicio_de_sesion/Inicio_sesion.html'">Login</button>
         </div>
     </header>
 
-    <main class="main-content">
+    <main class="main-content catalog-main">
         <div class="background-overlay"></div>
-        
+
         <div class="catalog-container" style="display: grid; grid-template-columns: 260px 1fr; gap: 30px; padding: 40px; max-width: 1400px; margin: 0 auto;">
-            
             <button id="filter-toggle" class="btn-filter-toggle" style="display: none;">
                 <i class="fa-solid fa-filter"></i> Filtrar Libros
             </button>
@@ -189,16 +122,10 @@
                     <h2 style="color: #5d4037; margin: 0;">Filtros</h2>
                     <button id="sidebar-close-btn" class="hamburger-btn" style="display: block; color: #d32f2f;"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                
+
                 <div class="filter-section">
                     <h3>Categorías</h3>
-                    <div class="filter-options">
-                        <label><input type="checkbox" class="genre-filter" value="Terror"> Terror</label>
-                        <label><input type="checkbox" class="genre-filter" value="Novela"> Novela</label>
-                        <label><input type="checkbox" class="genre-filter" value="Ciencia Ficción"> Ciencia Ficción</label>
-                        <label><input type="checkbox" class="genre-filter" value="Fantasía"> Fantasía</label>
-                        <label><input type="checkbox" class="genre-filter" value="Clásicos"> Clásicos</label>
-                    </div>
+                    <div class="filter-options" id="categories-filter"></div>
                 </div>
 
                 <div class="filter-section" style="margin-top: 30px;">
@@ -207,205 +134,26 @@
                         <label><input type="radio" name="price" value="all" checked> Todos</label>
                         <label><input type="radio" name="price" value="0-300"> Hasta $300</label>
                         <label><input type="radio" name="price" value="300-600"> $300 - $600</label>
+                        <label><input type="radio" name="price" value="600+"> Más de $600</label>
                     </div>
                 </div>
             </aside>
-            
+
             <section>
-                <div class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px;">
-                    </div>
+                <div class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px;"></div>
 
                 <div class="carousel-nav" style="text-align: center; padding: 50px 0; display: flex; justify-content: center; gap: 15px; align-items: center;">
-                    <button class="btn-primary" style="background: white; color: #5d4037; border: 1px solid #5d4037;">← Anterior</button> 
-                    <span style="color: white; font-weight: bold; background: #5d4037; padding: 5px 15px; border-radius: 20px;">Página 1</span>
-                    <button class="btn-primary" style="background: white; color: #5d4037; border: 1px solid #5d4037;">Siguiente →</button>
+                    <button class="btn-primary" id="prev-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">← Anterior</button>
+                    <span id="page-info" style="color: white; font-weight: bold; background: #5d4037; padding: 5px 15px; border-radius: 20px;">Página 1</span>
+                    <button class="btn-primary" id="next-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">Siguiente →</button>
                 </div>
             </section>
         </div>
     </main>
-<script>
 
-const API_URL = "http://localhost:3000/api";
-
-/* ================================
-   VERIFICAR SESION
-================================ */
-
-const usuario = localStorage.getItem("usuario");
-
-if(!usuario){
-    alert("Debes iniciar sesión para acceder al catálogo.");
-    window.location.href="/html/Inicio_sesion.html";
-}
-
-
-/* ================================
-   LIBROS DEMO
-================================ */
-
-const demoBooks = [
-
-{titulo:"El Resplandor",autor:"Stephen King",precio:350,imagen:"/Imagenes/Libros/1.jpg",genero:"Terror"},
-{titulo:"Dune",autor:"Frank Herbert",precio:420,imagen:"/Imagenes/Libros/2.jpg",genero:"Ciencia Ficción"},
-{titulo:"It (Eso)",autor:"Stephen King",precio:380,imagen:"/Imagenes/Libros/3.jpg",genero:"Terror"},
-{titulo:"Cien Años de Soledad",autor:"G. García Márquez",precio:290,imagen:"/Imagenes/Libros/4.jpg",genero:"Novela"},
-{titulo:"El Psicoanalista",autor:"John Katzenbach",precio:310,imagen:"/Imagenes/Libros/5.jpg",genero:"Terror"}
-
-];
-
-
-/* ================================
-   RENDER LIBROS
-================================ */
-
-function renderBooks(books){
-
-const container=document.getElementById("products-container");
-container.innerHTML="";
-
-if(books.length===0){
-
-container.innerHTML=`
-<p style="color:white;text-align:center;grid-column:1/-1;">
-No se encontraron libros
-</p>
-`;
-
-return;
-}
-
-
-books.forEach((libro,index)=>{
-
-const card=document.createElement("div");
-card.className="book-product-card";
-
-card.innerHTML=`
-
-<div>
-
-<img src="${libro.imagen}" alt="${libro.titulo}">
-
-<h3 style="font-size:1rem;margin:10px 0;color:#5d4037;">
-${libro.titulo}
-</h3>
-
-<p style="font-size:0.8rem;color:#777;margin-bottom:10px;">
-${libro.autor}
-</p>
-
-</div>
-
-<div>
-
-<span style="font-weight:bold;color:#d32f2f;font-size:1.2rem;display:block;margin-bottom:15px;">
-$${libro.precio}
-</span>
-
-<div style="display:flex;gap:8px;">
-
-<button class="btn-carrito" data-id="${index}"
-style="flex:1;background:#5d4037;color:white;border:none;padding:10px;border-radius:6px;cursor:pointer;">
-
-<i class="fa-solid fa-cart-plus"></i>
-
-</button>
-
-<button class="btn-comprar" data-id="${index}"
-style="flex:2;background:#fbc02d;color:#5d4037;border:none;padding:10px;border-radius:6px;font-weight:bold;cursor:pointer;">
-
-Comprar
-
-</button>
-
-</div>
-
-</div>
-`;
-
-container.appendChild(card);
-
-});
-
-activarBotones();
-
-}
-
-
-/* ================================
-   BOTONES
-================================ */
-
-function activarBotones(){
-
-/* AGREGAR AL CARRITO */
-
-document.querySelectorAll(".btn-carrito").forEach(btn=>{
-
-btn.addEventListener("click",(e)=>{
-
-const id=e.currentTarget.dataset.id;
-
-let carrito=JSON.parse(localStorage.getItem("carrito"))||[];
-
-carrito.push(demoBooks[id]);
-
-localStorage.setItem("carrito",JSON.stringify(carrito));
-
-alert("Libro agregado al carrito");
-
-});
-
-});
-
-
-/* COMPRAR */
-
-document.querySelectorAll(".btn-comprar").forEach(btn=>{
-
-btn.addEventListener("click",(e)=>{
-
-const id=e.currentTarget.dataset.id;
-
-localStorage.setItem("productoCompra",JSON.stringify(demoBooks[id]));
-
-window.location.href="/html/Checkout.html";
-
-});
-
-});
-
-}
-
-
-
-/* ================================
-   BUSCADOR
-================================ */
-
-document.getElementById("main-search").addEventListener("input",(e)=>{
-
-const term=e.target.value.toLowerCase();
-
-const filtered=demoBooks.filter(libro=>
-
-libro.titulo.toLowerCase().includes(term)||
-libro.autor.toLowerCase().includes(term)
-
-);
-
-renderBooks(filtered);
-
-});
-
-
-/* ================================
-   INICIAR
-================================ */
-
-renderBooks(demoBooks);
-
-</script>
+    <script src="/JS/cartManager.js"></script>
+    <script src="/JS/carrito.js"></script>
+    <script src="/JS/catalogo.js"></script>
     <script src="/JS/nav-toggle-global.js"></script>
 </body>
 </html>

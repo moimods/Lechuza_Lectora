@@ -121,6 +121,54 @@
     </footer>
 
     <script>
+        function usuarioActivo() {
+            return JSON.parse(
+                localStorage.getItem('usuario_logeado') ||
+                localStorage.getItem('usuario') ||
+                localStorage.getItem('usuarioCompleto') ||
+                'null'
+            );
+        }
+
+        function getCheckoutCart() {
+            let cart = JSON.parse(localStorage.getItem('laLechuzaLectoraCart') || '[]');
+            if (!cart.length) {
+                const legacyCart = JSON.parse(localStorage.getItem('carrito') || '[]');
+                cart = legacyCart.map((item) => ({
+                    id: item.id_producto,
+                    title: item.titulo,
+                    price: Number(item.precio || 0),
+                    quantity: Number(item.cantidad || 1),
+                    image: item.imagen_url || `/Imagenes/Libros/${item.id_producto}.jpg`
+                }));
+                localStorage.setItem('laLechuzaLectoraCart', JSON.stringify(cart));
+            }
+            return cart;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const usuario = usuarioActivo();
+            const cart = getCheckoutCart();
+
+            if (!usuario) {
+                localStorage.setItem('postLoginRedirect', '/html/Logeado/compra/pago.html');
+                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+                return;
+            }
+
+            if (!cart.length) {
+                alert('Tu carrito está vacío.');
+                window.location.href = '/html/Logeado/carrito.html';
+                return;
+            }
+
+            if (!localStorage.getItem('id_direccion_pedido')) {
+                alert('Selecciona una dirección para continuar.');
+                window.location.href = '/html/Logeado/compra/domicilio.html';
+                return;
+            }
+        });
+
         // Función para manejar el cambio visual de selección
         function updatePaymentSelection(type) {
             // Remover clase de todos
@@ -147,6 +195,13 @@
             if (!localStorage.getItem('id_direccion_pedido')) {
                 alert("Por favor, selecciona una dirección de envío primero.");
                 window.location.href = "/html/Logeado/compra/domicilio.html";
+                return;
+            }
+
+            const cart = getCheckoutCart();
+            if (!cart.length) {
+                alert("Tu carrito está vacío.");
+                window.location.href = "/html/Logeado/carrito.html";
                 return;
             }
             

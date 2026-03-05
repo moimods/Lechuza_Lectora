@@ -197,9 +197,14 @@ document.getElementById('form-login-usuario')
             localStorage.setItem('userName', data.user.nombre);
             localStorage.setItem('userRole', data.user.rol);
             localStorage.setItem('usuarioCompleto', JSON.stringify(data.user));
+            localStorage.setItem('usuario', JSON.stringify(data.user));
+            localStorage.setItem('usuario_logeado', JSON.stringify(data.user));
+
+            const redirectTo = localStorage.getItem('postLoginRedirect') || '/html/Logeado/Catalogo_Logeado.html';
+            localStorage.removeItem('postLoginRedirect');
 
             // Redirigir
-            window.location.href = '/inicio';
+            window.location.href = redirectTo;
 
         }else{
             alert("❌ " + (data.error || "Credenciales incorrectas"));

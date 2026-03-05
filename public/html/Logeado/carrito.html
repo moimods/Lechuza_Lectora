@@ -2,190 +2,103 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Catálogo - La Lechuza Lectora</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <title>La Lechuza Lectora - Carrito</title>
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <style>
-        body {
-            background: #f5f5f5;
-        }
-
-        .catalog-container {
-            padding: 40px;
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        .catalog-title {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #5d4037;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .book-product-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
-
-        .book-product-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .book-product-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: contain;
-            margin-bottom: 10px;
-        }
-
-        .book-product-card h3 {
-            font-size: 0.9rem;
-            color: #5d4037;
-            height: 40px;
-            overflow: hidden;
-        }
-
-        .price {
-            font-weight: bold;
-            color: #d32f2f;
-            display: block;
-            margin: 8px 0;
-        }
-
-        .btn-add {
-            background: #5d4037;
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 0.85rem;
-        }
-
-        .btn-add:hover {
-            background: #3e2723;
-        }
-
-        .top-bar {
-            background: #5d4037;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-        }
-
-        .top-bar a {
-            color: white;
-            text-decoration: none;
-            margin-left: 15px;
-        }
-
-        .logout {
-            cursor: pointer;
+        body { margin: 0; min-height: 100vh; background: #f7f3ef; }
+        .cart-wrap { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 8px 18px rgba(0,0,0,0.08); padding: 24px; }
+        .cart-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+        .cart-title { margin: 0; color: #5d4037; }
+        .cart-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        #carritoLista { display: grid; gap: 12px; margin-bottom: 20px; }
+        .item-carrito { border: 1px solid #eadfce; border-radius: 10px; padding: 14px; display: grid; grid-template-columns: 1fr auto auto auto auto; gap: 10px; align-items: center; }
+        .item-carrito h4 { margin: 0; color: #5d4037; }
+        .item-carrito p { margin: 0; color: #7b5d52; }
+        .item-carrito button { border: none; background: #5d4037; color: #fff; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+        .summary { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 16px; }
+        .summary strong { color: #5d4037; font-size: 1.1rem; }
+        .badge { background: #d32f2f; color: #fff; border-radius: 999px; padding: 2px 8px; font-size: 0.8rem; margin-left: 6px; }
+        .top-nav { background: #5d4037; color: #fff; padding: 14px 20px; display:flex; justify-content: space-between; align-items:center; }
+        .top-nav a { color:#fff; text-decoration:none; margin-left: 14px; }
+        @media (max-width: 768px) {
+            .cart-wrap { margin: 18px; padding: 16px; }
+            .item-carrito { grid-template-columns: 1fr auto auto; }
+            .item-carrito p { grid-column: 1 / -1; }
+            .summary { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
     </style>
 </head>
 <body>
-
-    <!-- Barra superior -->
-    <div class="top-bar">
+    <header class="top-nav">
+        <div><i class="fa-solid fa-book"></i> La Lechuza Lectora</div>
         <div>
-            <i class="fas fa-book"></i> La Lechuza Lectora
+            <a href="/html/Catalogo.html"><i class="fa-solid fa-store"></i> Seguir comprando</a>
+            <a href="/html/Logeado/carrito.html"><i class="fa-solid fa-cart-shopping"></i> Carrito <span id="cartCount" class="badge">0</span></a>
         </div>
-        <div>
-            <a href="/html/Logeado/carrito.html"><i class="fas fa-shopping-cart"></i> Carrito</a>
-            <a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+    </header>
+
+    <main class="cart-wrap">
+        <div class="cart-header">
+            <h1 class="cart-title">Tu carrito</h1>
+            <div class="cart-actions">
+                <button class="btn-primary" onclick="vaciarCarrito()"><i class="fa-solid fa-trash"></i> Vaciar</button>
+                <button class="btn-primary" onclick="window.location.href='/html/Catalogo.html'"><i class="fa-solid fa-arrow-left"></i> Catálogo</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Catálogo -->
-    <div class="catalog-container">
-        <h2 class="catalog-title">
-            <i class="fas fa-store"></i> Catálogo de Libros
-        </h2>
+        <section id="carritoLista"></section>
 
-        <div id="products-container" class="products-grid">
-            <!-- Productos cargados dinámicamente -->
+        <div class="summary">
+            <strong>Total: <span id="totalCarrito">$0.00</span></strong>
+            <button class="btn-primary" id="btn-pagar"><i class="fa-solid fa-credit-card"></i> Pagar</button>
         </div>
-    </div>
+    </main>
 
-    <!-- SOLO carrito.js (necesario para agregarAlCarrito) -->
     <script src="/JS/carrito.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        function buildCheckoutCart() {
+            const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+            return carrito.map((item) => ({
+                id: item.id_producto,
+                title: item.titulo,
+                price: Number(item.precio || 0),
+                quantity: Number(item.cantidad || 1),
+                image: item.imagen_url || `/Imagenes/Libros/${item.id_producto}.jpg`
+            }));
+        }
 
-            const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+        function prepareCheckoutData() {
+            const checkoutCart = buildCheckoutCart();
+            localStorage.setItem('laLechuzaLectoraCart', JSON.stringify(checkoutCart));
+            return checkoutCart;
+        }
 
-            if (!usuario) {
-                alert("Debes iniciar sesión para acceder al catálogo.");
+        function usuarioActivo() {
+            return JSON.parse(
+                localStorage.getItem('usuario_logeado') ||
+                localStorage.getItem('usuario') ||
+                localStorage.getItem('usuarioCompleto') ||
+                'null'
+            );
+        }
+
+        document.getElementById('btn-pagar').addEventListener('click', () => {
+            const carrito = prepareCheckoutData();
+            if (!carrito.length) {
+                alert('Tu carrito está vacío.');
+                return;
+            }
+
+            if (!usuarioActivo()) {
+                localStorage.setItem('postLoginRedirect', '/html/Logeado/compra/resumen_compra.html');
                 window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
                 return;
             }
 
-            cargarProductos();
-        });
-
-        async function cargarProductos() {
-
-            const container = document.getElementById('products-container');
-
-            try {
-                const response = await fetch('/api/productos');
-                const productos = await response.json();
-
-                container.innerHTML = "";
-
-                productos.forEach(libro => {
-
-                    const card = document.createElement('div');
-                    card.className = 'book-product-card';
-
-                    card.innerHTML = `
-                        <img src="../../Imagenes/Libros/${libro.id_producto}.jpg"
-                             onerror="this.src='../../Imagenes/Libros/default.jpg'">
-
-                        <h3>${libro.titulo}</h3>
-
-                        <span class="price">$${libro.precio}</span>
-
-                        <button class="btn-add"
-                            onclick="agregarAlCarrito(${libro.id_producto}, '${libro.titulo.replace(/'/g, "\\'")}', ${libro.precio})">
-                            <i class="fas fa-cart-plus"></i> Añadir
-                        </button>
-                    `;
-
-                    container.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error("Error cargando productos:", error);
-                container.innerHTML = "<p>Error al conectar con el servidor.</p>";
-            }
-        }
-
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('usuario_logeado');
-            window.location.href = '/index.html';
+            window.location.href = '/html/Logeado/compra/resumen_compra.html';
         });
     </script>
-
 </body>
 </html>
