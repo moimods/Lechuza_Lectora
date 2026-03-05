@@ -2,7 +2,7 @@
 -- LIMPIEZA TOTAL
 -- =========================================
 DROP TABLE IF EXISTS detalles_ventas, ventas, productos, categorias, metodos_pago, direcciones, usuarios CASCADE;
-
+ALTER DATABASE "Db_lechuza" RENAME TO db_lechuza;
 -- =========================================
 -- TABLA USUARIOS
 -- =========================================
@@ -123,6 +123,8 @@ INSERT INTO usuarios (nombre_completo, email, password_hash, telefono, rol) VALU
 -- Usuario Admin
 INSERT INTO usuarios (nombre_completo, email, password_hash, telefono, rol) VALUES
 ('Moi Admin', 'admin@lechuza.com', '123456789', '9999999999', 'admin');
+
+select * from usuarios;
 
 SELECT current_database();
 SELECT table_name 
