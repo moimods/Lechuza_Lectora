@@ -12,15 +12,6 @@
         /* --- ESTILOS BASE Y ESTRUCTURA --- */
         body { margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
 
-        .hamburger-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: #5d4037;
-            font-size: 1.8rem;
-            cursor: pointer;
-        }
-
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
@@ -232,82 +223,189 @@
             </section>
         </div>
     </main>
+<script>
 
-    <script>
-        // --- LÓGICA DE NAVEGACIÓN ---
-        function toggleMobileMenu() {
-            document.getElementById('mobile-nav').classList.toggle('active');
-        }
+const API_URL = "http://localhost:3000/api";
 
-        // --- LÓGICA DE FILTROS MÓVIL ---
-        document.getElementById('filter-toggle').addEventListener('click', () => {
-            document.getElementById('filter-sidebar').classList.add('active');
-        });
+/* ================================
+   VERIFICAR SESION
+================================ */
 
-        document.getElementById('sidebar-close-btn').addEventListener('click', () => {
-            document.getElementById('filter-sidebar').classList.remove('active');
-        });
+const usuario = localStorage.getItem("usuario");
 
-        // --- SIMULACIÓN DE DATOS Y BÚSQUEDA ---
-        const demoBooks = [
-            {titulo: "El Resplandor", autor: "Stephen King", precio: 350, imagen: "../Imagenes/Libros/1.jpg", genero: "Terror"},
-            {titulo: "Dune", autor: "Frank Herbert", precio: 420, imagen: "../Imagenes/Libros/2.jpg", genero: "Ciencia Ficción"},
-            {titulo: "It (Eso)", autor: "Stephen King", precio: 380, imagen: "../Imagenes/Libros/3.jpg", genero: "Terror"},
-            {titulo: "Cien Años de Soledad", autor: "G. García Márquez", precio: 290, imagen: "../Imagenes/Libros/4.jpg", genero: "Novela"},
-            {titulo: "El Psicoanalista", autor: "John Katzenbach", precio: 310, imagen: "../Imagenes/Libros/5.jpg", genero: "Terror"}
-        ];
+if(!usuario){
+    alert("Debes iniciar sesión para acceder al catálogo.");
+    window.location.href="/html/Inicio_sesion.html";
+}
 
-        function renderBooks(books) {
-            const container = document.getElementById('products-container');
-            container.innerHTML = '';
-            
-            if(books.length === 0) {
-                container.innerHTML = `<p style="color:white; grid-column: 1/-1; text-align:center;">No se encontraron libros que coincidan.</p>`;
-                return;
-            }
 
-            books.forEach(libro => {
-                const card = document.createElement('div');
-                card.className = 'book-product-card';
-                card.innerHTML = `
-                    <div>
-                        <img src="${libro.imagen}" alt="${libro.titulo}">
-                        <h3 style="font-size:1rem; margin:10px 0; color:#5d4037;">${libro.titulo}</h3>
-                        <p style="font-size:0.8rem; color:#777; margin-bottom:10px;">${libro.autor}</p>
-                    </div>
-                    <div>
-                        <span style="font-weight:bold; color:#d32f2f; font-size:1.2rem; display:block; margin-bottom:15px;">$${libro.precio}</span>
-                        <div style="display:flex; gap:8px;">
-                            <button style="flex:1; background:#5d4037; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-cart-plus"></i></button>
-                            <button style="flex:2; background:#fbc02d; color:#5d4037; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Comprar</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
+/* ================================
+   LIBROS DEMO
+================================ */
 
-        // Inicializar
-        renderBooks(demoBooks);
+const demoBooks = [
 
-        // Buscador en tiempo real
-        document.getElementById('main-search').addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = demoBooks.filter(b => 
-                b.titulo.toLowerCase().includes(term) || 
-                b.autor.toLowerCase().includes(term)
-            );
-            renderBooks(filtered);
-        });
+{titulo:"El Resplandor",autor:"Stephen King",precio:350,imagen:"/Imagenes/Libros/1.jpg",genero:"Terror"},
+{titulo:"Dune",autor:"Frank Herbert",precio:420,imagen:"/Imagenes/Libros/2.jpg",genero:"Ciencia Ficción"},
+{titulo:"It (Eso)",autor:"Stephen King",precio:380,imagen:"/Imagenes/Libros/3.jpg",genero:"Terror"},
+{titulo:"Cien Años de Soledad",autor:"G. García Márquez",precio:290,imagen:"/Imagenes/Libros/4.jpg",genero:"Novela"},
+{titulo:"El Psicoanalista",autor:"John Katzenbach",precio:310,imagen:"/Imagenes/Libros/5.jpg",genero:"Terror"}
 
-        // Cerrar menú móvil al hacer clic fuera
-        document.addEventListener('click', (e) => {
-            const nav = document.getElementById('mobile-nav');
-            const hamburger = document.getElementById('hamburger-btn');
-            if (nav.classList.contains('active') && !hamburger.contains(e.target) && !nav.contains(e.target)) {
-                nav.classList.remove('active');
-            }
-        });
-    </script>
+];
+
+
+/* ================================
+   RENDER LIBROS
+================================ */
+
+function renderBooks(books){
+
+const container=document.getElementById("products-container");
+container.innerHTML="";
+
+if(books.length===0){
+
+container.innerHTML=`
+<p style="color:white;text-align:center;grid-column:1/-1;">
+No se encontraron libros
+</p>
+`;
+
+return;
+}
+
+
+books.forEach((libro,index)=>{
+
+const card=document.createElement("div");
+card.className="book-product-card";
+
+card.innerHTML=`
+
+<div>
+
+<img src="${libro.imagen}" alt="${libro.titulo}">
+
+<h3 style="font-size:1rem;margin:10px 0;color:#5d4037;">
+${libro.titulo}
+</h3>
+
+<p style="font-size:0.8rem;color:#777;margin-bottom:10px;">
+${libro.autor}
+</p>
+
+</div>
+
+<div>
+
+<span style="font-weight:bold;color:#d32f2f;font-size:1.2rem;display:block;margin-bottom:15px;">
+$${libro.precio}
+</span>
+
+<div style="display:flex;gap:8px;">
+
+<button class="btn-carrito" data-id="${index}"
+style="flex:1;background:#5d4037;color:white;border:none;padding:10px;border-radius:6px;cursor:pointer;">
+
+<i class="fa-solid fa-cart-plus"></i>
+
+</button>
+
+<button class="btn-comprar" data-id="${index}"
+style="flex:2;background:#fbc02d;color:#5d4037;border:none;padding:10px;border-radius:6px;font-weight:bold;cursor:pointer;">
+
+Comprar
+
+</button>
+
+</div>
+
+</div>
+`;
+
+container.appendChild(card);
+
+});
+
+activarBotones();
+
+}
+
+
+/* ================================
+   BOTONES
+================================ */
+
+function activarBotones(){
+
+/* AGREGAR AL CARRITO */
+
+document.querySelectorAll(".btn-carrito").forEach(btn=>{
+
+btn.addEventListener("click",(e)=>{
+
+const id=e.currentTarget.dataset.id;
+
+let carrito=JSON.parse(localStorage.getItem("carrito"))||[];
+
+carrito.push(demoBooks[id]);
+
+localStorage.setItem("carrito",JSON.stringify(carrito));
+
+alert("Libro agregado al carrito");
+
+});
+
+});
+
+
+/* COMPRAR */
+
+document.querySelectorAll(".btn-comprar").forEach(btn=>{
+
+btn.addEventListener("click",(e)=>{
+
+const id=e.currentTarget.dataset.id;
+
+localStorage.setItem("productoCompra",JSON.stringify(demoBooks[id]));
+
+window.location.href="/html/Checkout.html";
+
+});
+
+});
+
+}
+
+
+
+/* ================================
+   BUSCADOR
+================================ */
+
+document.getElementById("main-search").addEventListener("input",(e)=>{
+
+const term=e.target.value.toLowerCase();
+
+const filtered=demoBooks.filter(libro=>
+
+libro.titulo.toLowerCase().includes(term)||
+libro.autor.toLowerCase().includes(term)
+
+);
+
+renderBooks(filtered);
+
+});
+
+
+/* ================================
+   INICIAR
+================================ */
+
+renderBooks(demoBooks);
+
+</script>
+    <script src="/JS/nav-toggle-global.js"></script>
 </body>
 </html>

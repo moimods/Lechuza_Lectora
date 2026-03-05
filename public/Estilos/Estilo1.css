@@ -56,44 +56,83 @@ body {
 
 }
 
-.hamburger-btn {
-    background: none;
-    border: none;
+.hamburger-btn,
+.nav-toggle-btn,
+.hamburger {
+    display: none;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border: 1px solid rgba(93, 64, 55, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.96);
     cursor: pointer;
-    padding: 10px;
-    display: none; /* Se oculta en escritorio */
     z-index: 1100;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.hamburger-btn:hover,
+.nav-toggle-btn:hover,
+.hamburger:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.hamburger-btn:focus-visible,
+.nav-toggle-btn:focus-visible,
+.hamburger:focus-visible {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 2px;
 }
 
 .burger-icon {
-    width: 25px;
-    height: 18px;
+    width: 18px;
+    height: 14px;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.burger-icon span {
+.burger-icon span,
+.nav-toggle-btn .line {
     display: block;
-    height: 3px;
+    height: 2px;
     width: 100%;
     background-color: var(--color-primary);
-    border-radius: 3px;
-    transition: all 0.3s ease-in-out;
+    border-radius: 2px;
+    transition: all 0.2s ease-in-out;
 }
 
-/* Animación a X cuando tiene la clase .open */
-.hamburger-btn.open .burger-icon span:nth-child(1) {
-    transform: translateY(7.5px) rotate(45deg);
+.nav-toggle-btn .line + .line {
+    margin-top: 4px;
 }
 
-.hamburger-btn.open .burger-icon span:nth-child(2) {
+.hamburger-btn i.fa-bars,
+.hamburger i.fa-bars {
+    color: var(--color-primary);
+    font-size: 1rem;
+}
+
+/* Animación a X cuando tiene la clase .open / .is-open */
+.hamburger-btn.open .burger-icon span:nth-child(1),
+.nav-toggle-btn.is-open .line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.hamburger-btn.open .burger-icon span:nth-child(2),
+.nav-toggle-btn.is-open .line:nth-child(2) {
     opacity: 0;
 }
 
-.hamburger-btn.open .burger-icon span:nth-child(3) {
-    transform: translateY(-7.5px) rotate(-45deg);
+.hamburger-btn.open .burger-icon span:nth-child(3),
+.nav-toggle-btn.is-open .line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
 }
 
 a { text-decoration: none; color: inherit; }

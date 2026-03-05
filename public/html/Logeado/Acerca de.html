@@ -9,16 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         /* --- ESTILOS DEL MENÚ HAMBURGUESA --- */
-        .hamburger-btn {
-            display: none; /* Oculto en PC */
-            background: none;
-            border: none;
-            color: #5d4037;
-            font-size: 1.8rem;
-            cursor: pointer;
-            order: 2;
-        }
-
         /* AJUSTES RESPONSIVOS CRÍTICOS */
         @media (max-width: 768px) {
             .navbar {
@@ -122,7 +112,7 @@
         <span class="site-name">LA LECHUZA LECTORA</span>
     </div>
 
-    <button class="hamburger-btn" onclick="toggleMobileMenu()">
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
         <i class="fa-solid fa-bars"></i>
     </button>
 
@@ -193,5 +183,6 @@
         }
     });
 </script>
+<script src="/JS/nav-toggle-global.js"></script>
 </body>
 </html>

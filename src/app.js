@@ -29,9 +29,17 @@ app.get("/inicio", (req, res) => {
 });
 
 const pageAliases = {
+  "/Catalogo.html": "/html/Catalogo.html",
+  "/html/Inicio_sesion.html": "/html/Inicio_de_sesion/Inicio_sesion.html",
+  "/Inicio_sesion.html": "/html/Inicio_de_sesion/Inicio_sesion.html",
+  "/login.html": "/html/Inicio_de_sesion/Inicio_sesion.html",
+  "/login": "/html/Inicio_de_sesion/Inicio_sesion.html",
   "/Catalogo_Logeado.html": "/html/Logeado/Catalogo_Logeado.html",
+  "/html/Catalogo_Logeado.html": "/html/Logeado/Catalogo_Logeado.html",
   "/carrito.html": "/html/Logeado/carrito.html",
+  "/html/carrito.html": "/html/Logeado/carrito.html",
   "/perfil.html": "/html/Logeado/perfil.html",
+  "/html/perfil.html": "/html/Logeado/perfil.html",
   "/Informacion_Personal.html": "/html/Logeado/Informacion_Personal.html",
   "/Mis_Pedidos.html": "/html/Logeado/Mis_pedidos.html",
   "/Mis_pedidos.html": "/html/Logeado/Mis_pedidos.html",
