@@ -1,21 +1,23 @@
-async function cargarProductos(){
+let currentPage = 1;
+const LIMIT = 12;
 
-    const res = await fetch("/api/productos");
-    const productos = await res.json();
+async function cargarProductos(page = 1) {
 
-    const tabla = document.getElementById("tablaProductos");
-    tabla.innerHTML = "";
+    try {
 
-    productos.forEach(p => {
+        const res = await fetch(
+            `/api/productos?page=${page}&limit=${LIMIT}`,
+            { credentials: "include" }
+        );
 
-        tabla.innerHTML += `
-            <tr>
-                <td>${p.id_producto}</td>
-                <td>${p.titulo}</td>
-                <td>${p.autor}</td>
-                <td>$${p.precio}</td>
-                <td>${p.stock}</td>
-            </tr>
-        `;
-    });
+        const result = await res.json();
+
+        pintarProductos(result.data);
+        renderPagination(result.pagination);
+
+        currentPage = page;
+
+    } catch (error) {
+        console.error(error);
+    }
 }
