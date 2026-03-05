@@ -135,24 +135,24 @@
         </div>
         
         <nav class="nav-links" id="mobile-nav">
-            <a href="Acerca_de.html">Acerca de</a>
-            <a href="Contacto.html">Contacto</a>
-            <a href="Ayuda.html">Ayuda</a>
-            <a href="Catalogo_Logeado.html">Catálogo</a>
+            <a href="/html/Logeado/Acerca%20de.html">Acerca de</a>
+            <a href="/html/Logeado/Contacto.html">Contacto</a>
+            <a href="/html/Logeado/Ayuda.html">Ayuda</a>
+            <a href="/html/Logeado/Catalogo_Logeado.html">Catálogo</a>
         </nav>
         
         <div class="auth-actions user-actions">
-            <button class="icon-button cart-button" onclick="window.location.href='carrito.html'">
+            <button class="icon-button cart-button" onclick="window.location.href='/html/Logeado/carrito.html'">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span class="cart-badge" id="cart-count">0</span>
             </button>
-            <button class="icon-button" onclick="window.location.href='../../index.html'"><i class="fa-solid fa-house"></i></button>
+            <button class="icon-button" onclick="window.location.href='/index.html'"><i class="fa-solid fa-house"></i></button>
 
             <div class="avatar-dropdown-container" style="position: relative;">
                 <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
                 <div class="dropdown-menu" id="avatar-dropdown">
-                    <a href="perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
-                    <a href="../../index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    <a href="/html/Logeado/perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
+                    <a href="/index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
@@ -169,7 +169,7 @@
                 <div class="profile-text-custom">
                     <h2 id="user-name" style="color: #5d4037; margin: 0;">Cargando...</h2> 
                     <p id="user-email" class="email-text" style="color: #777; margin: 5px 0;">...</p>
-                    <a href="Editar_Perfil.html" class="btn-edit-profile" style="background-color: #5d4037; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 10px; font-weight: bold;">Editar Cuenta</a>
+                    <a href="/html/Logeado/Editar_Perfil.html" class="btn-edit-profile" style="background-color: #5d4037; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 10px; font-weight: bold;">Editar Cuenta</a>
                 </div>
             </div>
 
@@ -205,11 +205,11 @@
             </div>
 
             <div class="profile-actions-grid-custom" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 800px; margin: 0 auto;">
-                <a href="Direcciones.html" class="action-module">
+                <a href="/html/Logeado/domicilio.html" class="action-module">
                     <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: #5d4037;"></i>
                     <h3 style="color: #5d4037; margin: 0;">Direcciones</h3>
                 </a>
-                <a href="Tarjetas.html" class="action-module">
+                <a href="/html/Logeado/Tarjetas.html" class="action-module">
                     <i class="fas fa-credit-card" style="font-size: 2rem; color: #5d4037;"></i>
                     <h3 style="color: #5d4037; margin: 0;">Métodos de Pago</h3>
                 </a>
@@ -227,7 +227,7 @@
         async function cargarDatosUsuario() {
             const userEmail = localStorage.getItem('userEmail'); 
             if (!userEmail) {
-                window.location.href = '../Inicio_de_sesion/Inicio_sesion.html';
+                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
                 return;
             }
 

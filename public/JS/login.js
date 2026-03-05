@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const data = await apiRequest("/api/login", {
+            const data = await apiRequest("/login", {
                 method: "POST",
                 body: JSON.stringify({ email, password })
             });
@@ -34,9 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Redirección según rol (opcional)
                 if (data.user.rol === "admin") {
-                    window.location.href = "/html/Admin/dashboard.html";
+                    window.location.href = "/html/Admin/panel_de_admin.html";
                 } else {
-                    window.location.href = "/html/Logeado/dashboard.html";
+                    window.location.href = "/html/Logeado/Inicio_Logeado.html";
                 }
             }
 

@@ -3,7 +3,9 @@
 // ===============================
 const API = async (endpoint, options = {}) => {
 
-    const response = await fetch(`${APP_CONFIG.API_BASE}${endpoint}`, {
+    const base = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || "/api";
+
+    const response = await fetch(`${base}${endpoint}`, {
         headers: {
             "Content-Type": "application/json",
             ...(options.headers || {})
@@ -53,8 +55,11 @@ async function eliminarProducto(id) {
 // ===============================
 
 async function cargarProductos() {
-    const productos = await apiRequest("/api/productos");
-    mostrar(productos);
+        const result = await API("/productos");
+        const productos = Array.isArray(result) ? result : (result.data || []);
+        if (typeof mostrar === "function") {
+            mostrar(productos);
+        }
 }
 
 // ===============================

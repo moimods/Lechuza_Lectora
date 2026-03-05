@@ -2,7 +2,7 @@
 // STORAGE
 // ===============================
 
-const CART_KEY = APP_CONFIG.STORAGE_KEYS.CART;
+const CART_KEY = (window.APP_CONFIG && window.APP_CONFIG.STORAGE_KEYS && window.APP_CONFIG.STORAGE_KEYS.CART) || "carrito";
 
 // Obtener carrito
 function obtenerCarrito() {

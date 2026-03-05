@@ -71,18 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(carrito.length === 0){
         alert("Carrito vacío.");
-        window.location.href="../carrito.html";
+        window.location.href="/html/Logeado/carrito.html";
         return;
     }
 
     if(!usuario){
-        window.location.href="../../Inicio_de_sesion/Inicio_sesion.html";
+        window.location.href="/html/Inicio_de_sesion/Inicio_sesion.html";
         return;
     }
 
     if(!idDireccion){
         alert("No seleccionaste dirección.");
-        window.location.href="Domicilio.html";
+        window.location.href="/html/Logeado/compra/domicilio.html";
         return;
     }
 
@@ -151,7 +151,7 @@ async function registrarVenta(){
             btn.innerText = "¡Compra Exitosa!";
 
             setTimeout(()=>{
-                window.location.href="Exito.html";
+                window.location.href="/html/Logeado/compra/Exito.html";
             },1500);
 
         }else{

@@ -111,3 +111,4 @@ const API = {
 
 // Export global (para HTML clásicos)
 window.API = API;
+window.apiRequest = apiRequest;

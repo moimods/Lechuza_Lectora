@@ -73,7 +73,7 @@
     </form>
 
     <p style="margin-top: 20px; font-size: 0.9rem;">
-        ¿Aún no tienes cuenta? <a href="Registro.html" style="color: #5d4037; font-weight: bold;">Regístrate</a>
+        ¿Aún no tienes cuenta? <a href="/html/Inicio_de_sesion/Registro.html" style="color: #5d4037; font-weight: bold;">Regístrate</a>
     </p>
 </div>
 
@@ -106,7 +106,7 @@
                 localStorage.setItem('usuario_logeado', JSON.stringify(data.user));
                 
                 // Redirección exitosa
-                window.location.href = '../Logeado/Catalogo_Logeado.html';
+                window.location.href = '/html/Logeado/Catalogo_Logeado.html';
             } else {
                 errorMsg.innerText = data.error;
                 errorMsg.style.display = 'block';

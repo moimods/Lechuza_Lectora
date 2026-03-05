@@ -1,7 +1,7 @@
 {
   "name": "la_lechuza",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
@@ -24,7 +24,7 @@
   "devDependencies": {
     "nodemon": "^3.1.14"
   },
-  "description": "",
+  "description": "Backend y frontend estático para La Lechuza Lectora",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/moimods/Lechuza_Lectora.git"
@@ -37,16 +37,4 @@
     "url": "https://github.com/moimods/Lechuza_Lectora/issues"
   },
   "homepage": "https://github.com/moimods/Lechuza_Lectora#readme"
-}
-{
-  "success": true,
-  "data": [...productos],
-  "pagination": {
-    "total": 120,
-    "page": 1,
-    "limit": 12,
-    "totalPages": 10,
-    "hasNext": true,
-    "hasPrev": false
-  }
 }

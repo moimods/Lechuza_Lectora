@@ -67,14 +67,14 @@
                 <div class="burger-icon"><span></span><span></span><span></span></div>
             </button>
             <div class="menu-items" id="menu-items">
-                <a href="panel_de_admin.html">Dashboard</a>
-                <a href="Gestion_de_inventario.html">Inventario</a>
-                <a href="../../index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
+                <a href="/html/Admin/panel_de_admin.html">Dashboard</a>
+                <a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
+                <a href="/index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
             </div>
         </nav>
 
         <div class="auth-actions user-actions">
-            <a href="panel_de_admin.html" class="icon-button"><i class="fa-solid fa-house"></i></a>
+            <a href="/html/Admin/panel_de_admin.html" class="icon-button"><i class="fa-solid fa-house"></i></a>
             <span class="admin-label" id="admin-display-name">Admin</span>
             <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
         </div>
@@ -85,7 +85,7 @@
 
         <div class="form-container-admin">
             <div class="inventory-header">
-                <a href="panel_de_admin.html" style="color: inherit; text-decoration: none;">
+                <a href="/html/Admin/panel_de_admin.html" style="color: inherit; text-decoration: none;">
                     <i class="fa-solid fa-circle-chevron-left fa-2xl" style="margin-right: 15px; cursor: pointer;"></i>
                 </a>
                 <h2 style="margin: 0;">Registrar Nuevo Libro</h2>
@@ -141,12 +141,12 @@
     </main>
 
     <div id="listaProductos"></div>
-<script src="/js/productos.js"></script>
+<script src="/JS/productos.js"></script>
     <script>
         // 1. Verificación de Seguridad
         const user = JSON.parse(localStorage.getItem('usuario'));
         if (!user || user.rol !== 'admin') {
-            window.location.href = '../Inicio_de_sesion/Inicio_sesion.html';
+            window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
         } else {
             document.getElementById('admin-display-name').innerText = user.nombre;
         }
@@ -180,7 +180,7 @@
 
                 if (response.ok) {
                     alert(`✅ ¡Éxito! El libro "${datosLibro.titulo}" ha sido guardado.`);
-                    window.location.href = 'Gestion_de_inventario.html'; 
+                    window.location.href = '/html/Admin/Gestion_de_inventario.html'; 
                 } else {
                     throw new Error(resultado.error || "Error al registrar");
                 }

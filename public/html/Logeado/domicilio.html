@@ -6,7 +6,7 @@
     <title>Seleccionar Dirección - La Lechuza Lectora</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
-    <script src="../../JS/UserDropdown.js" defer></script>
+    <script src="/JS/UserDropdown.js" defer></script>
     <style>
         /* Estilos para la selección de tarjeta */
         .address-card {
@@ -86,10 +86,10 @@
         </div>
         
         <nav class="nav-links">
-            <a href="../Acerca_de.html">Acerca de</a>
-            <a href="../Contacto.html">Contacto</a>
-            <a href="../Ayuda.html">Ayuda</a>
-            <a href="../Catalogo_Logeado.html">Catálogo</a>
+            <a href="/html/Logeado/Acerca%20de.html">Acerca de</a>
+            <a href="/html/Logeado/Contacto.html">Contacto</a>
+            <a href="/html/Logeado/Ayuda.html">Ayuda</a>
+            <a href="/html/Logeado/Catalogo_Logeado.html">Catálogo</a>
         </nav>
         
         <div class="auth-actions user-actions">
@@ -97,8 +97,8 @@
             <div class="avatar-dropdown-container" style="position: relative;">
                 <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
                 <div class="dropdown-menu" id="avatar-dropdown">
-                    <a href="../perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
-                    <a href="../../index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    <a href="/html/Logeado/perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
+                    <a href="/index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
@@ -116,7 +116,7 @@
 
             <div class="address-container">
                 <div style="margin-bottom: 25px; text-align: center;">
-                    <button class="btn-primary" onclick="window.location.href='../Registro_Domicilio.html'" style="background: #fbc02d; color: #5d4037; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; width: auto;">
+                    <button class="btn-primary" onclick="window.location.href='/html/Logeado/Agregar_domicilio.html'" style="background: #fbc02d; color: #5d4037; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; width: auto;">
                         <i class="fas fa-plus"></i> Agregar Nueva Dirección
                     </button>
                 </div>
@@ -140,7 +140,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const user = JSON.parse(localStorage.getItem('user'));
             if (!user) {
-                window.location.href = '../../index.html';
+                window.location.href = '/index.html';
                 return;
             }
 
@@ -208,7 +208,7 @@
                 return;
             }
             localStorage.setItem('id_direccion_pedido', direccionIdSeleccionada);
-            window.location.href = 'Checkout.html';
+            window.location.href = '/html/Logeado/compra/Checkout.html';
         }
 
         async function eliminarDireccion(id) {

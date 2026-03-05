@@ -23,9 +23,9 @@
         </button>
 
         <div class="menu-items" id="menu-items">
-            <a href="Gestion_de_inventario.html">Inventario</a>
-            <a href="Reporte_de_ventas.html">Reportes</a>
-            <a href="../../index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
+            <a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
+            <a href="/html/Admin/Reporte_de_ventas.html">Reportes</a>
+            <a href="/index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
         </div>
     </header>
 
@@ -36,10 +36,10 @@
             <h1 class="dashboard-title">Panel de Control de Inventario</h1>
 
             <div class="action-buttons-grid">
-                <button class="action-button red-bg" onclick="location.href='Gestion_de_inventario.html'"><i class="fa-solid fa-list-ul"></i> Gestionar Inventario</button>
-                <button class="action-button blue-bg" onclick="location.href='Gestion_productos.html'"><i class="fa-solid fa-box-open"></i> Adicionar Productos</button>
-                <button class="action-button orange-bg" onclick="location.href='Reporte_de_compras.html'"><i class="fa-solid fa-truck"></i> Ver Pedidos</button>
-                <button class="action-button lightblue-bg" onclick="location.href='Reporte_de_ventas.html'"><i class="fa-solid fa-chart-line"></i> Análisis de Ventas</button>
+                <button class="action-button red-bg" onclick="location.href='/html/Admin/Gestion_de_inventario.html'"><i class="fa-solid fa-list-ul"></i> Gestionar Inventario</button>
+                <button class="action-button blue-bg" onclick="location.href='/html/Admin/Gestion_productos.html'"><i class="fa-solid fa-box-open"></i> Adicionar Productos</button>
+                <button class="action-button orange-bg" onclick="location.href='/html/Admin/Reporte_de_compras.html'"><i class="fa-solid fa-truck"></i> Ver Pedidos</button>
+                <button class="action-button lightblue-bg" onclick="location.href='/html/Admin/Reporte_de_ventas.html'"><i class="fa-solid fa-chart-line"></i> Análisis de Ventas</button>
             </div>
 
             <div class="stats-container">
@@ -59,7 +59,8 @@
         </div>
     </main>
 
-    <script src="/JS/auth.js">
+    <script src="/JS/auth.js"></script>
+    <script>
     
         // --- LÓGICA DEL MENÚ HAMBURGUESA (CORREGIDA) ---
         const btnHamburguesa = document.getElementById('hamburger-btn');
@@ -77,12 +78,13 @@
         async function cargarDashboard() {
             try {
                 const respuesta = await fetch('/api/productos');
-                const productos = await respuesta.json();
+                const payload = await respuesta.json();
+                const productos = Array.isArray(payload) ? payload : (payload.data || []);
 
-                if (productos && productos.length > 0) {
+                if (productos.length > 0) {
                     const totalLibros = productos.length;
-                    const bajoStock = productos.filter(p => p.stock < 10).length;
-                    const sumaPiezas = productos.reduce((acc, p) => acc + (parseInt(p.stock) || 0), 0);
+                    const bajoStock = productos.filter(p => Number(p.stock) < 10).length;
+                    const sumaPiezas = productos.reduce((acc, p) => acc + (parseInt(p.stock, 10) || 0), 0);
 
                     // Actualizar tarjetas (seleccionando el TD correcto)
                     const celdas = document.querySelectorAll('.data-table td');

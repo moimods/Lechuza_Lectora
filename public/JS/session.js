@@ -14,7 +14,7 @@ function verificarSesion() {
 
     if (!usuario) {
         alert("Debes iniciar sesión");
-        window.location.href = "/html/Inicio_de_sesion/login.html";
+        window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
     }
 
     return usuario;
@@ -28,7 +28,7 @@ function verificarAdmin() {
 
     if (usuario.rol !== "admin") {
         alert("No tienes permisos para acceder aquí");
-        window.location.href = "/html/Logeado/dashboard.html";
+        window.location.href = "/html/Logeado/Inicio_Logeado.html";
     }
 }
 
@@ -52,5 +52,5 @@ function mostrarUsuario() {
 // ================================================
 function logout() {
     localStorage.removeItem("usuario");
-    window.location.href = "/html/Inicio_de_sesion/login.html";
+    window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
 }

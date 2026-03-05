@@ -31,7 +31,7 @@ async function registrarVenta(idDireccion = null) {
 
     if (!usuario) {
         alert("Debes iniciar sesión");
-        window.location.href = "/html/Inicio_de_sesion/login.html";
+        window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
         return;
     }
 
@@ -44,7 +44,7 @@ async function registrarVenta(idDireccion = null) {
 
     try {
 
-        const data = await apiRequest("/api/ventas/registrar", {
+        const data = await apiRequest("/ventas/registrar", {
             method: "POST",
             body: JSON.stringify({
                 id_usuario: usuario.id_usuario,
@@ -66,7 +66,7 @@ async function registrarVenta(idDireccion = null) {
             localStorage.removeItem("carrito");
 
             // Redirigir
-            window.location.href = "/html/Logeado/dashboard.html";
+            window.location.href = "/html/Logeado/Inicio_Logeado.html";
         }
 
     } catch (error) {

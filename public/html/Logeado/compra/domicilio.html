@@ -81,7 +81,7 @@
                 </div>
 
                 <button class="btn-secondary btn-add-address"
-                        onclick="window.location.href='../Registro_Domicilio.html'"
+                    onclick="window.location.href='/html/Logeado/Agregar_domicilio.html'"
                         style="margin-top: 20px; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                     <i class="fas fa-plus-circle"></i> Agregar Nuevo Domicilio
                 </button>
@@ -89,7 +89,7 @@
                 <div class="navigation-actions"
                      style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
                     
-                    <button onclick="window.location.href='../carrito.html'"
+                    <button onclick="window.location.href='/html/Logeado/carrito.html'"
                             style="background: #555; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                         ← Regresar al Carrito
                     </button>
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!usuario || !usuario.id_usuario) {
         alert("Sesión no detectada. Por favor, inicia sesión.");
-        window.location.href = '../../Inicio_de_sesion/Inicio_sesion.html';
+        window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
         return;
     }
 
@@ -188,7 +188,7 @@ function continuarAlPago() {
         return;
     }
 
-    window.location.href = 'Checkout.html';
+    window.location.href = '/html/Logeado/compra/Checkout.html';
 }
 </script>
 

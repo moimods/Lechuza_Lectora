@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Pagar con PayPal</title>
-    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
+    <link rel="icon" type="image/x-icon" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -62,7 +62,7 @@
 <body class="form-page">
 
     <header class="navbar-minimal" style="padding: 15px; background: rgba(240, 231, 203, 0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-        <div class="logo-container" onclick="window.location.href='Pagina_principal.html'" style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+        <div class="logo-container" onclick="window.location.href='/html/Logeado/Catalogo_Logeado.html'" style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo" style="height: 35px; margin-right: 10px;"> 
             <span class="site-name" style="font-weight: bold; color: #5d4037;">LA LECHUZA LECTORA</span>
         </div>
@@ -92,7 +92,7 @@
             </form>
             
             <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
-                <button type="button" onclick="window.location.href='Metodo_Pago.html'" style="background: none; border: none; color: #666; cursor: pointer; text-decoration: underline; font-size: 0.9em;">Cancelar y volver</button>
+                <button type="button" onclick="window.location.href='/html/Logeado/Agregar_metodo_pago.html'" style="background: none; border: none; color: #666; cursor: pointer; text-decoration: underline; font-size: 0.9em;">Cancelar y volver</button>
             </div>
         </div>
     </main>
@@ -114,7 +114,7 @@
                 alert("¡Pago procesado con éxito a través de PayPal!");
                 // Limpiar carrito y finalizar
                 localStorage.removeItem('carrito');
-                window.location.href = 'Pagina_principal.html';
+                window.location.href = '/html/Logeado/Catalogo_Logeado.html';
             }, 2000);
         });
     </script>

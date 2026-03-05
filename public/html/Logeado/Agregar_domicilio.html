@@ -73,12 +73,12 @@
 <body class="form-page">
     
     <header class="navbar user-navbar">
-        <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer;">
+        <div class="logo-container" onclick="window.location.href='/index.html'" style="cursor: pointer;">
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         <div class="auth-actions user-actions">
-            <button class="icon-button" onclick="window.location.href='perfil.html'"><i class="fa-solid fa-house"></i></button>
+            <button class="icon-button" onclick="window.location.href='/html/Logeado/perfil.html'"><i class="fa-solid fa-house"></i></button>
         </div>
     </header>
 
@@ -161,7 +161,7 @@
             const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
             if (!usuario || !usuario.id_usuario) {
                 alert("Debes estar logeado para agregar un domicilio");
-                window.location.href = '../../Inicio_de_sesion/Inicio_sesion.html';
+                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
                 return;
             }
         });
@@ -177,7 +177,7 @@
 
         if (!idUsuario) {
             alert("No se encontró una sesión activa.");
-            window.location.href = '../../Inicio_de_sesion/Inicio_sesion.html';
+            window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
             return;
         }
 
@@ -215,7 +215,7 @@
     });
 
     document.getElementById('btn-modal-accept-success').onclick = () => {
-        window.location.href = 'domicilio.html'; 
+        window.location.href = '/html/Logeado/domicilio.html'; 
     };
     </script>
 </body>

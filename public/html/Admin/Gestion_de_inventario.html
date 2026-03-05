@@ -64,7 +64,7 @@
     <button type="submit">Agregar</button>
 </form>
 
-<script src="/js/inventario.js"></script>
+<script src="/JS/inventario.js"></script>
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
@@ -77,15 +77,15 @@
                 <div class="burger-icon"><span></span><span></span><span></span></div>
             </button>
             <div class="menu-items" id="menu-items">
-                <a href="panel_de_admin.html">Panel Principal</a>
-                <a href="Gestion_productos.html">Agregar Producto</a>
-                <a href="Reporte_de_ventas.html">Reportes</a>
-                <a href="../../index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
+                <a href="/html/Admin/panel_de_admin.html">Panel Principal</a>
+                <a href="/html/Admin/Gestion_productos.html">Agregar Producto</a>
+                <a href="/html/Admin/Reporte_de_ventas.html">Reportes</a>
+                <a href="/index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
             </div>
         </nav>
 
         <div class="auth-actions user-actions">
-            <a href="panel_de_admin.html" class="home-icon"><i class="fa-solid fa-house"></i></a>
+            <a href="/html/Admin/panel_de_admin.html" class="home-icon"><i class="fa-solid fa-house"></i></a>
             <span class="admin-label" id="admin-name">Admin</span>
             <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="object-fit: cover; border-radius: 50%; width: 40px; height: 40px;">
         </div>
@@ -97,7 +97,7 @@
         <div class="inventory-container">
             <div class="inventory-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                 <div style="display: flex; align-items: center;">
-                    <a href="panel_de_admin.html" style="color: white; margin-right: 15px;"><i class="fa-solid fa-circle-left fa-2x"></i></a>
+                    <a href="/html/Admin/panel_de_admin.html" style="color: white; margin-right: 15px;"><i class="fa-solid fa-circle-left fa-2x"></i></a>
                     <h1 class="dashboard-title" style="color: white; margin: 0;">Control de Existencias</h1>
                 </div>
             </div>
@@ -151,7 +151,7 @@
             const usuario = JSON.parse(localStorage.getItem('usuario'));
             
             if (!usuario || usuario.rol !== 'admin') {
-                window.location.href = '/login'; 
+                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html'; 
                 return;
             }
 
@@ -252,7 +252,7 @@
         }
 
         function editarProducto(id) {
-            window.location.href = `Gestion_productos.html?id=${id}`;
+            window.location.href = `/html/Admin/Gestion_productos.html?id=${id}`;
         }
 
         function initMenu() {

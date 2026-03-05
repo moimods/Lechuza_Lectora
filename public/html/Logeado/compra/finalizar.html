@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Validación de Seguridad inicial
     if (!userId || cart.length === 0) {
         alert("Sesión expirada o carrito vacío.");
-        window.location.href = '../../../index.html';
+        window.location.href = '/index.html';
         return;
     }
 
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await fetch('http://localhost:3000/api/pedidos/crear', {
+            const response = await fetch('/api/ventas/registrar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(ventaPayload)
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function irAPerfil() {
-    window.location.href = '../../perfil/mis_pedidos.html';
+    window.location.href = '/html/Logeado/Mis_pedidos.html';
 }
 </script>
 </body>

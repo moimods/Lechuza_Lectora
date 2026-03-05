@@ -115,8 +115,8 @@ document.getElementById('adminLoginForm').addEventListener('submit', async (e) =
 
                 alert("🔓 Acceso administrativo concedido. Bienvenido, " + data.user.nombre);
                 
-                // Redirigir al panel (ajusta la ruta según tu estructura)
-                window.location.href = 'Panel_Administrador.html'; 
+                // Redirigir al panel admin real
+                window.location.href = '/html/Admin/panel_de_admin.html'; 
 
             } else {
                 // Si el usuario existe pero es un cliente normal

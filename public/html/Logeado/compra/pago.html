@@ -146,12 +146,12 @@
             // Validamos que haya una dirección guardada del paso anterior
             if (!localStorage.getItem('id_direccion_pedido')) {
                 alert("Por favor, selecciona una dirección de envío primero.");
-                window.location.href = "/compra/domicilio"; // Ajusta a tu ruta real
+                window.location.href = "/html/Logeado/compra/domicilio.html";
                 return;
             }
             
             // Redirigir al paso 4 (Confirmar)
-            window.location.href = "Confirmar.html"; // Ajusta el nombre de tu archivo final
+            window.location.href = "/html/Logeado/compra/Confirmar_Compra.html";
         }
     </script>
 </body>

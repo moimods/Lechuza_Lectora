@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Procesando Pedido - La Lechuza Lectora</title>
-    <link rel="icon" type="image/png" href="../../../Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
 
     <style>
@@ -144,7 +144,7 @@
                     text.innerText = "Estamos imprimiendo tu recibo...";
                     
                     setTimeout(() => {
-                        window.location.href = "Exito.html"; 
+                        window.location.href = "/html/Logeado/compra/Exito.html";
                     }, 2500); // Damos tiempo a la animación para que se vea bien
                 } else {
                     throw new Error(result.error || "Error en el servidor");

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Información Personal - La Lechuza Lectora</title>
-    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
+    <link rel="icon" type="image/x-icon" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <style>
@@ -82,25 +82,25 @@
 <body class="form-page">
     
     <header class="navbar detail-navbar">
-        <div class="logo-container" onclick="window.location.href='Catalogo_Logeado.html'" style="cursor:pointer;">
+        <div class="logo-container" onclick="window.location.href='/html/Logeado/Catalogo_Logeado.html'" style="cursor:pointer;">
             <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
         <nav class="nav-links">
-            <a href="Acerca_de.html">Acerca de</a>
-            <a href="Contacto.html">Contacto</a>
-            <a href="Ayuda.html">Ayuda</a>
-            <a href="Catalogo_Logeado.html">Catálogo</a>
+            <a href="/html/Logeado/Acerca%20de.html">Acerca de</a>
+            <a href="/html/Logeado/Contacto.html">Contacto</a>
+            <a href="/html/Logeado/Ayuda.html">Ayuda</a>
+            <a href="/html/Logeado/Catalogo_Logeado.html">Catálogo</a>
         </nav>
         
         <div class="auth-actions user-actions">
-            <button class="icon-button" onclick="window.location.href='perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+            <button class="icon-button" onclick="window.location.href='/html/Logeado/perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
             <div class="avatar-dropdown-container" style="position: relative;">
                 <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn">
                 <div class="dropdown-menu" id="avatar-dropdown">
-                    <a href="perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
-                    <a href="../../index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    <a href="/html/Logeado/perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
+                    <a href="/index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
@@ -143,7 +143,7 @@
                 </section>
 
                 <div style="text-align: right; margin-top: 30px; border-top: 1px solid rgba(93, 64, 55, 0.1); padding-top: 25px;">
-                    <button class="btn-update" onclick="window.location.href='Editar_Perfil.html'" style="background: #5d4037; color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px;">
+                    <button class="btn-update" onclick="window.location.href='/html/Logeado/Editar_Perfil.html'" style="background: #5d4037; color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px;">
                         <i class="fas fa-user-edit"></i> Actualizar mis datos
                     </button>
                 </div>
