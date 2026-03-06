@@ -15,17 +15,16 @@ async function iniciarServidor() {
       process.exit(1);
     }
 
-    // Iniciar servidor
     app.listen(PORT, () => {
       console.log(`
-╔════════════════════════════════════════════════════════════╗
-║     🦉 LA LECHUZA LECTORA - Backend Iniciado              ║
-╠════════════════════════════════════════════════════════════╣
-║ API URL:    http://localhost:${PORT}/api                  ║
-║ Ambiente:   ${process.env.NODE_ENV || "development"}     ║
-║ BD:         ${process.env.DB_NAME || "db_lechuza"}        ║
-║ JWT Secret: ${process.env.JWT_SECRET ? "✅ Configurado" : "⚠️ NO CONFIGURADO"}           ║
-╚════════════════════════════════════════════════════════════╝
+
+LA LECHUZA LECTORA 
+
+ API URL:    http://localhost:${PORT}/api                  
+ Ambiente:   ${process.env.NODE_ENV || "development"}     
+ BD:         ${process.env.DB_NAME || "db_lechuza"}        
+ JWT Secret: ${process.env.JWT_SECRET ? "Configurado" : "NO CONFIGURADO"} 
+
       `);
     });
   } catch (error) {

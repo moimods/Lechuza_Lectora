@@ -4,8 +4,6 @@
 -- LIMPIEZA DE TABLAS
 -- =========================================
 
-DROP TABLE IF EXISTS order_items CASCADE;
-DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS detalles_ventas CASCADE;
 DROP TABLE IF EXISTS ventas CASCADE;
 DROP TABLE IF EXISTS productos CASCADE;
@@ -131,33 +129,6 @@ CREATE TABLE detalles_ventas (
 
 
 -- =========================================
--- TABLAS COMPATIBLES CON payments.controller
--- =========================================
-
-CREATE TABLE orders (
-    id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    total DECIMAL(10,2),
-    status VARCHAR(50) DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (user_id) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
-);
-
-
-CREATE TABLE order_items (
-    id SERIAL PRIMARY KEY,
-    order_id INT NOT NULL,
-    book_id INT NOT NULL,
-    quantity INT,
-    price DECIMAL(10,2),
-
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-    FOREIGN KEY (book_id) REFERENCES productos(id_producto) ON DELETE CASCADE
-);
-
-
--- =========================================
 -- INSERTAR CATEGORIAS
 -- =========================================
 
@@ -178,52 +149,52 @@ VALUES
 
 ('Harry Potter y la Piedra Filosofal','J.K. Rowling',350,10,
 (SELECT id_categoria FROM categorias WHERE nombre='Fantasía'),
-'/Imagenes/Libros/1.jpg',
+'/Imagenes/Libro1.png',
 'El inicio de la saga del joven mago Harry Potter'),
 
 ('Drácula','Bram Stoker',280,8,
 (SELECT id_categoria FROM categorias WHERE nombre='Terror'),
-'/Imagenes/Libros/2.jpg',
+'/Imagenes/Libro2.png',
 'Clásico del terror gótico'),
 
 ('Orgullo y Prejuicio','Jane Austen',300,5,
 (SELECT id_categoria FROM categorias WHERE nombre='Clásicos'),
-'/Imagenes/Libros/3.jpg',
+'/Imagenes/Libro3.png',
 'Clásico romántico'),
 
 ('El Resplandor','Stephen King',350,6,
 (SELECT id_categoria FROM categorias WHERE nombre='Terror'),
-'/Imagenes/Libros/4.jpg',
+'/Imagenes/Libro4.png',
 'Terror psicológico en el hotel Overlook'),
 
 ('Cien Años de Soledad','Gabriel García Márquez',420,7,
 (SELECT id_categoria FROM categorias WHERE nombre='Clásicos'),
-'/Imagenes/Libros/5.jpg',
+'/Imagenes/Libro5.png',
 'Historia de la familia Buendía'),
 
 ('1984','George Orwell',310,9,
 (SELECT id_categoria FROM categorias WHERE nombre='Ciencia Ficción'),
-'/Imagenes/Libros/6.jpg',
+'/Imagenes/Libro6.png',
 'Distopía futurista'),
 
 ('El Hobbit','J.R.R. Tolkien',390,12,
 (SELECT id_categoria FROM categorias WHERE nombre='Fantasía'),
-'/Imagenes/Libros/7.jpg',
+'/Imagenes/Libro7.png',
 'Aventura en la Tierra Media'),
 
 ('Frankenstein','Mary Shelley',260,6,
 (SELECT id_categoria FROM categorias WHERE nombre='Terror'),
-'/Imagenes/Libros/8.jpg',
+'/Imagenes/Libro8.png',
 'El científico y su criatura'),
 
 ('Don Quijote de la Mancha','Miguel de Cervantes',450,4,
 (SELECT id_categoria FROM categorias WHERE nombre='Clásicos'),
-'/Imagenes/Libros/9.jpg',
+'/Imagenes/Libro1.png',
 'El caballero de la triste figura'),
 
 ('Fahrenheit 451','Ray Bradbury',295,8,
 (SELECT id_categoria FROM categorias WHERE nombre='Ciencia Ficción'),
-'/Imagenes/Libros/10.jpg',
+'/Imagenes/Libro2.png',
 'Una sociedad donde los libros son prohibidos');
 
 
@@ -238,14 +209,14 @@ VALUES
 (
 'Moi Cliente',
 'moiram@ejemplo.com',
-'$2b$10$sEgVLwEqRkl8C29Ej9zviuQ3BRjopSNlNoYcfqAxRcb/LRqztnRTC',
+'$2b$10$6ylnqMiCf89BTGgyX.tO0uhyDn3p/BU3dh2wErjW9O2AZ4e48CGj.',
 '1234567890',
 'cliente'
 ),
 (
 'Moi Admin',
 'admin@lechuza.com',
-'$2b$10$sEgVLwEqRkl8C29Ej9zviuQ3BRjopSNlNoYcfqAxRcb/LRqztnRTC',
+'$2b$10$6ylnqMiCf89BTGgyX.tO0uhyDn3p/BU3dh2wErjW9O2AZ4e48CGj.',
 '9999999999',
 'admin'
 );

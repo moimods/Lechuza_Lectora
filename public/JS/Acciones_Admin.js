@@ -45,14 +45,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ✅ FUNCIÓN MEJORADA CON ENDPOINTS CORRECTOS
 async function cargarEstadisticas() {
     try {
-        // Obtener estadísticas del admin
-        const response = await fetch('/api/admin/estadisticas');
-        
+        // Obtener estadísticas del admin (requiere JWT)
+        const token = localStorage.getItem('laLechuza_jwt_token');
+        const response = await fetch('/api/admin/estadisticas', {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            }
+        });
+
         if (!response.ok) {
             throw new Error('Error al cargar estadísticas');
         }
 
-        const stats = await response.json();
+        const raw = await response.json();
+        const stats = raw.data || raw;
 
         // Actualizar elementos DOM
         const stockEl = document.getElementById('count-stock');
@@ -60,17 +67,22 @@ async function cargarEstadisticas() {
         const pedidosEl = document.getElementById('count-pedidos');
         const ingresosEl = document.getElementById('count-ingresos');
 
-        if (stockEl && stats.stock) {
-            stockEl.innerText = `${stats.stock} unidades`;
+        const totalProductos = stats?.productos?.total_productos ?? 0;
+        const totalVentas = stats?.ventas?.total_ventas ?? 0;
+        const totalIngresos = stats?.ventas?.total_ingresos ?? 0;
+        const totalUsuarios = stats?.usuarios?.total_usuarios ?? 0;
+
+        if (stockEl) {
+            stockEl.innerText = `${totalProductos} unidades`;
         }
-        if (librosEl && stats.totalLibros) {
-            librosEl.innerText = `${stats.totalLibros} títulos`;
+        if (librosEl) {
+            librosEl.innerText = `${totalProductos} títulos`;
         }
-        if (pedidosEl && stats.totalPedidos) {
-            pedidosEl.innerText = `${stats.totalPedidos} pedidos`;
+        if (pedidosEl) {
+            pedidosEl.innerText = `${totalVentas} pedidos`;
         }
-        if (ingresosEl && stats.ingresosTotales) {
-            ingresosEl.innerText = `$${parseFloat(stats.ingresosTotales).toFixed(2)}`;
+        if (ingresosEl) {
+            ingresosEl.innerText = `$${parseFloat(totalIngresos || 0).toFixed(2)} | ${totalUsuarios} clientes`;
         }
 
     } catch (error) {

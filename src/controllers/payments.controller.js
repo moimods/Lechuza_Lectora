@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 const { mpClient, Preference } = require("../config/mercadopago");
+const { success, error } = require("../utils/response");
 
 async function checkoutMercadoPago(req, res, next) {
   const client = await pool.connect();
@@ -30,24 +31,33 @@ async function checkoutMercadoPago(req, res, next) {
         }))
       : [];
 
+    if (normalizedItems.length === 0) {
+      return error(res, "El checkout requiere al menos un item", 400);
+    }
+
+    const invalidItem = normalizedItems.find((item) => !item.id || item.qty <= 0 || item.price < 0);
+    if (invalidItem) {
+      return error(res, "Hay items inválidos en el checkout", 400);
+    }
+
     const orderTotal = normalizedItems.reduce((acc, item) => acc + (item.qty * item.price), 0);
 
     await client.query("BEGIN");
 
-    const orderResult = await client.query(
-      `INSERT INTO orders(user_id, total, status)
-       VALUES ($1, $2, 'pending')
-       RETURNING id`,
+    const ventaResult = await client.query(
+      `INSERT INTO ventas(id_usuario, total, estado)
+       VALUES ($1, $2, 'pendiente')
+       RETURNING id_venta`,
       [authUserId, orderTotal]
     );
 
-    const orderId = orderResult.rows[0].id;
+    const ventaId = ventaResult.rows[0].id_venta;
 
     for (const item of normalizedItems) {
       await client.query(
-        `INSERT INTO order_items (order_id, book_id, quantity, price)
+        `INSERT INTO detalles_ventas (id_venta, id_producto, cantidad, precio_unitario)
          VALUES ($1, $2, $3, $4)`,
-        [orderId, item.id, item.qty, item.price]
+        [ventaId, item.id, item.qty, item.price]
       );
     }
 
@@ -70,10 +80,10 @@ async function checkoutMercadoPago(req, res, next) {
 
     await client.query("COMMIT");
 
-    return res.json({
-      success: true,
-      init_point: preference.init_point
-    });
+    return success(res, {
+      init_point: preference.init_point,
+      id_venta: ventaId
+    }, "Checkout MercadoPago generado", 200);
   } catch (error) {
     await client.query("ROLLBACK");
     next(error);
@@ -83,10 +93,7 @@ async function checkoutMercadoPago(req, res, next) {
 }
 
 async function checkoutPaypal(req, res) {
-  return res.status(404).json({
-    success: false,
-    error: "PayPal no disponible actualmente"
-  });
+  return error(res, "PayPal no disponible actualmente", 404);
 }
 
 module.exports = {
