@@ -24,6 +24,16 @@ async function obtenerCategorias(req, res, next) {
   }
 }
 
+async function obtenerProducto(req, res, next) {
+  try {
+    const { id } = req.params;
+    const producto = await productosService.obtenerPorId(id);
+    return success(res, producto, null, 200);
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function crearProducto(req, res, next) {
   try {
     const { titulo, autor, precio, stock, categoria, id_categoria, imagen_url, descripcion } = req.body;
@@ -68,6 +78,7 @@ async function eliminarProducto(req, res, next) {
 
 module.exports = {
   obtenerProductos,
+  obtenerProducto,
   obtenerCategorias,
   crearProducto,
   actualizarProducto,

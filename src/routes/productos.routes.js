@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   obtenerProductos,
+  obtenerProducto,
   obtenerCategorias,
   crearProducto,
   actualizarProducto,
@@ -13,6 +14,7 @@ const router = express.Router();
 // Rutas públicas
 router.get("/categorias", obtenerCategorias);
 router.get("/", obtenerProductos);
+router.get("/:id", obtenerProducto);
 
 // Rutas protegidas (admin)
 router.post("/", verificarAuth, verificarAdmin, crearProducto);

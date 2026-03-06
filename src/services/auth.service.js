@@ -7,7 +7,7 @@ const usuariosService = require("./usuarios.service");
 const { UnauthorizedError, ValidationError } = require("../utils/errors");
 
 const JWT_SECRET = process.env.JWT_SECRET || "tu_clave_secreta_super_segura_12345";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "24h";
+const JWT_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES || process.env.JWT_EXPIRES || "24h";
 
 /**
  * Generar JWT token

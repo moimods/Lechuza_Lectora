@@ -60,6 +60,22 @@ async function obtenerVentasUsuario(req, res, next) {
 }
 
 /**
+ * Obtener todas las ventas (admin)
+ */
+async function obtenerVentas(req, res, next) {
+  try {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+
+    const resultado = await ventasService.obtenerTodas(page, limit);
+
+    return paginated(res, resultado.data, resultado.pagination, null, 200);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * Actualizar estado de venta (admin)
  */
 async function actualizarEstado(req, res, next) {
@@ -95,6 +111,7 @@ async function obtenerEstadisticas(req, res, next) {
 module.exports = {
   registrarVenta,
   obtenerVenta,
+  obtenerVentas,
   obtenerVentasUsuario,
   actualizarEstado,
   obtenerEstadisticas

@@ -32,16 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log("Iniciando destrucción de sesión...");
 
-        // A. Limpieza en el CLIENTE (Navegador)
-        // Borramos TODO: IDs, Nombres, Carrito, Tokens
-        localStorage.clear(); 
-        sessionStorage.clear();
-        console.log("Limpieza de LocalStorage completada.");
+        // Guardar token antes de limpiar storage para poder notificar al backend
+        const token = localStorage.getItem('laLechuza_jwt_token');
 
         try {
             // B. Limpieza en el SERVIDOR (Node.js)
             // Avisamos al servidor para que borre la sesión en la BD o cookies
-            const token = localStorage.getItem('laLechuza_jwt_token');
             const response = await fetch(API_LOGOUT_ENDPOINT, {
                 method: 'POST',
                 headers: {
@@ -57,6 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Si el servidor está apagado o falla, igual redirigimos
             console.warn("No se pudo contactar al servidor para el logout, pero el cliente fue limpiado.");
         }
+
+        // A. Limpieza en el CLIENTE (Navegador)
+        // Borramos TODO: IDs, Nombres, Carrito, Tokens
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log("Limpieza de LocalStorage completada.");
 
         // C. REDIRECCIÓN SEGURA
         // Usamos replace para que no puedan volver atrás con el historial
@@ -76,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (event) => {
         if (dropdownMenu && dropdownMenu.style.display === 'block') {
             // Si el clic NO fue en el avatar ni en el menú mismo...
-            if (!avatarButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            if (avatarButton && !avatarButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
                 dropdownMenu.style.display = 'none';
                 console.log("Menú cerrado por clic externo.");
             }

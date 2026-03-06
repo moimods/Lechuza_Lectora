@@ -6,7 +6,7 @@
 // =============================
 // CONFIGURACIÓN BASE
 // =============================
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || "http://localhost:3000/api";
 const TOKEN_KEY = "laLechuza_jwt_token";
 
 let csrfToken = null;

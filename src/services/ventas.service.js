@@ -150,6 +150,46 @@ async function obtenerPorUsuario(idUsuario, page = 1, limit = 10) {
 }
 
 /**
+ * Obtener todas las ventas (admin)
+ */
+async function obtenerTodas(page = 1, limit = 10) {
+  page = Math.max(1, Number(page));
+  limit = Math.max(1, Number(limit));
+  const offset = (page - 1) * limit;
+
+  const totalResult = await pool.query("SELECT COUNT(*)::int AS total FROM ventas");
+  const total = totalResult.rows[0].total;
+
+  const ventasResult = await pool.query(
+    `SELECT
+      v.id_venta,
+      v.id_usuario,
+      u.nombre_completo,
+      u.email,
+      v.total,
+      v.estado,
+      v.fecha_venta
+     FROM ventas v
+     JOIN usuarios u ON u.id_usuario = v.id_usuario
+     ORDER BY v.fecha_venta DESC
+     LIMIT $1 OFFSET $2`,
+    [limit, offset]
+  );
+
+  return {
+    data: ventasResult.rows,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      hasNext: page * limit < total,
+      hasPrev: page > 1
+    }
+  };
+}
+
+/**
  * Actualizar estado de venta
  */
 async function actualizarEstado(idVenta, nuevoEstado) {
@@ -204,6 +244,7 @@ async function obtenerEstadisticas() {
 module.exports = {
   registrarVenta,
   obtenerPorId,
+  obtenerTodas,
   obtenerPorUsuario,
   actualizarEstado,
   obtenerEstadisticas

@@ -26,16 +26,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             switch (moduleName) {
                 case "Reporte Ventas":
-                    window.location.href = "/admin/reporte-ventas";
+                    window.location.href = "/html/Admin/Reporte_de_ventas.html";
                     break;
                 case "Inventario":
-                    window.location.href = "/admin/inventario";
+                    window.location.href = "/html/Admin/Gestion_de_inventario.html";
                     break;
                 case "Pedidos Clientes":
-                    window.location.href = "/admin/reporte-compras";
+                    window.location.href = "/html/Admin/Reporte_de_compras.html";
                     break;
                 case "Nuevo Producto":
-                    window.location.href = "/admin/nuevo-producto";
+                    window.location.href = "/html/Admin/Gestion_productos.html";
                     break;
             }
         });

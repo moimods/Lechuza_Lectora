@@ -20,15 +20,15 @@ async function estadisticas(req, res, next) {
  */
 async function pedidos(req, res, next) {
   try {
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 20;
+    const pageRaw = req.query.page || 1;
+    const limitRaw = req.query.limit || 20;
 
     // Como no tenemos un método directo para obtener todos los pedidos,
     // podemos usar una query personalizada
     const pool = require("../config/db");
 
-    page = Math.max(1, Number(page));
-    limit = Math.max(1, Number(limit));
+    const page = Math.max(1, Number(pageRaw));
+    const limit = Math.max(1, Number(limitRaw));
     const offset = (page - 1) * limit;
 
     const totalResult = await pool.query("SELECT COUNT(*)::int AS total FROM ventas");

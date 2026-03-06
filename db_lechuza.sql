@@ -4,6 +4,8 @@
 -- LIMPIEZA DE TABLAS
 -- =========================================
 
+DROP TABLE IF EXISTS order_items CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS detalles_ventas CASCADE;
 DROP TABLE IF EXISTS ventas CASCADE;
 DROP TABLE IF EXISTS productos CASCADE;
@@ -129,6 +131,33 @@ CREATE TABLE detalles_ventas (
 
 
 -- =========================================
+-- TABLAS COMPATIBLES CON payments.controller
+-- =========================================
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    total DECIMAL(10,2),
+    status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INT NOT NULL,
+    book_id INT NOT NULL,
+    quantity INT,
+    price DECIMAL(10,2),
+
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES productos(id_producto) ON DELETE CASCADE
+);
+
+
+-- =========================================
 -- INSERTAR CATEGORIAS
 -- =========================================
 
@@ -142,7 +171,6 @@ INSERT INTO categorias (nombre, descripcion) VALUES
 -- =========================================
 -- INSERTAR LIBROS
 -- =========================================
-
 INSERT INTO productos
 (titulo,autor,precio,stock,id_categoria,imagen_url,descripcion)
 VALUES
@@ -209,14 +237,14 @@ VALUES
 (
 'Moi Cliente',
 'moiram@ejemplo.com',
-'$2b$10$6ylnqMiCf89BTGgyX.tO0uhyDn3p/BU3dh2wErjW9O2AZ4e48CGj.',
+'$2b$10$BSGjAnq3eL1nD/R7dch/2.zyCRCGB.Ns6Oi9Z0M/xOPfkuA2utoEu',
 '1234567890',
 'cliente'
 ),
 (
 'Moi Admin',
 'admin@lechuza.com',
-'$2b$10$6ylnqMiCf89BTGgyX.tO0uhyDn3p/BU3dh2wErjW9O2AZ4e48CGj.',
+'$2b$10$BSGjAnq3eL1nD/R7dch/2.zyCRCGB.Ns6Oi9Z0M/xOPfkuA2utoEu',
 '9999999999',
 'admin'
 );
