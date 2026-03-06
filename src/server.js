@@ -20,6 +20,7 @@ async function iniciarServidor() {
 
 LA LECHUZA LECTORA 
 
+ WEB URL:    http://localhost:${PORT}/                     
  API URL:    http://localhost:${PORT}/api                  
  Ambiente:   ${process.env.NODE_ENV || "development"}     
  BD:         ${process.env.DB_NAME || "db_lechuza"}        

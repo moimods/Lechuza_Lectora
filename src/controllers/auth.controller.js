@@ -58,8 +58,9 @@ async function actualizarPassword(req, res, next) {
   try {
     const { passwordActual, passwordNueva, passwordConfirm } = req.body;
 
-    if (passwordNueva !== passwordConfirm) {
-      return error(res, "Las contraseñas no coinciden", 400);
+    const { isValid, errors } = validatePasswordInput(passwordActual, passwordNueva, passwordConfirm);
+    if (!isValid) {
+      return error(res, errors.join(", "), 400);
     }
 
     await usuariosService.actualizarPassword(req.user.id, passwordActual, passwordNueva);

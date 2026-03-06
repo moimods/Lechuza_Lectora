@@ -10,12 +10,66 @@
   <main class="main-content" style="padding:40px;max-width:900px;margin:0 auto;">
     <h1 style="color:#5d4037;">Seguridad y Privacidad</h1>
     <p>Protegemos tus datos y tus transacciones con controles de seguridad.</p>
-    <ul style="line-height:1.8;">
-      <li>Cambia tu contraseña periódicamente.</li>
-      <li>No compartas tu sesión ni códigos de verificación.</li>
-      <li>Si detectas actividad sospechosa, contáctanos inmediatamente.</li>
-    </ul>
+
+    <section style="background:#fff;padding:16px;border-radius:10px;margin-bottom:16px;">
+      <h2 style="color:#5d4037;">Controles implementados en el proyecto</h2>
+      <ul style="line-height:1.8;">
+        <li>Autenticación con JWT y expiración de sesión.</li>
+        <li>Hash de contraseñas con bcrypt (no se guardan en texto plano).</li>
+        <li>Validaciones de entrada en backend y frontend.</li>
+        <li>Protección de rutas por rol (cliente y administrador).</li>
+        <li>Manejo centralizado de errores para evitar fuga de datos sensibles.</li>
+      </ul>
+    </section>
+
+    <section style="background:#f4ece2;padding:16px;border-radius:10px;margin-bottom:16px;">
+      <h2 style="color:#5d4037;">Estado de tu sesión</h2>
+      <div id="security-session-state" style="font-weight:bold;color:#5d4037;"></div>
+      <div id="security-user-state" style="margin-top:8px;color:#6d4c41;"></div>
+      <button id="btn-clear-local-session" class="btn-primary" style="margin-top:12px;">Cerrar sesión en este dispositivo</button>
+    </section>
+
+    <section style="background:#fff;padding:16px;border-radius:10px;">
+      <h2 style="color:#5d4037;">Buenas prácticas de privacidad</h2>
+      <ul style="line-height:1.8;">
+        <li>Usa contraseñas únicas y no las compartas.</li>
+        <li>Cierra sesión al usar equipos compartidos.</li>
+        <li>Revisa tus pedidos y métodos de pago periódicamente.</li>
+        <li>Si detectas actividad sospechosa, repórtala desde Contacto.</li>
+      </ul>
+    </section>
     <a href="/html/Logeado/perfil.html" class="btn-primary" style="display:inline-block;margin-top:20px;">Ir a mi perfil</a>
   </main>
+  <script>
+    const token = localStorage.getItem("laLechuza_jwt_token");
+    const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+
+    const sessionState = document.getElementById("security-session-state");
+    const userState = document.getElementById("security-user-state");
+
+    if (token) {
+      sessionState.textContent = "Sesion activa: protegida por token JWT.";
+    } else {
+      sessionState.textContent = "Sesion no activa: inicia sesion para reforzar controles personalizados.";
+    }
+
+    if (usuario) {
+      userState.textContent = `Usuario actual: ${usuario.nombre_completo || usuario.nombre || "Usuario"} (${usuario.rol || "cliente"}).`;
+    } else {
+      userState.textContent = "No hay un usuario autenticado en este navegador.";
+    }
+
+    document.getElementById("btn-clear-local-session").addEventListener("click", () => {
+      localStorage.removeItem("laLechuza_jwt_token");
+      localStorage.removeItem("usuario");
+      localStorage.removeItem("usuario_logeado");
+      localStorage.removeItem("usuarioCompleto");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userRole");
+      alert("Sesion local cerrada correctamente.");
+      window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
+    });
+  </script>
 </body>
 </html>

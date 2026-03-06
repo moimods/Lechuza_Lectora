@@ -81,34 +81,8 @@
             <h1 style="color: #ffffff; text-align: center; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Mis Pedidos</h1>
 
             <div class="orders-container" style="max-width: 900px; margin: 0 auto; background: rgba(240, 231, 203, 0.95); padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                
-                <div class="order-card">
-                    <div class="order-info">
-                        <h3>Pedido #LL-9402</h3>
-                        <p><i class="fa-solid fa-calendar-days"></i> Realizado el: 24 de Feb, 2026</p>
-                        <p><i class="fa-solid fa-box"></i> 3 libros: <em>Drácula, El Aleph...</em></p>
-                    </div>
-                    <div class="order-actions">
-                        <span class="order-status status-shipped">En Camino</span>
-                        <div class="order-price">$850.00 MXN</div>
-                        <button style="background: none; border: 1px solid #5d4037; color: #5d4037; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-left: 10px;">Ver detalle</button>
-                    </div>
-                </div>
-
-                <div class="order-card">
-                    <div class="order-info">
-                        <h3>Pedido #LL-8120</h3>
-                        <p><i class="fa-solid fa-calendar-days"></i> Realizado el: 10 de Ene, 2026</p>
-                        <p><i class="fa-solid fa-box"></i> 1 libro: <em>Cien años de soledad</em></p>
-                    </div>
-                    <div class="order-actions">
-                        <span class="order-status status-delivered">Entregado</span>
-                        <div class="order-price">$320.00 MXN</div>
-                        <button style="background: none; border: 1px solid #5d4037; color: #5d4037; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-left: 10px;">Ver detalle</button>
-                    </div>
-                </div>
-
-                <p style="text-align: center; color: #5d4037; font-size: 0.9rem; margin-top: 30px; opacity: 0.7;">Mostrando los últimos pedidos de los últimos 6 meses.</p>
+                <div id="orders-list"></div>
+                <p id="orders-summary" style="text-align: center; color: #5d4037; font-size: 0.9rem; margin-top: 30px; opacity: 0.7;"></p>
             </div>
         </div>
     </main>
@@ -117,6 +91,7 @@
         © 2026 La Lechuza Lectora ©
     </footer>
 
+    <script src="/JS/api.js"></script>
     <script>
         const avatarBtn = document.getElementById('avatar-btn');
         const dropdown = document.getElementById('avatar-dropdown');
@@ -127,6 +102,70 @@
         });
 
         window.addEventListener('click', () => dropdown.classList.remove('show'));
+
+        function formatDate(dateRaw) {
+            const date = new Date(dateRaw);
+            if (Number.isNaN(date.getTime())) return "Fecha no disponible";
+            return date.toLocaleDateString("es-MX", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            });
+        }
+
+        function statusClass(estado) {
+            const key = String(estado || "").toLowerCase();
+            if (key === "entregado" || key === "completado") return "status-delivered";
+            if (key === "enviado") return "status-shipped";
+            return "status-pending";
+        }
+
+        function statusLabel(estado) {
+            const key = String(estado || "").toLowerCase();
+            if (key === "completado") return "Completado";
+            if (key === "enviado") return "En camino";
+            if (key === "entregado") return "Entregado";
+            if (key === "cancelado") return "Cancelado";
+            return "Pendiente";
+        }
+
+        async function cargarPedidos() {
+            const list = document.getElementById("orders-list");
+            const summary = document.getElementById("orders-summary");
+
+            try {
+                const response = await API.get('/ventas/usuario?page=1&limit=50');
+                const pedidos = Array.isArray(response.data) ? response.data : [];
+
+                if (pedidos.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;color:#5d4037;">Aún no tienes pedidos registrados.</p>';
+                    summary.textContent = "Realiza tu primera compra en el catálogo para verla aquí.";
+                    return;
+                }
+
+                list.innerHTML = pedidos.map((p) => `
+                    <div class="order-card">
+                        <div class="order-info">
+                            <h3>Pedido #LL-${p.id_venta}</h3>
+                            <p><i class="fa-solid fa-calendar-days"></i> Realizado el: ${formatDate(p.fecha_venta)}</p>
+                            <p><i class="fa-solid fa-box"></i> Estado actual del pedido.</p>
+                        </div>
+                        <div class="order-actions">
+                            <span class="order-status ${statusClass(p.estado)}">${statusLabel(p.estado)}</span>
+                            <div class="order-price">$${Number(p.total || 0).toFixed(2)} MXN</div>
+                            <button onclick="window.location.href='/html/Ayuda/mis-compras.html'" style="background: none; border: 1px solid #5d4037; color: #5d4037; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-left: 10px;">Ver detalle</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                summary.textContent = `Mostrando ${pedidos.length} pedido(s) de tu cuenta.`;
+            } catch (err) {
+                list.innerHTML = '<p style="text-align:center;color:#b00020;">No se pudieron cargar los pedidos. Inicia sesión de nuevo.</p>';
+                summary.textContent = "";
+            }
+        }
+
+        cargarPedidos();
     </script>
 </body>
 </html>

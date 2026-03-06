@@ -5,7 +5,8 @@
 const usuariosService = require("../services/usuarios.service");
 const direccionesService = require("../services/direcciones.service");
 const metodosPagoService = require("../services/metodos_pago.service");
-const { success } = require("../utils/response");
+const { success, error } = require("../utils/response");
+const { validateAddressInput } = require("../utils/validators");
 
 /**
  * Obtener perfil del usuario actual
@@ -49,6 +50,12 @@ async function obtenerDirecciones(req, res, next) {
 
 async function crearDireccion(req, res, next) {
   try {
+    const { calle_numero, ciudad_estado, codigo_postal } = req.body;
+    const { isValid, errors } = validateAddressInput(calle_numero, ciudad_estado, codigo_postal);
+    if (!isValid) {
+      return error(res, errors.join(", "), 400);
+    }
+
     const direccion = await direccionesService.crear(req.user.id, req.body);
 
     return success(res, direccion, "Dirección creada exitosamente", 201);
@@ -60,6 +67,12 @@ async function crearDireccion(req, res, next) {
 async function actualizarDireccion(req, res, next) {
   try {
     const { id } = req.params;
+
+    const { calle_numero, ciudad_estado, codigo_postal } = req.body;
+    const { isValid, errors } = validateAddressInput(calle_numero, ciudad_estado, codigo_postal, { partial: true });
+    if (!isValid) {
+      return error(res, errors.join(", "), 400);
+    }
 
     const direccion = await direccionesService.actualizar(id, req.user.id, req.body);
 

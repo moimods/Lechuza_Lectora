@@ -15,6 +15,26 @@
     <title>La Lechuza Lectora - Inicio</title>
     <link rel="icon" type="image/png" href="Imagenes/logo.png">
     <link rel="stylesheet" href="Estilos/Estilo1.css">
+        <style>
+            .estado-servidor-badge {
+                position: fixed;
+                right: 14px;
+                bottom: 14px;
+                z-index: 9999;
+                padding: 10px 12px;
+                border-radius: 10px;
+                font-family: Roboto, sans-serif;
+                font-size: 13px;
+                font-weight: 700;
+                color: #fff;
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+                background: #8d6e63;
+            }
+
+            .estado-servidor-badge.estado-ok { background: #2e7d32; }
+            .estado-servidor-badge.estado-warn { background: #8d6e63; }
+            .estado-servidor-badge.estado-error { background: #c62828; }
+        </style>
     
     <script src="JS/Boton_Inicio_Sesion.js" defer></script>
     
@@ -121,5 +141,8 @@
             © Todos los derechos reservados 2026. Diseñado por La Lechuza Lectora ©
         </div>
     </footer>
+
+    <div id="estado-servidor" class="estado-servidor-badge estado-warn">Verificando servidor...</div>
+    <script src="/JS/diagnostico-estado.js" defer></script>
 </body>
 </html>

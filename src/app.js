@@ -8,6 +8,19 @@ const errorHandler = require("./middlewares/error-handler");
 
 const app = express();
 
+app.use((req, res, next) => {
+  const isHtmlRequest = req.method === "GET" && (req.path === "/" || req.path.endsWith(".html"));
+
+  if (isHtmlRequest) {
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+    res.set("Surrogate-Control", "no-store");
+  }
+
+  next();
+});
+
 app.use(cors({
   origin: process.env.CORS_ORIGIN || true,
   credentials: true

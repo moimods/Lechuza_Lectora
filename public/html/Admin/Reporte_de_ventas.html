@@ -98,65 +98,47 @@
         </div>
     </main>
 
+    <script src="/JS/api.js"></script>
     <script>
-        async function inicializarReporte() {
-            let data;
-            
-            try {
-                // Intento de conexión con el backend
-                const respuesta = await fetch('/api/reportes/ventas');
-                if (!respuesta.ok) throw new Error("Endpoint no encontrado, usando datos locales.");
-                data = await respuesta.json();
-            } catch (error) {
-                console.warn(error.message);
-                // DATOS DE PRUEBA (Para que la gráfica funcione mientras creas el endpoint)
-                data = {
-                    resumen: { total_ganancias: 15420.50, total_pedidos: 84, promedio: 183.57 },
-                    top: [
-                        { titulo: "El Quijote", total_vendido: 25 },
-                        { titulo: "Cien Años de Soledad", total_vendido: 18 },
-                        { titulo: "Rayuela", total_vendido: 12 }
-                    ],
-                    grafica: [
-                        { mes: 'Ene', monto: 1200 }, { mes: 'Feb', monto: 1900 },
-                        { mes: 'Mar', monto: 3000 }, { mes: 'Abr', monto: 2500 }
-                    ]
-                };
+        function renderReporte(data) {
+            const resumen = data?.resumen || {};
+            const top = Array.isArray(data?.top) ? data.top : [];
+            const grafica = Array.isArray(data?.grafica) ? data.grafica : [];
+
+            document.getElementById("total-ingresos").innerText = `$${Number(resumen.total_ganancias || 0).toLocaleString()}`;
+            document.getElementById("conteo-ventas").innerText = Number(resumen.total_pedidos || 0);
+            document.getElementById("ticket-promedio").innerText = `$${Number(resumen.promedio || 0).toFixed(2)}`;
+
+            const tbody = document.getElementById("top-libros-body");
+            if (top.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="2">Sin ventas registradas</td></tr>';
+            } else {
+                tbody.innerHTML = top.map((libro) => `
+                    <tr>
+                        <td>${libro.titulo}</td>
+                        <td><strong>${Number(libro.total_vendido || 0)}</strong></td>
+                    </tr>
+                `).join("");
             }
 
-            // 1. Actualizar Tarjetas KPI
-            document.getElementById('total-ingresos').innerText = `$${parseFloat(data.resumen.total_ganancias).toLocaleString()}`;
-            document.getElementById('conteo-ventas').innerText = data.resumen.total_pedidos;
-            document.getElementById('ticket-promedio').innerText = `$${parseFloat(data.resumen.promedio).toFixed(2)}`;
-
-            // 2. Llenar Tabla de Libros Más Vendidos
-            const tbody = document.getElementById('top-libros-body');
-            tbody.innerHTML = data.top.map(l => `
-                <tr>
-                    <td>${l.titulo}</td>
-                    <td><strong>${l.total_vendido}</strong></td>
-                </tr>
-            `).join('');
-
-            // 3. Crear Gráfica de Tendencia
-            const ctx = document.getElementById('ventasChart').getContext('2d');
+            const ctx = document.getElementById("ventasChart").getContext("2d");
             new Chart(ctx, {
-                type: 'line',
+                type: "line",
                 data: {
-                    labels: data.grafica.map(g => g.mes),
+                    labels: grafica.map((g) => g.mes),
                     datasets: [{
-                        label: 'Ventas Mensuales ($)',
-                        data: data.grafica.map(g => g.monto),
-                        borderColor: '#5d4037',
-                        backgroundColor: 'rgba(93, 64, 55, 0.1)',
+                        label: "Ventas Mensuales ($)",
+                        data: grafica.map((g) => Number(g.monto || 0)),
+                        borderColor: "#5d4037",
+                        backgroundColor: "rgba(93, 64, 55, 0.1)",
                         fill: true,
                         tension: 0.4,
                         pointRadius: 5,
-                        pointBackgroundColor: '#5d4037'
+                        pointBackgroundColor: "#5d4037"
                     }]
                 },
-                options: { 
-                    responsive: true, 
+                options: {
+                    responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false }
@@ -166,6 +148,16 @@
                     }
                 }
             });
+        }
+
+        async function inicializarReporte() {
+            try {
+                const data = await API.get("/reportes/ventas");
+                renderReporte(data);
+            } catch (error) {
+                console.error("No se pudo cargar el reporte de ventas:", error);
+                alert("No se pudo cargar el reporte. Verifica tu sesión y vuelve a intentar.");
+            }
         }
 
         window.onload = inicializarReporte;

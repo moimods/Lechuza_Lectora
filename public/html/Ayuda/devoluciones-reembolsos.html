@@ -10,12 +10,123 @@
   <main class="main-content" style="padding:40px;max-width:900px;margin:0 auto;">
     <h1 style="color:#5d4037;">Devoluciones y Reembolsos</h1>
     <p>Si tu producto llegó con daños o no corresponde, puedes solicitar devolución.</p>
-    <ul style="line-height:1.8;">
-      <li>Solicita devolución dentro del plazo de la compra.</li>
-      <li>Incluye número de pedido y motivo de devolución.</li>
-      <li>El reembolso se procesa al método de pago original.</li>
-    </ul>
+    <div style="background:#f4ece2;padding:15px;border-radius:8px;margin-bottom:20px;color:#5d4037;">
+      Las solicitudes se guardan en la sesión activa para seguimiento rápido.
+    </div>
+    <form id="form-devolucion" style="display:grid;gap:12px;background:#fff;padding:16px;border-radius:10px;">
+      <label>
+        Pedido
+        <select id="pedido-select" required style="width:100%;padding:10px;"></select>
+      </label>
+      <label>
+        Motivo
+        <select id="motivo-select" required style="width:100%;padding:10px;">
+          <option value="">Selecciona un motivo</option>
+          <option value="producto_danado">Producto danado</option>
+          <option value="producto_incorrecto">Producto incorrecto</option>
+          <option value="no_recibido">No recibido</option>
+          <option value="otro">Otro</option>
+        </select>
+      </label>
+      <label>
+        Comentarios
+        <textarea id="comentarios" rows="4" placeholder="Describe el problema..." style="width:100%;padding:10px;"></textarea>
+      </label>
+      <button type="submit" class="btn-primary" style="justify-self:start;">Registrar solicitud</button>
+    </form>
+
+    <h2 style="color:#5d4037;margin-top:24px;">Historial de solicitudes</h2>
+    <div id="devoluciones-lista" style="display:grid;gap:10px;"></div>
     <a href="/html/Contacto.html" class="btn-primary" style="display:inline-block;margin-top:20px;">Solicitar soporte</a>
   </main>
+  <script src="/JS/api.js"></script>
+  <script>
+    function getUserKey() {
+      const uid = localStorage.getItem("userId") || "anon";
+      return `devolucionesSesion_${uid}`;
+    }
+
+    function readSolicitudes() {
+      try {
+        return JSON.parse(sessionStorage.getItem(getUserKey()) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveSolicitudes(items) {
+      sessionStorage.setItem(getUserKey(), JSON.stringify(items));
+    }
+
+    function renderSolicitudes() {
+      const lista = document.getElementById("devoluciones-lista");
+      const solicitudes = readSolicitudes();
+
+      if (!solicitudes.length) {
+        lista.innerHTML = '<p style="color:#666;">No hay solicitudes registradas en esta sesión.</p>';
+        return;
+      }
+
+      lista.innerHTML = solicitudes.map((s) => `
+        <article style="background:#fff;padding:12px;border-radius:8px;border-left:4px solid #5d4037;">
+          <strong>Pedido #LL-${s.id_venta}</strong>
+          <div>Motivo: ${s.motivo}</div>
+          <div>Comentarios: ${s.comentarios || "Sin comentarios"}</div>
+          <div style="color:#777;">Fecha: ${new Date(s.createdAt).toLocaleString("es-MX")}</div>
+          <div style="font-weight:bold;color:#5d4037;">Estado: Recibida</div>
+        </article>
+      `).join("");
+    }
+
+    async function cargarPedidos() {
+      const select = document.getElementById("pedido-select");
+      select.innerHTML = '<option value="">Cargando pedidos...</option>';
+
+      try {
+        const response = await API.get('/ventas/usuario?page=1&limit=50');
+        const pedidos = Array.isArray(response.data) ? response.data : [];
+
+        if (!pedidos.length) {
+          select.innerHTML = '<option value="">No hay pedidos disponibles</option>';
+          return;
+        }
+
+        select.innerHTML = '<option value="">Selecciona un pedido</option>' + pedidos.map((p) =>
+          `<option value="${p.id_venta}">#LL-${p.id_venta} | $${Number(p.total || 0).toFixed(2)} | ${String(p.estado || "pendiente")}</option>`
+        ).join("");
+      } catch (error) {
+        select.innerHTML = '<option value="">No se pudieron cargar pedidos</option>';
+      }
+    }
+
+    document.getElementById("form-devolucion").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const idVenta = document.getElementById("pedido-select").value;
+      const motivo = document.getElementById("motivo-select").value;
+      const comentarios = document.getElementById("comentarios").value.trim();
+
+      if (!idVenta || !motivo) {
+        alert("Debes seleccionar pedido y motivo.");
+        return;
+      }
+
+      const solicitudes = readSolicitudes();
+      solicitudes.unshift({
+        id_venta: idVenta,
+        motivo,
+        comentarios,
+        createdAt: new Date().toISOString()
+      });
+      saveSolicitudes(solicitudes);
+
+      e.target.reset();
+      renderSolicitudes();
+      alert("Solicitud de devolucion registrada en tu sesion activa.");
+    });
+
+    cargarPedidos();
+    renderSolicitudes();
+  </script>
 </body>
 </html>

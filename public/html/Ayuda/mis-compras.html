@@ -10,12 +10,59 @@
   <main class="main-content" style="padding:40px;max-width:900px;margin:0 auto;">
     <h1 style="color:#5d4037;">Mis Compras</h1>
     <p>Aquí puedes revisar el estado de tus pedidos, historial de compras y seguimiento.</p>
-    <ul style="line-height:1.8;">
-      <li>Consulta tus pedidos desde <a href="/html/Logeado/Mis_pedidos.html">Mis pedidos</a>.</li>
-      <li>Verifica estado: pendiente, pagado, enviado o entregado.</li>
-      <li>Si hay incidencia, contáctanos desde <a href="/html/Contacto.html">Contacto</a>.</li>
-    </ul>
+    <div id="compras-resumen" style="margin:20px 0;padding:15px;border-radius:8px;background:#f4ece2;color:#5d4037;"></div>
+    <div id="compras-lista" style="display:grid;gap:12px;"></div>
     <a href="/html/Ayuda.html" class="btn-primary" style="display:inline-block;margin-top:20px;">Volver a Ayuda</a>
   </main>
+  <script src="/JS/api.js"></script>
+  <script>
+    function estadoTexto(estado) {
+      const key = String(estado || "").toLowerCase();
+      if (key === "completado") return "Completado";
+      if (key === "enviado") return "En camino";
+      if (key === "entregado") return "Entregado";
+      if (key === "cancelado") return "Cancelado";
+      return "Pendiente";
+    }
+
+    function fechaTexto(raw) {
+      const d = new Date(raw);
+      if (Number.isNaN(d.getTime())) return "Fecha no disponible";
+      return d.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" });
+    }
+
+    async function cargarHistorial() {
+      const resumen = document.getElementById("compras-resumen");
+      const lista = document.getElementById("compras-lista");
+
+      try {
+        const response = await API.get('/ventas/usuario?page=1&limit=50');
+        const compras = Array.isArray(response.data) ? response.data : [];
+
+        if (compras.length === 0) {
+          resumen.textContent = "No hay compras registradas todavía.";
+          lista.innerHTML = "";
+          return;
+        }
+
+        const totalGastado = compras.reduce((acc, c) => acc + Number(c.total || 0), 0);
+        resumen.textContent = `Total de compras: ${compras.length} | Monto acumulado: $${totalGastado.toFixed(2)} MXN`;
+
+        lista.innerHTML = compras.map((c) => `
+          <article style="background:#fff;padding:14px;border-radius:10px;border-left:4px solid #5d4037;">
+            <strong>Pedido #LL-${c.id_venta}</strong>
+            <div style="color:#555;margin-top:6px;">Fecha: ${fechaTexto(c.fecha_venta)}</div>
+            <div style="color:#555;">Estado: ${estadoTexto(c.estado)}</div>
+            <div style="color:#5d4037;font-weight:bold;">Total: $${Number(c.total || 0).toFixed(2)} MXN</div>
+          </article>
+        `).join("");
+      } catch (error) {
+        resumen.textContent = "No se pudo cargar tu historial. Verifica tu sesión.";
+        lista.innerHTML = "";
+      }
+    }
+
+    cargarHistorial();
+  </script>
 </body>
 </html>

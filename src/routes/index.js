@@ -14,7 +14,8 @@ const router = express.Router();
 router.get("/", (req, res) => {
   res.json({
     ok: true,
-    message: "API de La Lechuza Lectora activa"
+    message: "API de La Lechuza Lectora activa",
+    frontend: "http://localhost:3000/"
   });
 });
 

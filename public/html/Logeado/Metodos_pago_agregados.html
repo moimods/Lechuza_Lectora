@@ -80,29 +80,24 @@
             <h1 style="color: #5d4037; margin-bottom: 10px; font-size: 1.6rem;">Método de Pago</h1>
             <p style="color: #777; font-size: 0.9rem; margin-bottom: 30px;">Selecciona tu forma de pago preferida</p>
 
-            <div class="payment-option selected" onclick="selectOption(this)">
-                <div class="icon-box" style="background: #0070ba; color: white; width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-right: 15px; font-size: 1.2rem;">
-                    <i class="fa-brands fa-paypal"></i> 
-                </div>
-                <div style="text-align: left;">
-                    <span style="display: block; font-size: 0.75rem; color: #888; text-transform: uppercase;">PayPal</span>
-                    <p style="margin: 0; font-weight: bold; color: #333;">popeyye23r@gmail.com</p>
-                </div>
-            </div>
+            <div id="payment-method-list"></div>
 
-            <div class="payment-option" onclick="selectOption(this)">
-                <div class="icon-box" style="background: #333; color: white; width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-right: 15px; font-size: 1.2rem;">
-                    <i class="fa-solid fa-credit-card"></i> 
-                </div>
-                <div style="text-align: left;">
-                    <span style="display: block; font-size: 0.75rem; color: #888; text-transform: uppercase;">Tarjeta de Débito/Crédito</span>
-                    <p style="margin: 0; font-weight: bold; color: #333;">•••• 5732</p>
-                </div>
-            </div>
-
-            <button style="background: none; border: 1px dashed #ccc; width: 100%; padding: 10px; border-radius: 10px; color: #888; cursor: pointer; margin-bottom: 25px; font-size: 0.85rem;">
-                <i class="fa-solid fa-plus"></i> Añadir nuevo método
-            </button>
+            <form id="payment-method-form" style="display:grid;gap:10px;margin:15px 0 25px 0;text-align:left;">
+                <label>
+                    Tipo de método
+                    <select id="tipo-metodo" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;">
+                        <option value="paypal">PayPal</option>
+                        <option value="tarjeta">Tarjeta de Débito/Crédito</option>
+                    </select>
+                </label>
+                <label>
+                    Referencia (correo PayPal o ultimos 4 de tarjeta)
+                    <input id="referencia-metodo" type="text" maxlength="60" placeholder="ejemplo@correo.com o 5732" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;">
+                </label>
+                <button type="submit" style="background: none; border: 1px dashed #ccc; width: 100%; padding: 10px; border-radius: 10px; color: #666; cursor: pointer; font-size: 0.85rem;">
+                    <i class="fa-solid fa-plus"></i> Añadir nuevo método
+                </button>
+            </form>
 
             <button class="btn-confirm" onclick="confirmarPago()" style="width: 100%; background: #5d4037; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(93, 64, 55, 0.3);">
                 Confirmar y Pagar
@@ -119,22 +114,106 @@
     </footer>
 
     <script>
-        // Función para cambiar la selección visual
-        function selectOption(element) {
-            // Quitar clase selected a todos
-            document.querySelectorAll('.payment-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            // Añadir al actual
-            element.classList.add('selected');
+        function getSessionKey() {
+            const uid = localStorage.getItem('userId') || 'anon';
+            return `metodosPagoSesion_${uid}`;
         }
 
+        function readMethods() {
+            try {
+                return JSON.parse(sessionStorage.getItem(getSessionKey()) || '[]');
+            } catch {
+                return [];
+            }
+        }
+
+        function saveMethods(methods) {
+            sessionStorage.setItem(getSessionKey(), JSON.stringify(methods));
+        }
+
+        function renderMethods() {
+            const methods = readMethods();
+            const container = document.getElementById('payment-method-list');
+
+            if (!methods.length) {
+                container.innerHTML = '<p style="color:#777;margin-bottom:15px;">No hay métodos guardados en esta sesión.</p>';
+                return;
+            }
+
+            container.innerHTML = methods.map((m, index) => {
+                const selectedClass = m.selected ? 'selected' : '';
+                const icon = m.tipo === 'paypal' ? 'fa-brands fa-paypal' : 'fa-solid fa-credit-card';
+                const bg = m.tipo === 'paypal' ? '#0070ba' : '#333';
+                const title = m.tipo === 'paypal' ? 'PayPal' : 'Tarjeta de Débito/Crédito';
+
+                return `
+                <div class="payment-option ${selectedClass}" onclick="selectOption(${index})">
+                    <div class="icon-box" style="background: ${bg}; color: white; width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-right: 15px; font-size: 1.2rem;">
+                        <i class="${icon}"></i>
+                    </div>
+                    <div style="text-align: left; flex:1;">
+                        <span style="display: block; font-size: 0.75rem; color: #888; text-transform: uppercase;">${title}</span>
+                        <p style="margin: 0; font-weight: bold; color: #333;">${m.referencia}</p>
+                    </div>
+                    <button type="button" onclick="event.stopPropagation(); removeOption(${index})" style="background:none;border:none;color:#a00;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function selectOption(index) {
+            const methods = readMethods().map((m, i) => ({ ...m, selected: i === index }));
+            saveMethods(methods);
+            renderMethods();
+        }
+
+        function removeOption(index) {
+            const methods = readMethods();
+            methods.splice(index, 1);
+            if (methods.length && !methods.some((m) => m.selected)) {
+                methods[0].selected = true;
+            }
+            saveMethods(methods);
+            renderMethods();
+        }
+
+        document.getElementById('payment-method-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const tipo = document.getElementById('tipo-metodo').value;
+            const referencia = document.getElementById('referencia-metodo').value.trim();
+
+            if (!referencia) {
+                alert('Ingresa una referencia valida del metodo.');
+                return;
+            }
+
+            const methods = readMethods();
+            methods.forEach((m) => { m.selected = false; });
+            methods.push({ tipo, referencia, selected: true, createdAt: new Date().toISOString() });
+            saveMethods(methods);
+            e.target.reset();
+            renderMethods();
+        });
+
         function confirmarPago() {
-            const selected = document.querySelector('.payment-option.selected p').innerText;
-            alert("Procesando pago con: " + selected);
-            // Aquí redirigirías a la página de éxito o confirmación final
+            const selected = readMethods().find((m) => m.selected);
+            if (!selected) {
+                alert('Selecciona un metodo de pago guardado en tu sesion.');
+                return;
+            }
+
+            alert(`Metodo seleccionado en sesion activa: ${selected.referencia}. No se realizo ninguna transaccion.`);
             window.location.href = "/html/Logeado/Mis_pedidos.html";
         }
+
+        // Métodos demo por sesión si está vacío
+        if (!readMethods().length) {
+            saveMethods([
+                { tipo: 'paypal', referencia: 'demo@paypal.com', selected: true, createdAt: new Date().toISOString() }
+            ]);
+        }
+
+        renderMethods();
     </script>
 </body>
 </html>

@@ -108,6 +108,27 @@ function validateRegisterInput(nombre_completo, email, password, passwordConfirm
 }
 
 /**
+ * Valida cambio de contraseña
+ */
+function validatePasswordInput(passwordActual, passwordNueva, passwordConfirm) {
+  const errors = [];
+
+  if (!passwordActual || String(passwordActual).trim() === "") {
+    errors.push("Contraseña actual es obligatoria");
+  }
+
+  if (!isValidPassword(passwordNueva)) {
+    errors.push("Contraseña nueva debe tener al menos 8 caracteres");
+  }
+
+  if (passwordNueva !== passwordConfirm) {
+    errors.push("Las contraseñas no coinciden");
+  }
+
+  return { isValid: errors.length === 0, errors };
+}
+
+/**
  * Valida objeto de producto
  */
 function validateProductInput(titulo, precio, stock) {
@@ -131,19 +152,46 @@ function validateProductInput(titulo, precio, stock) {
 /**
  * Valida objeto de dirección
  */
-function validateAddressInput(calle_numero, ciudad_estado, codigo_postal) {
+function validateAddressInput(calle_numero, ciudad_estado, codigo_postal, options = {}) {
   const errors = [];
+  const partial = Boolean(options.partial);
 
-  if (!calle_numero || String(calle_numero).trim() === "") {
-    errors.push("Calle y número son obligatorios");
+  const calle = calle_numero === undefined || calle_numero === null
+    ? ""
+    : String(calle_numero).trim();
+  const ciudadEstado = ciudad_estado === undefined || ciudad_estado === null
+    ? ""
+    : String(ciudad_estado).trim();
+  const cp = codigo_postal === undefined || codigo_postal === null
+    ? ""
+    : String(codigo_postal).trim();
+
+  if (!partial || calle_numero !== undefined) {
+    if (!calle) {
+      errors.push("Calle y número son obligatorios");
+    } else if (calle.length < 5) {
+      errors.push("Calle y número debe tener al menos 5 caracteres");
+    }
   }
 
-  if (!ciudad_estado || String(ciudad_estado).trim() === "") {
-    errors.push("Ciudad/estado es obligatorio");
+  if (!partial || ciudad_estado !== undefined) {
+    if (!ciudadEstado) {
+      errors.push("Ciudad/estado es obligatorio");
+    } else if (ciudadEstado.length < 3) {
+      errors.push("Ciudad/estado debe tener al menos 3 caracteres");
+    }
   }
 
-  if (!codigo_postal || String(codigo_postal).trim() === "") {
-    errors.push("Código postal es obligatorio");
+  if (!partial || codigo_postal !== undefined) {
+    if (!cp) {
+      errors.push("Código postal es obligatorio");
+    } else if (!/^\d{5}$/.test(cp)) {
+      errors.push("Código postal debe tener 5 dígitos");
+    }
+  }
+
+  if (partial && calle_numero === undefined && ciudad_estado === undefined && codigo_postal === undefined) {
+    errors.push("Debes enviar al menos un campo de dirección para actualizar");
   }
 
   return { isValid: errors.length === 0, errors };
@@ -159,6 +207,7 @@ module.exports = {
   isValidUrl,
   validateLoginInput,
   validateRegisterInput,
+  validatePasswordInput,
   validateProductInput,
   validateAddressInput
 };

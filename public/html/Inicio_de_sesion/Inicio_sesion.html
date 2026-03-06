@@ -68,6 +68,12 @@
 <div class="form-card login-card"
 style="max-width:450px;margin:50px auto;background:white;padding:40px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
 
+    <div style="display:flex;justify-content:flex-end;">
+        <button type="button" onclick="window.location.href='../../index.html'" title="Volver al inicio" style="background:none;border:none;color:#5d4037;cursor:pointer;font-size:1.2rem;">
+            <i class="fa-solid fa-house"></i>
+        </button>
+    </div>
+
     <div style="text-align:center;">
         <img src="../../Imagenes/logo.png" class="main-logo" style="width:100px;">
     </div>
@@ -159,6 +165,7 @@ style="text-align:center;padding:20px;color:#5d4037;font-size:.85em;">
 
 </footer>
 
+<script src="/JS/api.js"></script>
 <!-- ================= LOGIN SCRIPT ================= -->
 <script>
 
@@ -176,29 +183,19 @@ document.getElementById('form-login-usuario')
     }
 
     try{
+        const data = await API.login(email, password);
+        const ok = data.ok ?? data.success;
+        const user = data.usuario || data.user || data.data?.usuario || data.data?.user;
 
-        const response = await fetch('/api/login',{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
-
-        const data = await response.json();
-
-        if(data.success){
+        if(ok && user){
 
             // Guardar sesión
-            localStorage.setItem('userId', data.user.id_usuario);
-            localStorage.setItem('userName', data.user.nombre);
-            localStorage.setItem('userRole', data.user.rol);
-            localStorage.setItem('usuarioCompleto', JSON.stringify(data.user));
-            localStorage.setItem('usuario', JSON.stringify(data.user));
-            localStorage.setItem('usuario_logeado', JSON.stringify(data.user));
+            localStorage.setItem('userId', String(user.id_usuario || ''));
+            localStorage.setItem('userName', user.nombre_completo || user.nombre || 'Usuario');
+            localStorage.setItem('userRole', user.rol || 'cliente');
+            localStorage.setItem('usuarioCompleto', JSON.stringify(user));
+            localStorage.setItem('usuario', JSON.stringify(user));
+            localStorage.setItem('usuario_logeado', JSON.stringify(user));
 
             const redirectTo = localStorage.getItem('postLoginRedirect') || '/html/Logeado/Catalogo_Logeado.html';
             localStorage.removeItem('postLoginRedirect');
@@ -217,7 +214,8 @@ document.getElementById('form-login-usuario')
 
 });
 
-</script>
+ </script>
+<script src="/JS/limpiar-cache-formularios.js" defer></script>
 
 </body>
 </html>

@@ -104,6 +104,7 @@
         </div>
     </div>
 
+<script src="/JS/api.js"></script>
 <script>
     // 1. Función para mostrar/ocultar contraseña
     function togglePass(id) {
@@ -153,9 +154,10 @@
         const nombreCompleto = partesNombre.filter(Boolean).join(' ');
 
         const datosUsuario = {
-            nombre: nombreCompleto,
+            nombre_completo: nombreCompleto,
             email: document.getElementById('email').value.trim(),
             password: pass,
+            passwordConfirm: confirm,
             telefono: document.getElementById('telefono').value.trim(),
             domicilio: document.getElementById('domicilio').value.trim(),
             fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
@@ -170,26 +172,21 @@
             btnSubmit.innerText = "Registrando...";
             btnSubmit.disabled = true;
 
-            const response = await fetch('/api/registro', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosUsuario)
-            });
+            const result = await API.post('/auth/registro', datosUsuario);
+            const ok = result.ok ?? result.success;
 
-            const result = await response.json();
-
-            if (response.ok && result.success) {
+            if (ok) {
                 // Mostrar modal de éxito
                 document.getElementById('success-modal').style.display = 'flex';
                 this.reset(); // Limpiar el formulario
             } else {
-                alert("❌ Error: " + (result.message || "Ese correo ya está registrado."));
+                alert("❌ Error: " + (result.error || result.message || "No se pudo completar el registro."));
                 btnSubmit.innerText = originalText;
                 btnSubmit.disabled = false;
             }
         } catch (error) {
             console.error("Error en la petición:", error);
-            alert("⚠️ No pudimos conectar con el servidor de la librería. Intenta más tarde.");
+            alert("⚠️ " + (error.message || "No pudimos conectar con el servidor de la librería. Intenta más tarde."));
             document.querySelector('button[type="submit"]').disabled = false;
         }
     });
@@ -199,5 +196,6 @@
         window.location.href = 'Inicio_sesion.html';
     };
 </script>
+<script src="/JS/limpiar-cache-formularios.js" defer></script>
 </body>
 </html>
