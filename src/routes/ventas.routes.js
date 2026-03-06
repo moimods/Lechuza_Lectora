@@ -1,8 +1,18 @@
 const express = require("express");
-const { registrarVenta } = require("../controllers/ventas.controller");
+const {
+  registrarVenta,
+  obtenerVenta,
+  obtenerVentasUsuario,
+  actualizarEstado
+} = require("../controllers/ventas.controller");
+const { verificarAuth, verificarAdmin } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
-router.post("/registrar", registrarVenta);
+// Rutas protegidas
+router.post("/registrar", verificarAuth, registrarVenta);
+router.get("/usuario", verificarAuth, obtenerVentasUsuario);
+router.get("/:id", verificarAuth, obtenerVenta);
+router.put("/:id/estado", verificarAuth, verificarAdmin, actualizarEstado);
 
 module.exports = router;

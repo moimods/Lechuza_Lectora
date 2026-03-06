@@ -46,39 +46,38 @@ document.addEventListener('DOMContentLoaded', () => {
             return actions.order.capture().then(async function(details) {
                 
                 // Cargar carrito y normalizar datos
-                const cart = JSON.parse(localStorage.getItem('laLechuzaLectoraCart')) || [];
+                const cart = JSON.parse(localStorage.getItem('laLechuza_carrito') || localStorage.getItem('laLechuzaLectoraCart') || '[]');
                 const userId = localStorage.getItem('userId');
                 const checkoutData = JSON.parse(localStorage.getItem('laLechuzaCheckoutData')) || {};
+                const token = localStorage.getItem('laLechuza_jwt_token');
 
-                // Normalizar productos para que coincidan con la API
-                const productosProcesados = cart.map(item => ({
+                // Normalizar items para /api/ventas/registrar
+                const itemsProcesados = cart.map(item => ({
                     id_producto: item.id_producto || item.id,
-                    id: item.id || item.id_producto,
                     cantidad: item.cantidad || item.quantity || 1,
-                    cantidad: item.cantidad || item.quantity || 1,
-                    precio: item.precio || item.price,
-                    price: item.price || item.precio
+                    precio: item.precio || item.price
                 }));
 
                 const pedidoFinal = {
-                    id_usuario: parseInt(userId),
                     id_direccion: checkoutData.selectedAddress ? parseInt(checkoutData.selectedAddress) : null,
-                    total: details.purchase_units[0].amount.value,
-                    metodo_pago: 'PayPal',
-                    id_transaccion: details.id,
-                    productos: productosProcesados
+                    id_metodo_pago: checkoutData.selectedPaymentMethod ? parseInt(checkoutData.selectedPaymentMethod) : null,
+                    items: itemsProcesados
                 };
 
                 try {
                     const response = await fetch('http://localhost:3000/api/ventas/registrar', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                        },
                         body: JSON.stringify(pedidoFinal)
                     });
 
                     const result = await response.json();
 
-                    if (response.ok && result.success) {
+                    if (response.ok && (result.ok || result.success)) {
+                        localStorage.removeItem('laLechuza_carrito');
                         localStorage.removeItem('laLechuzaLectoraCart');
                         localStorage.removeItem('laLechuzaCheckoutData');
                         sessionStorage.setItem('lastOrderId', details.id);

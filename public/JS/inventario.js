@@ -14,18 +14,20 @@ document
     };
 
     try {
+        const token = localStorage.getItem("laLechuza_jwt_token");
 
         const res = await fetch("/api/productos", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                ...(token ? { "Authorization": `Bearer ${token}` } : {})
             },
             body: JSON.stringify(producto)
         });
 
         const data = await res.json();
 
-        if(data.success){
+        if (data.ok || data.success) {
 
             alert("✅ Producto agregado");
 

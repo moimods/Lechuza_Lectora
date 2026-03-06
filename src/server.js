@@ -1,9 +1,38 @@
 require("dotenv").config();
 
 const app = require("./app");
+const pool = require("./config/db");
 
 const PORT = Number(process.env.PORT || 3000);
 
-app.listen(PORT, () => {
-  console.log(`La Lechuza Lectora escuchando en http://localhost:${PORT}`);
-});
+async function iniciarServidor() {
+  try {
+    // Verificar conexión a BD
+    const conexionOk = await pool.verificarConexion();
+    
+    if (!conexionOk) {
+      console.error("❌ No se pudo conectar a la base de datos");
+      process.exit(1);
+    }
+
+    // Iniciar servidor
+    app.listen(PORT, () => {
+      console.log(`
+╔════════════════════════════════════════════════════════════╗
+║     🦉 LA LECHUZA LECTORA - Backend Iniciado              ║
+╠════════════════════════════════════════════════════════════╣
+║ API URL:    http://localhost:${PORT}/api                  ║
+║ Ambiente:   ${process.env.NODE_ENV || "development"}     ║
+║ BD:         ${process.env.DB_NAME || "db_lechuza"}        ║
+║ JWT Secret: ${process.env.JWT_SECRET ? "✅ Configurado" : "⚠️ NO CONFIGURADO"}           ║
+╚════════════════════════════════════════════════════════════╝
+      `);
+    });
+  } catch (error) {
+    console.error("❌ Error iniciando servidor:", error.message);
+    process.exit(1);
+  }
+}
+
+iniciarServidor();
+

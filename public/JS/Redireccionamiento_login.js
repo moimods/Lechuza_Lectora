@@ -41,26 +41,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // --- LLAMADA REAL AL BACKEND ---
-                const response = await fetch(`${API_BASE_URL}/login`, {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
 
-                const data = await response.json();
+                const raw = await response.json();
+                const ok = raw.ok ?? raw.success;
+                const payload = raw.data || raw;
+                const user = payload.usuario || payload.user;
+                const token = payload.token;
                 
-                if (response.ok && data.success) {
+                if (response.ok && ok && user) {
                     // ✅ LOGIN EXITOSO - Guardamos datos del usuario
-                    localStorage.setItem('userId', data.user.id_usuario);
-                    localStorage.setItem('userName', data.user.nombre);
-                    localStorage.setItem('userRole', data.user.rol);
-                    localStorage.setItem('usuario', JSON.stringify(data.user)); // Para compatibilidad con Acciones_Admin.js
-                    localStorage.setItem('usuario_logeado', JSON.stringify(data.user));
-                    localStorage.setItem('usuarioCompleto', JSON.stringify(data.user));
+                    if (token) {
+                        localStorage.setItem('laLechuza_jwt_token', token);
+                    }
+                    localStorage.setItem('userId', user.id_usuario);
+                    localStorage.setItem('userName', user.nombre_completo || user.nombre || '');
+                    localStorage.setItem('userRole', user.rol);
+                    localStorage.setItem('usuario', JSON.stringify(user)); // Para compatibilidad con Acciones_Admin.js
+                    localStorage.setItem('usuario_logeado', JSON.stringify(user));
+                    localStorage.setItem('usuarioCompleto', JSON.stringify(user));
 
                     // Redirigir según el rol
-                    if (data.user.rol === 'admin') {
-                        window.location.href = '../../admin/panel';
+                    if (user.rol === 'admin') {
+                        window.location.href = '/html/Admin/panel_de_admin.html';
                     } else {
                         const redirectTo = localStorage.getItem('postLoginRedirect') || '/html/Logeado/Catalogo_Logeado.html';
                         localStorage.removeItem('postLoginRedirect');
@@ -68,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } else {
                     // ❌ LOGIN FALLIDO
-                    alert(data.error || "Credenciales incorrectas");
+                    alert(raw.error || "Credenciales incorrectas");
                     loginSubmitButton.disabled = false;
                     loginSubmitButton.innerHTML = 'Iniciar Sesión';
                 }

@@ -47,18 +47,17 @@ async function registrarVenta(idDireccion = null) {
         const data = await apiRequest("/ventas/registrar", {
             method: "POST",
             body: JSON.stringify({
-                id_usuario: usuario.id_usuario,
                 id_direccion: idDireccion,
-                total: total,
-                productos: carrito.map(item => ({
+                items: carrito.map(item => ({
                     id_producto: item.id_producto,
                     cantidad: item.cantidad,
                     precio: item.precio
-                }))
+                })),
+                id_metodo_pago: null
             })
         });
 
-        if (data.success) {
+        if (data.ok || data.success) {
 
             alert("Compra realizada con éxito 🎉");
 

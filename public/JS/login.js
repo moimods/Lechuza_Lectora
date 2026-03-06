@@ -21,35 +21,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const data = await apiRequest("/login", {
-                method: "POST",
-                body: JSON.stringify({ email, password })
-            });
+            // Usar API.login que maneja JWT automáticamente
+            const data = await API.login(email, password);
 
-            if (data.success) {
+            if (data.ok) {
                 // Guardar usuario en localStorage
-                localStorage.setItem("usuario", JSON.stringify(data.user));
-                localStorage.setItem("usuario_logeado", JSON.stringify(data.user));
-                localStorage.setItem("usuarioCompleto", JSON.stringify(data.user));
-                localStorage.setItem("userId", String(data.user.id_usuario || ""));
-                localStorage.setItem("userName", data.user.nombre || "");
-                localStorage.setItem("userRole", data.user.rol || "cliente");
+                const usuario = data.usuario;
+                localStorage.setItem("usuario", JSON.stringify(usuario));
+                localStorage.setItem("usuario_logeado", JSON.stringify(usuario));
+                localStorage.setItem("usuarioCompleto", JSON.stringify(usuario));
+                localStorage.setItem("userId", String(usuario.id_usuario || ""));
+                localStorage.setItem("userName", usuario.nombre_completo || "");
+                localStorage.setItem("userRole", usuario.rol || "cliente");
 
                 alert("Inicio de sesión exitoso");
 
                 const redirectTo = localStorage.getItem("postLoginRedirect") || "/html/Logeado/Catalogo_Logeado.html";
                 localStorage.removeItem("postLoginRedirect");
 
-                // Redirección según rol (opcional)
-                if (data.user.rol === "admin") {
+                // Redirección según rol
+                if (usuario.rol === "admin") {
                     window.location.href = "/html/Admin/panel_de_admin.html";
                 } else {
                     window.location.href = redirectTo;
                 }
+            } else {
+                alert(data.error || "Error al iniciar sesión");
             }
 
         } catch (error) {
-            console.log("Error en login:", error.message);
+            console.error("Error en login:", error.message);
+            alert(error.message || "Error de conexión");
         }
     });
 

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURACIÓN ---
     const LOGOUT_REDIRECT_URL = '../../index.html';
-    const API_LOGOUT_ENDPOINT = '/api/logout'; // Cambia esto según tu server.js
+    const API_LOGOUT_ENDPOINT = '/api/auth/logout';
 
     // Elementos del DOM
     const avatarButton = document.getElementById('avatar-btn');
@@ -41,9 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // B. Limpieza en el SERVIDOR (Node.js)
             // Avisamos al servidor para que borre la sesión en la BD o cookies
+            const token = localStorage.getItem('laLechuza_jwt_token');
             const response = await fetch(API_LOGOUT_ENDPOINT, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                }
             });
 
             if (response.ok) {

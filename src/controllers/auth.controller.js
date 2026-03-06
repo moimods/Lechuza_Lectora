@@ -1,65 +1,78 @@
-const pool = require("../config/db");
+const authService = require("../services/auth.service");
+const usuariosService = require("../services/usuarios.service");
+const { success, error } = require("../utils/response");
+const { validateLoginInput, validateRegisterInput, validatePasswordInput } = require("../utils/validators");
 
 async function login(req, res, next) {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, error: "Email y contraseña son obligatorios" });
+    // Validar entrada
+    const { isValid, errors } = validateLoginInput(email, password);
+    if (!isValid) {
+      return error(res, errors.join(", "), 400);
     }
 
-    let user;
+    // Autenticar
+    const { token, usuario } = await authService.login(email, password);
 
-    try {
-      const query = await pool.query(
-        "SELECT id_usuario, nombre, email, rol FROM usuarios WHERE email = $1 LIMIT 1",
-        [email]
-      );
-      user = query.rows[0];
-    } catch {
-      user = null;
+    return success(res, {
+      token,
+      usuario
+    }, "Login exitoso", 200);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function registro(req, res, next) {
+  try {
+    const { nombre_completo, email, password, passwordConfirm } = req.body;
+
+    // Validar entrada
+    const { isValid, errors } = validateRegisterInput(nombre_completo, email, password, passwordConfirm);
+    if (!isValid) {
+      return error(res, errors.join(", "), 400);
     }
 
-    if (!user) {
-      user = {
-        id_usuario: 1,
-        nombre: "Usuario Demo",
-        email,
-        rol: email.includes("admin") ? "admin" : "cliente"
-      };
-    }
+    // Crear usuario
+    const usuario = await usuariosService.crear(nombre_completo, email, password);
 
-    return res.json({
-      success: true,
-      user
-    });
-  } catch (error) {
-    next(error);
+    // Generar token
+    const token = authService.generarToken(usuario.id_usuario, usuario.email, usuario.rol);
+
+    return success(res, {
+      token,
+      usuario
+    }, "Usuario registrado correctamente", 201);
+  } catch (err) {
+    next(err);
   }
 }
 
 function logout(req, res) {
-  return res.json({ success: true, message: "Sesión cerrada" });
+  return success(res, null, "Sesión cerrada", 200);
 }
 
-async function registro(req, res) {
-  return res.status(201).json({
-    success: true,
-    message: "Usuario registrado correctamente",
-    user: req.body || {}
-  });
-}
+async function actualizarPassword(req, res, next) {
+  try {
+    const { passwordActual, passwordNueva, passwordConfirm } = req.body;
 
-async function actualizarPassword(req, res) {
-  return res.json({
-    success: true,
-    message: "Contraseña actualizada correctamente"
-  });
+    if (passwordNueva !== passwordConfirm) {
+      return error(res, "Las contraseñas no coinciden", 400);
+    }
+
+    await usuariosService.actualizarPassword(req.user.id, passwordActual, passwordNueva);
+
+    return success(res, null, "Contraseña actualizada correctamente", 200);
+  } catch (err) {
+    next(err);
+  }
 }
 
 module.exports = {
   login,
-  logout,
   registro,
+  logout,
   actualizarPassword
 };
