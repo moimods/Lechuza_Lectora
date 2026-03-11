@@ -113,8 +113,6 @@ document.getElementById('adminLoginForm').addEventListener('submit', async (e) =
                 localStorage.setItem('userName', user.nombre_completo || user.nombre || 'Admin');
                 localStorage.setItem('userRole', user.rol);
                 localStorage.setItem('usuario', JSON.stringify(user));
-                localStorage.setItem('usuario_logeado', JSON.stringify(user));
-                localStorage.setItem('usuarioCompleto', JSON.stringify(user));
                 localStorage.setItem('admin_session', 'true'); // Flag extra para paneles admin
 
                 alert("Acceso administrativo concedido. Bienvenido, " + (user.nombre_completo || user.nombre || 'Admin'));

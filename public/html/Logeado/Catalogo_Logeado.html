@@ -141,7 +141,7 @@
     <main class="main-content catalog-main">
         <div class="background-overlay"></div>
 
-        <div class="catalog-container" style="display: grid; grid-template-columns: 260px 1fr; gap: 30px; padding: 40px; max-width: 1400px; margin: 0 auto;">
+        <div class="catalog-container" style="display: grid; grid-template-columns: minmax(220px, 280px) 1fr; gap: 30px; padding: clamp(16px, 2vw, 40px); width: min(100% - 2rem, 1680px); max-width: none; margin: 0 auto;">
             <button id="filter-toggle" class="btn-filter-toggle" style="display: none;">
                 <i class="fa-solid fa-filter"></i> Filtrar Libros
             </button>

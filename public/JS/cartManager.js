@@ -3,6 +3,19 @@ function getCartItems() {
   return Array.isArray(raw) ? raw : [];
 }
 
+function initializeCartForSession() {
+  const initKey = "laLechuza_cart_initialized";
+  if (sessionStorage.getItem(initKey) === "1") return;
+
+  const token = localStorage.getItem("laLechuza_jwt_token");
+  if (!token) {
+    localStorage.removeItem("carrito");
+    localStorage.removeItem("laLechuzaLectoraCart");
+  }
+
+  sessionStorage.setItem(initKey, "1");
+}
+
 function updateCartBadge() {
   const total = getCartItems().reduce(
     (sum, item) => sum + (Number(item.cantidad ?? item.qty ?? item.quantity) || 0),
@@ -15,7 +28,10 @@ function updateCartBadge() {
   if (badgeB) badgeB.textContent = String(total);
 }
 
-document.addEventListener("DOMContentLoaded", updateCartBadge);
+document.addEventListener("DOMContentLoaded", () => {
+  initializeCartForSession();
+  updateCartBadge();
+});
 window.addEventListener("storage", (event) => {
   if (event.key === "carrito") {
     updateCartBadge();

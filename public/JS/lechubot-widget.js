@@ -597,7 +597,6 @@ if(!panel.contains(e.target) && !toggle.contains(e.target))
 
 });
 
-/* ESC */
 
 document.addEventListener("keydown",e=>{
 

@@ -81,6 +81,10 @@
                     <p style="text-align: center; color: #666;">Cargando tus direcciones...</p>
                 </div>
 
+                <div id="selected-address-indicator" style="display:none; margin-top: 15px; background: #fff8e1; border: 1px solid #fbc02d; border-radius: 8px; padding: 12px; color: #5d4037; font-weight: bold;">
+                    Dirección seleccionada: <span id="selected-address-text"></span>
+                </div>
+
                 <button class="btn-secondary btn-add-address"
                     onclick="window.location.href='/html/Logeado/Agregar_domicilio.html'"
                         style="margin-top: 20px; border: 1px solid #5d4037; color: #5d4037; background: transparent; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
@@ -92,12 +96,12 @@
                     
                     <button onclick="window.location.href='/html/Logeado/carrito.html'"
                             style="background: #555; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                        â† Regresar al Carrito
+                        ← Regresar al Carrito
                     </button>
 
                     <button onclick="continuarAlPago()"
                             style="background: #5d4037; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                        Continuar a Pago â†’
+                        Continuar a Pago →
                     </button>
                 </div>
             </div>
@@ -110,9 +114,10 @@
 
 <script>
 let direccionSeleccionadaObjeto = null;
+let direccionesCache = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
+    const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
     const checkoutCart = JSON.parse(localStorage.getItem('laLechuzaLectoraCart') || '[]');
     const legacyCart = JSON.parse(localStorage.getItem('carrito') || '[]');
     
@@ -139,20 +144,16 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('laLechuzaLectoraCart', JSON.stringify(normalized));
     }
 
-    cargarDirecciones(usuario.id_usuario);
+    cargarDirecciones();
 });
 
-async function cargarDirecciones(idUsuario) {
+async function cargarDirecciones() {
     const container = document.getElementById('addresses-list-container');
 
     try {
-        const response = await fetch(`/api/direcciones/usuario/${idUsuario}`);
-
-        if (!response.ok) {
-            throw new Error("Error en la respuesta del servidor");
-        }
-
-        const direcciones = await response.json();
+        const response = await API.get('/usuario/direcciones');
+        const direcciones = Array.isArray(response?.data) ? response.data : [];
+        direccionesCache = direcciones;
 
         if (!direcciones || direcciones.length === 0) {
             container.innerHTML = `
@@ -165,23 +166,40 @@ async function cargarDirecciones(idUsuario) {
 
         container.innerHTML = direcciones.map(dir => `
             <div class="address-card" 
-                 id="dir-${dir.id_direccion}" 
-                 data-direccion='${JSON.stringify(dir)}'>
+                 id="dir-${dir.id_direccion}"
+                 data-id-direccion="${dir.id_direccion}">
                 <i class="fas fa-check-circle check-icon"></i>
                 <div style="flex-grow: 1;">
-                    <strong>${dir.tipo_domicilio || 'Domicilio'}</strong><br>
-                    <small>${dir.calle || dir.direccion_texto}, Col. ${dir.colonia}</small><br>
-                    <small>${dir.municipio_alcaldia || dir.ciudad}, ${dir.estado}. CP: ${dir.cp}</small>
+                    <strong>${dir.es_principal ? 'Domicilio Principal' : 'Domicilio'}</strong><br>
+                    <small>${dir.calle_numero || 'Sin calle'}, Col. ${dir.colonia || 'Sin colonia'}</small><br>
+                    <small>${dir.ciudad_estado || 'Sin ciudad/estado'}. CP: ${dir.codigo_postal || 'N/D'}</small>
                 </div>
             </div>
         `).join('');
 
         document.querySelectorAll('.address-card').forEach(card => {
             card.addEventListener('click', () => {
-                const direccionObj = JSON.parse(card.dataset.direccion);
-                seleccionarDireccion(direccionObj);
+                const idDireccion = Number(card.dataset.idDireccion || 0);
+                const direccionObj = direccionesCache.find((d) => Number(d.id_direccion) === idDireccion);
+                if (direccionObj) {
+                    seleccionarDireccion(direccionObj);
+                }
             });
         });
+
+        // Auto-selección inteligente:
+        // 1) la dirección guardada en sesión/localStorage
+        // 2) la principal
+        // 3) la primera disponible
+        const lastSelectedId = Number(localStorage.getItem('id_direccion_pedido') || 0);
+        const preferred =
+            direcciones.find((d) => Number(d.id_direccion) === lastSelectedId) ||
+            direcciones.find((d) => Boolean(d.es_principal)) ||
+            direcciones[0];
+
+        if (preferred && preferred.id_direccion) {
+            seleccionarDireccion(preferred);
+        }
 
     } catch (error) {
         console.error("Error al cargar direcciones:", error);
@@ -195,6 +213,13 @@ function seleccionarDireccion(direccionObj) {
 
     const card = document.getElementById(`dir-${direccionObj.id_direccion}`);
     if (card) card.classList.add('selected');
+
+    const indicator = document.getElementById('selected-address-indicator');
+    const indicatorText = document.getElementById('selected-address-text');
+    if (indicator && indicatorText) {
+        indicatorText.textContent = `#${direccionObj.id_direccion} - ${direccionObj.calle_numero || 'Sin calle'}, CP ${direccionObj.codigo_postal || 'N/D'}`;
+        indicator.style.display = 'block';
+    }
 
     direccionSeleccionadaObjeto = direccionObj;
 
@@ -212,6 +237,7 @@ function continuarAlPago() {
 }
 </script>
 
+<script src="/JS/api.js"></script>
 <script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>

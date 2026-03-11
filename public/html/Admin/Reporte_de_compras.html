@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        .orders-container { padding: 30px; max-width: 1200px; margin: auto; position: relative; z-index: 10; }
+        .orders-container {
+            padding: clamp(16px, 2vw, 30px);
+            width: min(100% - 2rem, 1680px);
+            margin: auto;
+            position: relative;
+            z-index: 10;
+        }
         
         .table-wrapper {
             background: rgba(255, 255, 255, 0.95);
@@ -30,6 +36,7 @@
         .status-pendiente { background: #fff3e0; color: #ef6c00; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .orders-table { min-width: 980px; }
         th { background-color: #5d4037; color: white; padding: 15px; text-align: left; }
         td { padding: 15px; border-bottom: 1px solid #ddd; color: #333; }
         tr:hover { background-color: #f9f4f2; }
@@ -85,7 +92,7 @@
         <h1 style="color: white; margin-bottom: 25px;"><i class="fa-solid fa-boxes-packing"></i> Pedidos Recientes</h1>
         
         <div class="table-wrapper">
-            <table>
+            <table class="orders-table">
                 <thead>
                     <tr>
                         <th>Orden</th>
@@ -157,12 +164,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(
-                localStorage.getItem('usuario') ||
-                localStorage.getItem('usuario_logeado') ||
-                localStorage.getItem('usuarioCompleto') ||
-                'null'
-            );
+            const user = JSON.parse(localStorage.getItem('usuario') || 'null');
 
             if (!user || user.rol !== 'admin') {
                 window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';

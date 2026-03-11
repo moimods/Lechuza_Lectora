@@ -135,16 +135,12 @@
         </div>
     </main>
 
+    <script src="/JS/api.js"></script>
     <script>
         let direccionIdSeleccionada = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(
-                localStorage.getItem('usuario') ||
-                localStorage.getItem('usuario_logeado') ||
-                localStorage.getItem('usuarioCompleto') ||
-                'null'
-            );
+            const user = JSON.parse(localStorage.getItem('usuario') || 'null');
             if (!user) {
                 window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
                 return;
@@ -231,7 +227,6 @@
             document.getElementById('avatar-dropdown').classList.toggle('show');
         }
     </script>
-<script src="/JS/api.js" defer></script>
 <script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>

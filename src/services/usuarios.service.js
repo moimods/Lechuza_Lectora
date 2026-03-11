@@ -45,7 +45,7 @@ async function obtenerPorId(id) {
 /**
  * Crear nuevo usuario
  */
-async function crear(nombre_completo, email, password) {
+async function crear(nombre_completo, email, password, telefono) {
   if (!nombre_completo || nombre_completo.trim().length < 2) {
     throw new ValidationError("Nombre debe tener al menos 2 caracteres");
   }
@@ -58,6 +58,11 @@ async function crear(nombre_completo, email, password) {
     throw new ValidationError("Contraseña debe tener al menos 8 caracteres");
   }
 
+  const telefonoNormalizado = String(telefono || "").trim();
+  if (!telefonoNormalizado) {
+    throw new ValidationError("Teléfono es obligatorio");
+  }
+
   // Verificar que el email no exista
   const existing = await obtenerPorEmail(email);
   if (existing) {
@@ -68,10 +73,10 @@ async function crear(nombre_completo, email, password) {
   const passwordHash = await bcrypt.hash(password, 10);
 
   const result = await pool.query(
-    `INSERT INTO usuarios (nombre_completo, email, password_hash, rol)
-     VALUES ($1, $2, $3, 'cliente')
-     RETURNING id_usuario, nombre_completo, email, rol, fecha_registro`,
-    [nombre_completo, email, passwordHash]
+    `INSERT INTO usuarios (nombre_completo, email, password_hash, telefono, rol)
+     VALUES ($1, $2, $3, $4, 'cliente')
+     RETURNING id_usuario, nombre_completo, email, telefono, rol, fecha_registro`,
+    [nombre_completo, email, passwordHash, telefonoNormalizado]
   );
 
   return result.rows[0];

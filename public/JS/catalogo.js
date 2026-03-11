@@ -77,11 +77,10 @@ function getProductCategory(product) {
   );
 }
 
-function ensureCategoryFilters(products) {
+function renderCategoryFilters(categories) {
   const container = document.getElementById("categories-filter");
   if (!container) return;
 
-  const categories = [...new Set(products.map((p) => getProductCategory(p)).filter(Boolean))];
   if (categories.length === 0) {
     container.innerHTML = "";
     return;
@@ -90,6 +89,29 @@ function ensureCategoryFilters(products) {
   container.innerHTML = categories
     .map((category) => `<label><input type="checkbox" class="genre-filter" value="${category}"> ${category}</label>`)
     .join("");
+}
+
+async function cargarCategoriasDisponibles(products = []) {
+  const fromProducts = [...new Set(products.map((p) => getProductCategory(p)).filter(Boolean))];
+
+  try {
+    const response = await fetch("/api/productos/categorias", {
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error("No se pudieron cargar categorías desde API");
+    }
+
+    const payload = await response.json();
+    const data = Array.isArray(payload?.data) ? payload.data : (Array.isArray(payload) ? payload : []);
+    const fromDb = data.map((c) => String(c?.nombre || "").trim()).filter(Boolean);
+    const allCategories = [...new Set([...fromDb, ...fromProducts])].sort((a, b) => a.localeCompare(b));
+    renderCategoryFilters(allCategories);
+  } catch (error) {
+    // Fallback: al menos mostrar las categorías detectadas en productos cargados.
+    renderCategoryFilters(fromProducts.sort((a, b) => a.localeCompare(b)));
+  }
 }
 
 function createProductCard(product) {
@@ -182,13 +204,14 @@ function applyFilters(products) {
 function guardCatalogAccess() {
   if (bodyConfig.mode !== "logged") return true;
 
-  const usuario = JSON.parse(
-    localStorage.getItem("usuario_logeado") ||
-    localStorage.getItem("usuario") ||
-    localStorage.getItem("usuarioCompleto") ||
-    "null"
-  );
-  if (!usuario) {
+  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+  const token = localStorage.getItem("laLechuza_jwt_token");
+
+  if (!usuario || !token) {
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userRole");
     window.location.href = bodyConfig.loginPath;
     return false;
   }
@@ -210,7 +233,7 @@ async function cargarProductos(page = 1) {
     const normalized = normalizeApiProducts(payload);
 
     allProducts = normalized.data;
-    ensureCategoryFilters(allProducts);
+    await cargarCategoriasDisponibles(allProducts);
     filteredProducts = applyFilters(allProducts);
 
     renderBooks(filteredProducts);

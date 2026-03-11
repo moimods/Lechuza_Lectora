@@ -33,7 +33,10 @@
 </head>
 <body>
     <header class="top-nav">
-        <div><i class="fa-solid fa-book"></i> La Lechuza Lectora</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <img src="/Imagenes/logo.png" alt="Logo La Lechuza Lectora" style="width:28px; height:28px; border-radius:50%; object-fit:cover;">
+            <span>La Lechuza Lectora</span>
+        </div>
         <div>
             <a href="/html/Catalogo.html"><i class="fa-solid fa-store"></i> Seguir comprando</a>
             <a href="/html/Logeado/carrito.html"><i class="fa-solid fa-cart-shopping"></i> Carrito <span id="cartCount" class="badge">0</span></a>
@@ -77,12 +80,7 @@
         }
 
         function usuarioActivo() {
-            return JSON.parse(
-                localStorage.getItem('usuario_logeado') ||
-                localStorage.getItem('usuario') ||
-                localStorage.getItem('usuarioCompleto') ||
-                'null'
-            );
+            return JSON.parse(localStorage.getItem('usuario') || 'null');
         }
 
         document.getElementById('btn-pagar').addEventListener('click', () => {

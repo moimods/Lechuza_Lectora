@@ -85,7 +85,7 @@ function validateLoginInput(email, password) {
 /**
  * Valida objeto de registro
  */
-function validateRegisterInput(nombre_completo, email, password, passwordConfirm) {
+function validateRegisterInput(nombre_completo, email, password, passwordConfirm, telefono) {
   const errors = [];
 
   if (!isValidName(nombre_completo)) {
@@ -102,6 +102,13 @@ function validateRegisterInput(nombre_completo, email, password, passwordConfirm
 
   if (password !== passwordConfirm) {
     errors.push("Las contraseñas no coinciden");
+  }
+
+  const telefonoStr = String(telefono || "").trim();
+  if (!telefonoStr) {
+    errors.push("Teléfono es obligatorio");
+  } else if (!/^\+?\d{10,15}$/.test(telefonoStr.replace(/[\s()-]/g, ""))) {
+    errors.push("Teléfono inválido");
   }
 
   return { isValid: errors.length === 0, errors };

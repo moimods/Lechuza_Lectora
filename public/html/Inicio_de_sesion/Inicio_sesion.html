@@ -189,9 +189,7 @@ document.getElementById('form-login-usuario')
             localStorage.setItem('userId', String(user.id_usuario || user.id || ''));
             localStorage.setItem('userName', user.nombre_completo || user.nombre || 'Usuario');
             localStorage.setItem('userRole', user.rol || 'cliente');
-            localStorage.setItem('usuarioCompleto', JSON.stringify(user));
             localStorage.setItem('usuario', JSON.stringify(user));
-            localStorage.setItem('usuario_logeado', JSON.stringify(user));
 
             const redirectTo = localStorage.getItem('postLoginRedirect') || '/html/Logeado/Catalogo_Logeado.html';
             localStorage.removeItem('postLoginRedirect');

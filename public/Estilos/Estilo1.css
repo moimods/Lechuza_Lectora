@@ -6546,6 +6546,42 @@ a { text-decoration: none; color: inherit; }
     }
 }
 
+/* =============================
+   ADMIN RESPONSIVE ENHANCEMENTS
+============================= */
+
+.admin-shell,
+.inventory-shell,
+.report-shell,
+.orders-shell {
+    width: min(100% - 2rem, 1680px);
+    margin-inline: auto;
+    padding-inline: clamp(10px, 1.5vw, 24px);
+}
+
+.inventory-table {
+    min-width: 980px;
+}
+
+.orders-table,
+.ventas-table {
+    min-width: 820px;
+}
+
+.admin-actions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+@media (max-width: 1100px) {
+    .admin-shell,
+    .inventory-shell,
+    .report-shell,
+    .orders-shell {
+        width: min(100% - 1rem, 100%);
+        padding-inline: 8px;
+    }
+}
+
 
 .admin-profile-navbar {
     padding: 10px 40px;
@@ -6596,7 +6632,99 @@ a { text-decoration: none; color: inherit; }
     }
     to {
         opacity: 1;
-        transform: translateY(0);    
+        transform: translateY(0);
+    }
+}
+
+/* =============================
+   GLOBAL RESPONSIVE OPTIMIZATION
+============================= */
+
+/* Contenedores principales más fluidos en escritorio grande */
+.content-container,
+.catalog-container,
+.contact-container,
+.profile-main-wrapper,
+.detail-content-container {
+    width: min(100% - 2rem, 1680px) !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+}
+
+/* Grids comunes con columnas flexibles por defecto */
+.admin-actions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+}
+
+.stats-row {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+/* Tablas: evitar ruptura de layout + scroll horizontal controlado */
+.inventory-table-wrapper,
+.table-wrapper,
+.report-data-table,
+.sales-data-table {
+    overflow-x: auto;
+}
+
+.inventory-table {
+    min-width: 980px;
+}
+
+.orders-table,
+.ventas-table,
+.data-table,
+.alerts-table,
+.distribution-table {
+    min-width: 820px;
+}
+
+/* Formularios con grid inline rígido: permitir adaptación real */
+@media (max-width: 1100px) {
+    .registration-grid,
+    .address-grid,
+    .contact-grid,
+    .checkout-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .content-container,
+    .catalog-container,
+    .contact-container,
+    .profile-main-wrapper,
+    .detail-content-container {
+        width: min(100% - 1rem, 100%) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .registration-grid,
+    .address-grid,
+    .contact-grid,
+    .checkout-grid,
+    .info-grid,
+    .mission-values-grid,
+    .history-section,
+    .reviews-section {
+        grid-template-columns: 1fr !important;
+    }
+
+    .content-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 24px !important;
+    }
+
+    .form-card,
+    .checkout-container,
+    .payment-method-card,
+    .orders-container,
+    .report-container,
+    .inventory-container {
+        width: min(100% - 1rem, 100%) !important;
     }
 }
 

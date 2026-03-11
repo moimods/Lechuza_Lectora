@@ -105,7 +105,7 @@
                 
                 <div class="navigation-actions" style="display: flex; justify-content: space-between; gap: 15px;">
                     <button class="btn-dark-action" onclick="window.history.back()" style="background: #777; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                        â† REGRESAR
+                        ← REGRESAR
                     </button>
 
                     <button class="btn-primary" id="btn-finalizar-compra" onclick="ejecutarCompraFinal()" style="background: #27ae60; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; flex-grow: 1; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(39,174,96,0.3);">
@@ -122,7 +122,7 @@
                 </div>
                 <h2 style="color: #5d4037; margin-bottom: 10px;">¡Compra Finalizada!</h2>
                 <p style="color: #666; margin-bottom: 25px; line-height: 1.6;">Tu pedido ha sido procesado con éxito. Puedes consultar los detalles en tu perfil de usuario.</p>
-                <button id="btn-modal-compra-accept" onclick="window.location.href='/index.html'" style="background: #5d4037; color: white; padding: 12px 40px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1.1rem;">CONTINUAR</button>
+                <button id="btn-modal-compra-accept" onclick="window.location.href='/html/Logeado/Inicio_Logeado.html'" style="background: #5d4037; color: white; padding: 12px 40px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1.1rem;">CONTINUAR</button>
             </div>
         </div>
     </main>
@@ -131,19 +131,16 @@
         <div class="copyright">© 2026. La Lechuza Lectora | Todos los derechos reservados.</div>
     </footer>
 
+    <script src="/JS/api.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Cargar datos del carrito y checkout
             let carrito = JSON.parse(localStorage.getItem('laLechuzaLectoraCart') || '[]');
             const carritoLegacy = JSON.parse(localStorage.getItem('carrito') || '[]');
-            const usuario = JSON.parse(
-                localStorage.getItem('usuario_logeado') ||
-                localStorage.getItem('usuario') ||
-                localStorage.getItem('usuarioCompleto') ||
-                'null'
-            );
+            const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
             const idDireccion = localStorage.getItem('id_direccion_pedido');
-            const metodoPago = localStorage.getItem('metodo_pago') || 'PayPal';
+            const metodoPago = localStorage.getItem('metodo_pago') || 'Mercado Pago';
+            const direccionEnvio = JSON.parse(localStorage.getItem('direccion_envio') || 'null');
 
             if(!carrito.length && carritoLegacy.length) {
                 carrito = carritoLegacy.map((item) => ({
@@ -180,7 +177,9 @@
             // Mostrar datos en pantalla
             document.getElementById('display-total').textContent = `$${total.toFixed(2)}`;
             document.getElementById('display-payment').textContent = metodoPago;
-            document.getElementById('display-address').textContent = idDireccion ? `Dirección seleccionada (ID: ${idDireccion})` : "Confirmada en paso anterior";
+            document.getElementById('display-address').textContent = direccionEnvio
+                ? `${direccionEnvio.calle_numero || ''}, C.P. ${direccionEnvio.codigo_postal || ''}, ${direccionEnvio.ciudad_estado || ''}`
+                : (idDireccion ? `Dirección seleccionada (ID: ${idDireccion})` : "Confirmada en paso anterior");
         });
 
         async function ejecutarCompraFinal() {
@@ -192,12 +191,7 @@
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> PROCESANDO...';
 
             // Obtener datos para la API
-            const usuario = JSON.parse(
-                localStorage.getItem('usuario_logeado') ||
-                localStorage.getItem('usuario') ||
-                localStorage.getItem('usuarioCompleto') ||
-                'null'
-            );
+            const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
             const idDireccion = localStorage.getItem('id_direccion_pedido');
             const carrito = JSON.parse(localStorage.getItem('laLechuzaLectoraCart') || '[]');
             const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -210,11 +204,9 @@
             }
 
             const datosVenta = {
-                id_usuario: parseInt(usuario.id_usuario),
                 id_direccion: parseInt(idDireccion),
-                total: total,
                 id_metodo_pago: 1,
-                productos: carrito.map(p => ({
+                items: carrito.map(p => ({
                     id_producto: p.id,
                     cantidad: p.quantity,
                     precio_unitario: p.price
@@ -222,20 +214,16 @@
             };
 
             try {
-                const response = await fetch('/api/ventas/registrar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datosVenta)
-                });
+                const result = await API.post('/ventas/registrar', datosVenta);
 
-                const result = await response.json();
-
-                if(response.ok) {
+                if(result.ok || result.success) {
                     // LIMPIEZA POST-VENTA
                     localStorage.removeItem('laLechuzaLectoraCart');
                     localStorage.removeItem('carrito');
                     localStorage.removeItem('id_direccion_pedido');
                     localStorage.removeItem('metodo_pago');
+                    localStorage.removeItem('direccion_envio');
+                    localStorage.removeItem('compra_en_progreso');
                     localStorage.removeItem('laLechuzaCheckoutData'); // Tu data anterior
 
                     // Mostrar modal de éxito

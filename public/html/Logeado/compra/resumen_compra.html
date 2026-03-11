@@ -84,7 +84,7 @@
                         </div>
                     </div>
                     
-                    <button class="btn-primary btn-next-step" onclick="window.location.href='/html/Logeado/compra/domicilio.html'" style="width: 100%; background: #5d4037; color: white; border: none; padding: 12px; margin-top: 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    <button class="btn-primary btn-next-step" onclick="continuarADomicilio()" style="width: 100%; background: #5d4037; color: white; border: none; padding: 12px; margin-top: 25px; border-radius: 5px; cursor: pointer; font-weight: bold;">
                         Continuar a Dirección
                     </button>
                     <button class="btn-secondary btn-cancel-checkout" onclick="window.location.href='/html/Logeado/Catalogo_Logeado.html'" style="width: 100%; background: transparent; color: #555; border: 1px solid #555; padding: 10px; margin-top: 10px; border-radius: 5px; cursor: pointer;">
@@ -109,12 +109,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const usuario = JSON.parse(
-        localStorage.getItem('usuario_logeado') ||
-        localStorage.getItem('usuario') ||
-        localStorage.getItem('usuarioCompleto') ||
-        'null'
-    );
+    const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
 
     if (!usuario) {
         localStorage.setItem('postLoginRedirect', '/html/Logeado/compra/resumen_compra.html');
@@ -177,6 +172,11 @@ function renderizarResumen() {
     subtotalDisplay.innerText = `$${subtotal.toFixed(2)}`;
     totalDisplay.innerText = `$${subtotal.toFixed(2)}`;
     localStorage.setItem('total_compra_actual', subtotal.toFixed(2));
+}
+
+function continuarADomicilio() {
+    localStorage.setItem('compra_en_progreso', '1');
+    window.location.href = '/html/Logeado/compra/domicilio.html';
 }
 </script>
 <script src="/JS/lechubot-widget.js" defer></script>

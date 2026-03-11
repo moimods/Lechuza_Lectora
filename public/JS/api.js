@@ -119,6 +119,73 @@ function reiniciarTemporizadorSesion() {
   }, SESSION_TIMEOUT_MS);
 }
 
+async function sincronizarDomicilioRegistro() {
+  const rawTempAddress =
+    sessionStorage.getItem("direccion_temporal") ||
+    localStorage.getItem("direccion_temporal") ||
+    "";
+
+  let domicilio = "";
+
+  if (rawTempAddress) {
+    try {
+      const parsed = JSON.parse(rawTempAddress);
+      domicilio = String(parsed?.direccion || "").trim();
+    } catch {
+      domicilio = "";
+    }
+  }
+
+  if (!domicilio) {
+    const pendingAddress =
+      sessionStorage.getItem("registro_domicilio_preferido") ||
+      localStorage.getItem("registro_domicilio_preferido") ||
+      "";
+    domicilio = String(pendingAddress).trim();
+  }
+
+  if (!domicilio) return;
+
+  const limpiarPendientesRegistro = () => {
+    sessionStorage.removeItem("direccion_temporal");
+    localStorage.removeItem("direccion_temporal");
+    sessionStorage.removeItem("registro_domicilio_preferido");
+    localStorage.removeItem("registro_domicilio_preferido");
+  };
+
+  try {
+    const existing = await API.get("/usuario/direcciones");
+    const direcciones = Array.isArray(existing?.data) ? existing.data : [];
+
+    if (direcciones.length > 0) {
+      const idPrincipal = direcciones[0]?.id_direccion;
+      if (idPrincipal) {
+        localStorage.setItem("id_direccion_pedido", String(idPrincipal));
+      }
+      limpiarPendientesRegistro();
+      return;
+    }
+
+    const nuevaDireccion = {
+      calle_numero: domicilio,
+      colonia: "Sin especificar",
+      codigo_postal: "00000",
+      ciudad_estado: "Sin especificar",
+      es_principal: true
+    };
+
+    const created = await API.post("/usuario/direcciones", nuevaDireccion);
+    const idNueva = created?.data?.id_direccion;
+    if (idNueva) {
+      localStorage.setItem("id_direccion_pedido", String(idNueva));
+    }
+
+    limpiarPendientesRegistro();
+  } catch (error) {
+    console.warn("No se pudo sincronizar el domicilio de registro:", error?.message || error);
+  }
+}
+
 function activarDestruccionSesionPorInactividad() {
   const events = ["click", "keydown", "mousemove", "touchstart", "scroll"];
   events.forEach((evt) => {
@@ -321,6 +388,8 @@ API.login = async (email, password, options = {}) => {
     } else if (rememberCredentials === false) {
       limpiarCredencialesGuardadas();
     }
+
+    await sincronizarDomicilioRegistro();
   }
 
   return {
@@ -357,8 +426,16 @@ API.reiniciarTemporizadorSesion = reiniciarTemporizadorSesion;
 async function hidratarSesionDesdeToken() {
   if (!tieneSesion()) return;
 
-  const usuarioLocal = localStorage.getItem("usuario") || localStorage.getItem("usuario_logeado");
+  const usuarioLocal = localStorage.getItem("usuario");
   if (usuarioLocal) return;
+
+  const usuarioLegacy = localStorage.getItem("usuario_logeado") || localStorage.getItem("usuarioCompleto");
+  if (usuarioLegacy) {
+    localStorage.setItem("usuario", usuarioLegacy);
+    localStorage.removeItem("usuario_logeado");
+    localStorage.removeItem("usuarioCompleto");
+    return;
+  }
 
   try {
     const response = await API.get("/usuario/perfil");
@@ -367,8 +444,6 @@ async function hidratarSesionDesdeToken() {
     if (!usuario || typeof usuario !== "object") return;
 
     localStorage.setItem("usuario", JSON.stringify(usuario));
-    localStorage.setItem("usuario_logeado", JSON.stringify(usuario));
-    localStorage.setItem("usuarioCompleto", JSON.stringify(usuario));
     localStorage.setItem("userId", String(usuario.id_usuario || usuario.id || ""));
     localStorage.setItem("userName", usuario.nombre_completo || usuario.nombre || "Usuario");
     localStorage.setItem("userRole", usuario.rol || "cliente");

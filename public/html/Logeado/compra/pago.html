@@ -80,37 +80,22 @@
             <div class="checkout-step-content">
                 <div id="payment-options-list" style="display: flex; flex-direction: column; gap: 15px;">
                     
-                    <label class="payment-option selected" id="label-paypal">
-                        <input type="radio" name="payment_method" value="PayPal" checked onchange="updatePaymentSelection('paypal')">
-                        <i class="fab fa-paypal" style="color: #0070ba; font-size: 24px;"></i> 
+                    <label class="payment-option selected" id="label-mercadopago">
+                        <input type="radio" name="payment_method" value="Mercado Pago" checked onchange="updatePaymentSelection()">
+                        <i class="fa-solid fa-wallet" style="color: #009ee3; font-size: 24px;"></i>
                         <div style="flex-grow: 1;">
-                            <span style="font-weight: bold; color: #5d4037; display: block;">PayPal</span>
-                            <span style="font-size: 0.85rem; color: #777;">Rápido y seguro</span>
+                            <span style="font-weight: bold; color: #5d4037; display: block;">Mercado Pago</span>
+                            <span style="font-size: 0.85rem; color: #777;">Paga de forma segura con tu cuenta Mercado Pago</span>
                         </div>
                     </label>
-
-                    <label class="payment-option" id="label-card">
-                        <input type="radio" name="payment_method" value="Tarjeta de Crédito/Débito" onchange="updatePaymentSelection('card')">
-                        <i class="fas fa-credit-card" style="color: #333; font-size: 24px;"></i> 
-                        <div style="flex-grow: 1;">
-                            <span style="font-weight: bold; color: #5d4037; display: block;">Tarjeta de Débito/Crédito</span>
-                            <span style="font-size: 0.85rem; color: #777;">Visa, Mastercard, Amex •••• 1234</span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="add-payment-actions" style="margin-top: 25px; display: flex; gap: 10px;">
-                    <button type="button" style="flex: 1; border: 1px dashed #5d4037; color: #5d4037; background: transparent; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
-                        <i class="fas fa-plus"></i> Nueva Tarjeta
-                    </button>
                 </div>
                 
                 <div class="navigation-actions" style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
                     <button type="button" onclick="window.history.back()" style="background: #f0f0f0; color: #555; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                        â† Regresar
+                        ← Regresar
                     </button>
                     <button type="button" onclick="goToConfirm()" style="background: #5d4037; color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(93, 64, 55, 0.2);">
-                        Revisar y Pagar â†’
+                        Revisar y Pagar →
                     </button>
                 </div>
             </div>
@@ -123,12 +108,7 @@
 
     <script>
         function usuarioActivo() {
-            return JSON.parse(
-                localStorage.getItem('usuario_logeado') ||
-                localStorage.getItem('usuario') ||
-                localStorage.getItem('usuarioCompleto') ||
-                'null'
-            );
+            return JSON.parse(localStorage.getItem('usuario') || 'null');
         }
 
         function getCheckoutCart() {
@@ -170,24 +150,16 @@
             }
         });
 
-        // Función para manejar el cambio visual de selección
-        function updatePaymentSelection(type) {
-            // Remover clase de todos
+        // Mantener una sola opción de pago estandarizada para este flujo.
+        function updatePaymentSelection() {
             document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
-            
-            // Añadir clase al seleccionado y guardar en memoria
-            if(type === 'paypal') {
-                document.getElementById('label-paypal').classList.add('selected');
-                localStorage.setItem('metodo_pago', 'PayPal');
-            } else {
-                document.getElementById('label-card').classList.add('selected');
-                localStorage.setItem('metodo_pago', 'Tarjeta terminada en 1234');
-            }
+            document.getElementById('label-mercadopago').classList.add('selected');
+            localStorage.setItem('metodo_pago', 'Mercado Pago');
         }
 
         // Inicializar selección al cargar la página
         window.onload = () => {
-            localStorage.setItem('metodo_pago', 'PayPal'); // Valor por defecto
+            localStorage.setItem('metodo_pago', 'Mercado Pago');
         };
 
         // Función para avanzar al siguiente paso
@@ -205,6 +177,8 @@
                 window.location.href = "/html/Logeado/carrito.html";
                 return;
             }
+
+            localStorage.setItem('compra_en_progreso', '1');
             
             // Redirigir al paso 4 (Confirmar)
             window.location.href = "/html/Logeado/compra/Confirmar_Compra.html";

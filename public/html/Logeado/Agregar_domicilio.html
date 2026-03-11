@@ -156,15 +156,64 @@
         </div>
     </div>
 
-        <script src="/JS/api.js" defer></script>
+        <script src="/JS/api.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                const usuario = JSON.parse(
-                    localStorage.getItem('usuario') ||
-                    localStorage.getItem('usuario_logeado') ||
-                    localStorage.getItem('usuarioCompleto') ||
-                    'null'
-                );
+                let usuarioRaw = localStorage.getItem('usuario') || 'null';
+
+                if (usuarioRaw === 'null') {
+                    const usuarioLegacy =
+                        localStorage.getItem('usuario_logeado') ||
+                        localStorage.getItem('usuarioCompleto');
+
+                    if (usuarioLegacy) {
+                        localStorage.setItem('usuario', usuarioLegacy);
+                        localStorage.removeItem('usuario_logeado');
+                        localStorage.removeItem('usuarioCompleto');
+                        usuarioRaw = usuarioLegacy;
+                    }
+                }
+
+                let usuario = null;
+                try {
+                    usuario = JSON.parse(usuarioRaw);
+                } catch {
+                    usuario = null;
+                }
+
+                if (usuario && !localStorage.getItem('usuario')) {
+                    localStorage.setItem('usuario', JSON.stringify(usuario));
+                }
+
+                const direccionTemp =
+                    sessionStorage.getItem('direccion_temporal') ||
+                    localStorage.getItem('direccion_temporal');
+
+                if (direccionTemp) {
+                    try {
+                        const data = JSON.parse(direccionTemp);
+                        if (data && data.direccion) {
+                            const inputDireccion = document.getElementById('direccion');
+                            if (inputDireccion && !inputDireccion.value.trim()) {
+                                inputDireccion.value = String(data.direccion).trim();
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('No se pudo leer direccion_temporal:', error);
+                    }
+                } else {
+                    // Compatibilidad con clave anterior en texto plano.
+                    const direccionGuardada =
+                        sessionStorage.getItem('registro_domicilio_preferido') ||
+                        localStorage.getItem('registro_domicilio_preferido');
+
+                    if (direccionGuardada) {
+                        const inputDireccion = document.getElementById('direccion');
+                        if (inputDireccion && !inputDireccion.value.trim()) {
+                            inputDireccion.value = direccionGuardada;
+                        }
+                    }
+                }
 
                 if (!usuario) {
                     alert("Debes iniciar sesión para agregar un domicilio.");
@@ -226,7 +275,12 @@
     });
 
     document.getElementById('btn-modal-accept-success').onclick = () => {
-        window.location.href = '/html/Logeado/domicilio.html'; 
+        if (localStorage.getItem('compra_en_progreso')) {
+            window.location.href = '/html/Logeado/compra/domicilio.html';
+            return;
+        }
+
+        window.location.href = '/html/Logeado/domicilio.html';
     };
     </script>
 <script src="/JS/lechubot-widget.js" defer></script>

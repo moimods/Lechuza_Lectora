@@ -61,9 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('userId', user.id_usuario);
                     localStorage.setItem('userName', user.nombre_completo || user.nombre || '');
                     localStorage.setItem('userRole', user.rol);
-                    localStorage.setItem('usuario', JSON.stringify(user)); // Para compatibilidad con Acciones_Admin.js
-                    localStorage.setItem('usuario_logeado', JSON.stringify(user));
-                    localStorage.setItem('usuarioCompleto', JSON.stringify(user));
+                    localStorage.setItem('usuario', JSON.stringify(user));
 
                     // Redirigir según el rol
                     if (user.rol === 'admin') {

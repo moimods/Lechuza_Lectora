@@ -39,6 +39,36 @@
             box-shadow: 0 0 8px rgba(93, 64, 55, 0.2);
         }
 
+        .inventory-container {
+            width: min(100% - 2rem, 1680px);
+            margin-inline: auto;
+        }
+
+        .search-container {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .results-pill {
+            white-space: nowrap;
+        }
+
+        .inventory-table {
+            min-width: 980px;
+        }
+
+        @media (max-width: 900px) {
+            .search-container {
+                grid-template-columns: 1fr;
+            }
+
+            .results-pill {
+                text-align: left !important;
+            }
+        }
+
         @media print {
             .navbar, .hamburger-btn, .inventory-footer, .btn-edit, .btn-delete, .search-container { display: none !important; }
             .inventory-container { width: 100%; box-shadow: none; margin: 0; }
@@ -86,13 +116,13 @@
                 </button>
             </div>
 
-            <div class="search-container" style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px;">
+            <div class="search-container" style="margin-bottom: 20px; gap: 15px; align-items: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px;">
                 <div style="position: relative; flex: 1;">
                     <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #5d4037;"></i>
                     <input type="text" id="inventory-search" placeholder="Buscar por título, autor o ID..." 
                         style="width: 100%; padding: 12px 12px 12px 45px; border-radius: 8px; border: none; outline: none; font-size: 1rem;">
                 </div>
-                <div style="color: white; font-weight: bold; min-width: 150px; text-align: right;">
+                <div class="results-pill" style="color: white; font-weight: bold; text-align: right;">
                     <span id="results-count">0</span> productos
                 </div>
             </div>
@@ -134,12 +164,7 @@
         let indiceBusqueda = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            const usuario = JSON.parse(
-                localStorage.getItem('usuario') ||
-                localStorage.getItem('usuario_logeado') ||
-                localStorage.getItem('usuarioCompleto') ||
-                'null'
-            );
+            const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
             
             if (!usuario || usuario.rol !== 'admin') {
                 window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html'; 

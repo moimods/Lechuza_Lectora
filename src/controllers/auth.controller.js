@@ -32,16 +32,16 @@ async function login(req, res, next) {
 
 async function registro(req, res, next) {
   try {
-    const { nombre_completo, email, password, passwordConfirm } = req.body;
+    const { nombre_completo, email, password, passwordConfirm, telefono } = req.body;
 
     // Validar entrada
-    const { isValid, errors } = validateRegisterInput(nombre_completo, email, password, passwordConfirm);
+    const { isValid, errors } = validateRegisterInput(nombre_completo, email, password, passwordConfirm, telefono);
     if (!isValid) {
       return error(res, errors.join(", "), 400);
     }
 
     // Crear usuario
-    const usuario = await usuariosService.crear(nombre_completo, email, password);
+    const usuario = await usuariosService.crear(nombre_completo, email, password, telefono);
 
     // Generar token
     const token = authService.generarToken(usuario.id_usuario, usuario.email, usuario.rol);

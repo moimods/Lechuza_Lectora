@@ -34,6 +34,48 @@
             .estado-servidor-badge.estado-ok { background: #2e7d32; }
             .estado-servidor-badge.estado-warn { background: #8d6e63; }
             .estado-servidor-badge.estado-error { background: #c62828; }
+
+            @media (max-width: 768px) {
+                .hamburger-btn {
+                    display: inline-flex !important;
+                    order: 0;
+                }
+
+                .navbar {
+                    position: relative;
+                }
+
+                .navbar .nav-links {
+                    display: none;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    width: 100%;
+                    background: rgba(240, 231, 203, 0.98);
+                    flex-direction: column;
+                    padding: 12px;
+                    gap: 8px;
+                    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+                    z-index: 1001;
+                }
+
+                .navbar .nav-links.active {
+                    display: flex;
+                }
+
+                .navbar .nav-links a {
+                    margin: 0;
+                    padding: 10px 12px;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.75);
+                }
+
+                .auth-actions {
+                    width: 100%;
+                    justify-content: center;
+                    margin-top: 10px;
+                }
+            }
         </style>
     
     <script src="JS/Boton_Inicio_Sesion.js" defer></script>
@@ -44,6 +86,10 @@
 
 <body>
     <header class="navbar">
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Abrir menú" aria-expanded="false">
+            <span class="burger-icon"><span></span><span></span><span></span></span>
+        </button>
+
         <div class="logo-container">
             <img src="Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
@@ -54,7 +100,7 @@
             <input type="text" placeholder="Buscar Libros, Autores, Editoriales y más...">
         </div>
         
-        <nav class="nav-links">
+        <nav class="nav-links" id="mobile-nav">
             <a href="html/Acerca de.html">Acerca de</a>
             <a href="html/Contacto.html">Contacto</a>
             <a href="html/Ayuda.html">Ayuda</a>
@@ -143,7 +189,20 @@
     </footer>
 
     <div id="estado-servidor" class="estado-servidor-badge estado-warn">Verificando servidor...</div>
+    <script>
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobile-nav');
+            const button = document.getElementById('hamburger-btn');
+            if (!nav || !button) return;
+
+            const isOpen = !nav.classList.contains('active');
+            nav.classList.toggle('active', isOpen);
+            button.classList.toggle('open', isOpen);
+            button.setAttribute('aria-expanded', String(isOpen));
+        }
+    </script>
     <script src="/JS/diagnostico-estado.js" defer></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
 <script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>

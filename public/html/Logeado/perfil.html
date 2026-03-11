@@ -155,7 +155,7 @@
         <div class="profile-main-wrapper" style="position: relative; z-index: 5; padding: 20px;">
             <h1 style="color: #ffffff; text-align: center; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Panel de Usuario</h1>
 
-            <div class="profile-header-card" style="background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 0 auto 30px; max-width: 800px;">
+            <div class="profile-header-card" style="background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 0 auto 30px; width: min(100%, 1200px); max-width: none;">
                 <img src="/Imagenes/miku.png.jpg" alt="Avatar" id="profile-avatar-img" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #fbc02d;">
                 <div class="profile-text-custom">
                     <h2 id="user-name" style="color: #5d4037; margin: 0;">Cargando...</h2> 
@@ -164,7 +164,7 @@
                 </div>
             </div>
 
-            <div class="info-container" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto 30px;">
+            <div class="info-container" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: min(100%, 1200px); max-width: none; margin: 0 auto 30px;">
                 <section class="info-group">
                     <h2 style="color: #5d4037; border-bottom: 2px solid #fdf5e6; padding-bottom: 10px; margin-bottom: 20px;">
                         <i class="fa-solid fa-clock-rotate-left"></i> Mis Pedidos Recientes
@@ -175,7 +175,7 @@
                 </section>
             </div>
 
-            <div class="info-container" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto 30px;">
+            <div class="info-container" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: min(100%, 1200px); max-width: none; margin: 0 auto 30px;">
                 <section class="info-group">
                     <h2 style="color: #5d4037; border-bottom: 2px solid #fdf5e6; padding-bottom: 10px; margin-bottom: 20px;">Información de Contacto</h2>
                     <div class="info-grid">
@@ -195,7 +195,7 @@
                 </section>
             </div>
 
-            <div class="profile-actions-grid-custom" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 800px; margin: 0 auto;">
+            <div class="profile-actions-grid-custom" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; width: min(100%, 1200px); max-width: none; margin: 0 auto;">
                 <a href="/html/Logeado/domicilio.html" class="action-module">
                     <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: #5d4037;"></i>
                     <h3 style="color: #5d4037; margin: 0;">Direcciones</h3>
@@ -216,49 +216,59 @@
         // --- LÓGICA DE CARGA DE DATOS ---
 
         async function cargarDatosUsuario() {
-            const userEmail = localStorage.getItem('userEmail'); 
-            if (!userEmail) {
+            const token = localStorage.getItem('laLechuza_jwt_token');
+            const usuarioLocal = JSON.parse(localStorage.getItem('usuario') || 'null');
+
+            if (!token || !usuarioLocal) {
                 window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
                 return;
             }
 
             try {
-                const respuesta = await fetch(`/api/usuario/${userEmail}`);
-                const datos = await respuesta.json();
-                
-                if (datos) {
-                    document.getElementById('user-name').textContent = datos.nombre_completo;
-                    document.getElementById('user-email').textContent = datos.email;
-                    document.getElementById('info-nombre').textContent = datos.nombre_completo;
-                    document.getElementById('info-telefono').textContent = datos.telefono || 'No registrado';
-                    document.getElementById('info-email-detail').textContent = datos.email;
+                const response = await API.get('/usuario/perfil');
+                const datos = response?.data || null;
 
-                    // Manejo de imagen de perfil
-                    const profileImg = document.getElementById('profile-avatar-img');
-                    const navAvatar = document.getElementById('avatar-btn');
-                    
-                    if(datos.foto_perfil && datos.foto_perfil !== 'default_avatar.png') {
-                        profileImg.src = datos.foto_perfil;
-                        navAvatar.src = datos.foto_perfil;
-                    }
-
-                    // Fallback si la imagen falla
-                    profileImg.onerror = () => profileImg.src = "/Imagenes/miku.png.jpg";
-                    navAvatar.onerror = () => navAvatar.src = "/Imagenes/miku.png.jpg";
-
-                    cargarHistorialPedidos(datos.id_usuario);
+                if (!datos) {
+                    throw new Error('No se pudo cargar el perfil');
                 }
+
+                localStorage.setItem('usuario', JSON.stringify(datos));
+                localStorage.setItem('userId', String(datos.id_usuario || ''));
+                localStorage.setItem('userName', datos.nombre_completo || datos.nombre || 'Usuario');
+                localStorage.setItem('userRole', datos.rol || 'cliente');
+
+                document.getElementById('user-name').textContent = datos.nombre_completo || 'Usuario';
+                document.getElementById('user-email').textContent = datos.email || 'Sin correo';
+                document.getElementById('info-nombre').textContent = datos.nombre_completo || 'No disponible';
+                document.getElementById('info-telefono').textContent = datos.telefono || 'No registrado';
+                document.getElementById('info-email-detail').textContent = datos.email || 'No disponible';
+
+                const profileImg = document.getElementById('profile-avatar-img');
+                const navAvatar = document.getElementById('avatar-btn');
+
+                if (datos.foto_perfil && datos.foto_perfil !== 'default_avatar.png') {
+                    profileImg.src = datos.foto_perfil;
+                    navAvatar.src = datos.foto_perfil;
+                }
+
+                profileImg.onerror = () => profileImg.src = "/Imagenes/miku.png.jpg";
+                navAvatar.onerror = () => navAvatar.src = "/Imagenes/miku.png.jpg";
+
+                cargarHistorialPedidos();
             } catch (error) {
                 console.error("Error al cargar datos:", error);
+                if (String(error?.message || '').toLowerCase().includes('no autorizado')) {
+                    window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+                }
             }
         }
 
-        async function cargarHistorialPedidos(idUsuario) {
+        async function cargarHistorialPedidos() {
             const container = document.getElementById('pedidos-container');
 
             try {
-                const respuesta = await fetch(`/api/pedidos/usuario/${idUsuario}`);
-                const pedidos = await respuesta.json();
+                const respuesta = await API.get('/ventas/usuario?limit=5&page=1');
+                const pedidos = Array.isArray(respuesta?.data) ? respuesta.data : [];
 
                 if (!pedidos || pedidos.length === 0) {
                     container.innerHTML = `
@@ -272,13 +282,13 @@
                 container.innerHTML = pedidos.map(pedido => `
                     <div class="pedido-card">
                         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
-                            <span style="font-weight: bold; color: #5d4037;">Pedido #${pedido.id_pedido}</span>
+                            <span style="font-weight: bold; color: #5d4037;">Pedido #${pedido.id_venta}</span>
                             <span class="badge-estado" style="background: ${getEstadoColor(pedido.estado)};">
                                 ${pedido.estado.toUpperCase()}
                             </span>
                         </div>
-                        <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Fecha:</strong> ${new Date(pedido.fecha_pedido).toLocaleDateString()}</p>
-                        <p style="margin: 5px 0; font-size: 0.9rem; color: #555;"><strong>Libros:</strong> ${pedido.libros_comprados || 'Detalle no disponible'}</p>
+                        <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Fecha:</strong> ${new Date(pedido.fecha_venta).toLocaleDateString()}</p>
+                        <p style="margin: 5px 0; font-size: 0.9rem; color: #555;"><strong>Detalle:</strong> Resumen de compra disponible en historial.</p>
                         <div style="text-align: right; margin-top: 10px;">
                             <span style="font-size: 1.1rem; font-weight: bold; color: #d32f2f;">Total: $${pedido.total}</span>
                         </div>

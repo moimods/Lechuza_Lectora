@@ -46,14 +46,46 @@ async function crear(idUsuario, datos) {
     throw new ValidationError("Código postal es obligatorio");
   }
 
-  const result = await pool.query(
-    `INSERT INTO direcciones (id_usuario, calle_numero, colonia, codigo_postal, ciudad_estado, es_principal)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING id_direccion, calle_numero, colonia, codigo_postal, ciudad_estado, es_principal`,
-    [idUsuario, calle_numero, colonia || null, codigo_postal, ciudad_estado, es_principal || false]
-  );
+  const client = await pool.connect();
 
-  return result.rows[0];
+  try {
+    await client.query("BEGIN");
+
+    const countResult = await client.query(
+      "SELECT COUNT(*)::int AS total FROM direcciones WHERE id_usuario = $1",
+      [idUsuario]
+    );
+    const totalDirecciones = Number(countResult.rows[0]?.total || 0);
+
+    // Si es la primera dirección del usuario, forzamos principal.
+    let principalFinal = Boolean(es_principal);
+    if (totalDirecciones === 0) {
+      principalFinal = true;
+    }
+
+    // Si la nueva dirección será principal, desmarcamos las anteriores.
+    if (principalFinal) {
+      await client.query(
+        "UPDATE direcciones SET es_principal = FALSE WHERE id_usuario = $1 AND es_principal = TRUE",
+        [idUsuario]
+      );
+    }
+
+    const result = await client.query(
+      `INSERT INTO direcciones (id_usuario, calle_numero, colonia, codigo_postal, ciudad_estado, es_principal)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id_direccion, calle_numero, colonia, codigo_postal, ciudad_estado, es_principal`,
+      [idUsuario, calle_numero, colonia || null, codigo_postal, ciudad_estado, principalFinal]
+    );
+
+    await client.query("COMMIT");
+    return result.rows[0];
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 /**
@@ -114,15 +146,35 @@ async function actualizar(idDireccion, idUsuario, datos) {
     throw new ValidationError("Ningún campo para actualizar");
   }
 
-  values.push(idDireccion);
+  const client = await pool.connect();
 
-  const result = await pool.query(
-    `UPDATE direcciones SET ${updates.join(", ")} WHERE id_direccion = $${paramCount}
-     RETURNING id_direccion, calle_numero, colonia, codigo_postal, ciudad_estado, es_principal`,
-    values
-  );
+  try {
+    await client.query("BEGIN");
 
-  return result.rows[0];
+    // Si esta dirección se marca como principal, desmarcamos las demás del usuario.
+    if (es_principal === true) {
+      await client.query(
+        "UPDATE direcciones SET es_principal = FALSE WHERE id_usuario = $1 AND id_direccion <> $2 AND es_principal = TRUE",
+        [idUsuario, idDireccion]
+      );
+    }
+
+    values.push(idDireccion);
+
+    const result = await client.query(
+      `UPDATE direcciones SET ${updates.join(", ")} WHERE id_direccion = $${paramCount}
+       RETURNING id_direccion, calle_numero, colonia, codigo_postal, ciudad_estado, es_principal`,
+      values
+    );
+
+    await client.query("COMMIT");
+    return result.rows[0];
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 /**
