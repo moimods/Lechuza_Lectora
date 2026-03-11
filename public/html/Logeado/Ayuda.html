@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Centro de Ayuda</title>
-    <link rel="icon" type="image/x-icon" href="/Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -15,7 +15,7 @@
         .help-search-bar { background: white; padding: 15px 25px; border-radius: 30px; display: flex; align-items: center; border: 2px solid transparent; margin-bottom: 35px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: border-color 0.3s; }
         .help-search-bar:focus-within { border-color: #5d4037; }
         .help-search-bar input { border: none; outline: none; width: 100%; font-size: 1.1rem; margin-left: 15px; color: #5d4037; }
-        .background-overlay { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .background-overlay { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .icon-red { color: #d32f2f; } .icon-yellow { color: #fbc02d; } .icon-brown { color: #5d4037; } .icon-blue { color: #1976d2; }
         .dropdown-menu { display: none; position: absolute; right: 0; top: 50px; background: white; min-width: 170px; box-shadow: 0px 8px 16px rgba(0,0,0,0.3); z-index: 9999; border-radius: 8px; padding: 10px 0; border: 1px solid #ddd; }
         .dropdown-menu.show { display: block; }
@@ -40,7 +40,7 @@
     <header class="navbar detail-navbar">
         <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
         <div class="logo-container" onclick="window.location.href='/html/Logeado/Catalogo_Logeado.html'" style="cursor:pointer;">
-            <img src="../../Imagenes/logo.png" alt="Logo" class="logo">
+            <img src="/Imagenes/logo.png" alt="Logo" class="logo">
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         <nav class="nav-links" id="mobile-nav">
@@ -53,10 +53,10 @@
             <a href="/html/Logeado/carrito.html" class="icon-link"><i class="fa-solid fa-cart-shopping"></i></a>
             <button class="icon-button" onclick="window.location.href='/html/Logeado/Catalogo_Logeado.html'"><i class="fa-solid fa-house"></i></button>
             <div class="avatar-dropdown-container" style="position: relative;">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn">
+                <img src="/Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn">
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="/html/Logeado/perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
-                    <a href="/index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    <a href="/index.html" onclick="return appLogout(event)"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
@@ -123,6 +123,9 @@
             }
         });
     </script>
-    <script src="/JS/nav-toggle-global.js"></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
+<script src="/JS/api.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+

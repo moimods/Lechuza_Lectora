@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ayuda - Seguridad y Privacidad</title>
@@ -48,9 +49,9 @@
     const userState = document.getElementById("security-user-state");
 
     if (token) {
-      sessionState.textContent = "Sesion activa: protegida por token JWT.";
+      sessionState.textContent = "Sesión activa: protegida por token JWT.";
     } else {
-      sessionState.textContent = "Sesion no activa: inicia sesion para reforzar controles personalizados.";
+      sessionState.textContent = "Sesión no activa: inicia sesión para reforzar controles personalizados.";
     }
 
     if (usuario) {
@@ -67,9 +68,13 @@
       localStorage.removeItem("userId");
       localStorage.removeItem("userName");
       localStorage.removeItem("userRole");
-      alert("Sesion local cerrada correctamente.");
+      alert("Sesión local cerrada correctamente.");
       window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
     });
   </script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+
+

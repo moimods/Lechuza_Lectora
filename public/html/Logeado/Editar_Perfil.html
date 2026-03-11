@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Perfil - La Lechuza Lectora</title>
-    <link rel="icon" type="image/x-icon" href="/Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <style>
@@ -50,7 +50,7 @@
     
     <header class="navbar detail-navbar">
         <div class="logo-container" onclick="window.location.href='/html/Logeado/Catalogo_Logeado.html'" style="cursor:pointer;">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <img src="/Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
@@ -64,17 +64,17 @@
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.location.href='/html/Logeado/perfil.html'"><i class="fa-solid fa-arrow-left"></i> Volver</button>
             <div class="avatar-dropdown-container" style="position: relative;">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn">
+                <img src="/Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn">
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="/html/Logeado/perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
-                    <a href="/index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    <a href="/index.html" onclick="return appLogout(event)"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
     </header>
     
     <main class="main-content">
-        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
+        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
         
         <div class="profile-main-wrapper" style="position: relative; z-index: 5; margin-top: 40px; padding-bottom: 50px;">
             <h1 style="color: #ffffff; text-align: center; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Editar Perfil</h1>
@@ -83,7 +83,7 @@
                 <form id="edit-profile-form">
                     <div class="edit-photo-section" style="text-align: center; margin-bottom: 25px;">
                         <div style="position: relative; display: inline-block;">
-                            <img src="../../Imagenes/miku.png.jpg" alt="Avatar actual" id="preview-avatar" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #5d4037; background: white;">
+                            <img src="/Imagenes/miku.png.jpg" alt="Avatar actual" id="preview-avatar" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #5d4037; background: white;">
                             <label for="file-upload" style="position: absolute; bottom: 5px; right: 5px; background: #5d4037; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid white;">
                                 <i class="fas fa-camera"></i>
                             </label>
@@ -162,5 +162,8 @@
             dropdown.classList.remove('show');
         });
     </script>
+<script src="/JS/api.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+

@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Gestión de Pedidos</title>
@@ -57,7 +58,7 @@
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
+            <img src="/Imagenes/logo.png" alt="Logo" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
 
@@ -69,14 +70,14 @@
                 <a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
                 <a href="/html/Admin/Reporte_de_ventas.html">Ventas</a>
                 <a href="/html/Admin/Reporte_de_compras.html">Pedidos</a>
-                <a href="/index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
+                <a href="/index.html" onclick="return appLogout(event)">Cerrar Sesión</a>
             </div>
         </nav>
 
         <div class="auth-actions user-actions">
             <a href="/html/Admin/panel_de_admin.html" class="icon-button"><i class="fa-solid fa-house"></i></a>
             <span class="admin-label" id="admin-display-name">Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+            <img src="/Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
         </div>
     </header>
 
@@ -175,6 +176,10 @@
             cargarPedidos();
         });
     </script>
-    <script src="/JS/nav-toggle-global.js"></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
+<script src="/JS/api.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

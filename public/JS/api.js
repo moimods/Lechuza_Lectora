@@ -8,8 +8,12 @@
 // =============================
 const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || "http://localhost:3000/api";
 const TOKEN_KEY = "laLechuza_jwt_token";
+const LOGIN_REMINDER_KEY = "laLechuza_login_reminder";
+const SAVED_CREDENTIALS_KEY = "laLechuza_saved_credentials";
+const SESSION_TIMEOUT_MS = Number((window.APP_CONFIG && window.APP_CONFIG.SESSION_TIMEOUT_MS) || (30 * 60 * 1000));
 
 let csrfToken = null;
+let sessionTimer = null;
 
 // =============================
 // GESTIÓN DE JWT
@@ -37,6 +41,11 @@ function obtenerToken() {
 function eliminarToken() {
   localStorage.removeItem(TOKEN_KEY);
   csrfToken = null;
+
+  if (sessionTimer) {
+    clearTimeout(sessionTimer);
+    sessionTimer = null;
+  }
 }
 
 /**
@@ -44,6 +53,81 @@ function eliminarToken() {
  */
 function tieneSesion() {
   return !!obtenerToken();
+}
+
+/**
+ * Guarda un recordatorio de acceso sin almacenar contraseña real.
+ */
+function guardarRecordatorioLogin(email, password) {
+  if (!email) return;
+
+  const plain = String(password || "");
+  const passwordHint = plain.length > 0 ? "*".repeat(Math.min(plain.length, 12)) : "(sin contraseña guardada)";
+
+  localStorage.setItem(LOGIN_REMINDER_KEY, JSON.stringify({
+    email: String(email).trim(),
+    passwordHint,
+    updatedAt: new Date().toISOString()
+  }));
+}
+
+function obtenerRecordatorioLogin() {
+  try {
+    return JSON.parse(localStorage.getItem(LOGIN_REMINDER_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function limpiarRecordatorioLogin() {
+  localStorage.removeItem(LOGIN_REMINDER_KEY);
+}
+
+function guardarCredenciales(email, password) {
+  if (!email || !password) return;
+
+  localStorage.setItem(SAVED_CREDENTIALS_KEY, JSON.stringify({
+    email: String(email).trim(),
+    password: String(password),
+    updatedAt: new Date().toISOString()
+  }));
+}
+
+function obtenerCredencialesGuardadas() {
+  try {
+    return JSON.parse(localStorage.getItem(SAVED_CREDENTIALS_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function limpiarCredencialesGuardadas() {
+  localStorage.removeItem(SAVED_CREDENTIALS_KEY);
+}
+
+function reiniciarTemporizadorSesion() {
+  if (!tieneSesion()) return;
+
+  if (sessionTimer) {
+    clearTimeout(sessionTimer);
+  }
+
+  sessionTimer = setTimeout(() => {
+    eliminarToken();
+    alert("Tu sesión fue cerrada por inactividad.");
+    window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
+  }, SESSION_TIMEOUT_MS);
+}
+
+function activarDestruccionSesionPorInactividad() {
+  const events = ["click", "keydown", "mousemove", "touchstart", "scroll"];
+  events.forEach((evt) => {
+    window.addEventListener(evt, reiniciarTemporizadorSesion, { passive: true });
+  });
+
+  if (tieneSesion()) {
+    reiniciarTemporizadorSesion();
+  }
 }
 
 // =============================
@@ -108,6 +192,14 @@ async function apiRequest(endpoint, options = {}) {
       data = { error: "Respuesta inválida del servidor" };
     }
 
+    const path = String(window.location.pathname || "").toLowerCase();
+    const isAuthPage =
+      path.includes("inicio_sesion") ||
+      path.includes("inicio-de-sesion") ||
+      path.includes("login") ||
+      path.includes("registro") ||
+      path.includes("recuperacion");
+
     // MANEJO DE ERRORES
     if (!response.ok) {
       // Sesión expirada o no autorizado
@@ -115,9 +207,8 @@ async function apiRequest(endpoint, options = {}) {
         eliminarToken();
         console.warn("⚠️ Sesión expirada");
         
-        // Solo redirigir si no estamos ya en login
-        if (!window.location.pathname.includes("login") && 
-            !window.location.pathname.includes("registro")) {
+        // Solo redirigir si no estamos ya en una pantalla de autenticación.
+        if (!isAuthPage) {
           alert("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
           window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
         }
@@ -215,13 +306,21 @@ const API = {
 /**
  * Login - Guarda JWT automáticamente
  */
-API.login = async (email, password) => {
+API.login = async (email, password, options = {}) => {
   const response = await API.post("/auth/login", { email, password });
   const token = response.token || response.data?.token;
   const usuario = response.usuario || response.data?.usuario || response.user || response.data?.user;
+  const rememberCredentials = options.rememberCredentials;
 
   if (token) {
     guardarToken(token);
+    reiniciarTemporizadorSesion();
+
+    if (rememberCredentials === true) {
+      guardarCredenciales(email, password);
+    } else if (rememberCredentials === false) {
+      limpiarCredencialesGuardadas();
+    }
   }
 
   return {
@@ -247,9 +346,69 @@ API.tieneSesion = tieneSesion;
 API.obtenerToken = obtenerToken;
 API.guardarToken = guardarToken;
 API.eliminarToken = eliminarToken;
+API.guardarRecordatorioLogin = guardarRecordatorioLogin;
+API.obtenerRecordatorioLogin = obtenerRecordatorioLogin;
+API.limpiarRecordatorioLogin = limpiarRecordatorioLogin;
+API.guardarCredenciales = guardarCredenciales;
+API.obtenerCredencialesGuardadas = obtenerCredencialesGuardadas;
+API.limpiarCredencialesGuardadas = limpiarCredencialesGuardadas;
+API.reiniciarTemporizadorSesion = reiniciarTemporizadorSesion;
+
+async function hidratarSesionDesdeToken() {
+  if (!tieneSesion()) return;
+
+  const usuarioLocal = localStorage.getItem("usuario") || localStorage.getItem("usuario_logeado");
+  if (usuarioLocal) return;
+
+  try {
+    const response = await API.get("/usuario/perfil");
+    const usuario = response && response.data ? response.data : null;
+
+    if (!usuario || typeof usuario !== "object") return;
+
+    localStorage.setItem("usuario", JSON.stringify(usuario));
+    localStorage.setItem("usuario_logeado", JSON.stringify(usuario));
+    localStorage.setItem("usuarioCompleto", JSON.stringify(usuario));
+    localStorage.setItem("userId", String(usuario.id_usuario || usuario.id || ""));
+    localStorage.setItem("userName", usuario.nombre_completo || usuario.nombre || "Usuario");
+    localStorage.setItem("userRole", usuario.rol || "cliente");
+  } catch (error) {
+    console.warn("No se pudo hidratar la sesión desde token:", error.message || error);
+  }
+}
+
+API.hidratarSesionDesdeToken = hidratarSesionDesdeToken;
+
+window.appLogout = function appLogout(event) {
+  if (event && typeof event.preventDefault === "function") {
+    event.preventDefault();
+  }
+
+  API.logout()
+    .catch(() => {})
+    .finally(() => {
+      [
+        "usuario",
+        "usuario_logeado",
+        "usuarioCompleto",
+        "userId",
+        "userName",
+        "userRole",
+        "admin_session",
+        "postLoginRedirect"
+      ].forEach((key) => localStorage.removeItem(key));
+
+      window.location.href = "/index.html";
+    });
+
+  return false;
+};
 
 // Export global para HTML clásicos
 window.API = API;
 window.apiRequest = apiRequest;
+
+activarDestruccionSesionPorInactividad();
+hidratarSesionDesdeToken();
 
 console.log("✅ API Client cargado correctamente");

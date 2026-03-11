@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Recuperar Contraseña</title>
-    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -24,7 +24,7 @@
 
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+                        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -98,7 +98,7 @@
         // 1. Simulación de envío de código
         btnEnviar.addEventListener('click', async () => {
             const email = inputCorreo.value.trim();
-            if(!email) return alert("🦉 ¡Oye! Necesito tu correo para saber a dónde volar.");
+            if(!email) return alert("ðŸ¦‰ ¡Oye! Necesito tu correo para saber a dónde volar.");
 
             // Feedback visual de carga
             btnEnviar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
@@ -106,7 +106,7 @@
             btnEnviar.disabled = true;
 
             setTimeout(() => {
-                alert("✨ Mensaje enviado. Revisa tu bandeja de entrada.\n(Para esta prueba el código es: 1234)");
+                alert("âœ¨ Mensaje enviado. Revisa tu bandeja de entrada.\n(Para esta prueba el código es: 1234)");
                 btnEnviar.innerHTML = 'Reenviar código';
                 btnEnviar.classList.remove('btn-disabled');
                 btnEnviar.disabled = false;
@@ -119,7 +119,7 @@
             if(!codigo) return alert("Por favor, ingresa el código de 4 dígitos.");
 
             if(codigo === "1234") { 
-                alert("✅ Código correcto. Redirigiendo al cambio de contraseña...");
+                alert("âœ… Código correcto. Redirigiendo al cambio de contraseña...");
                 window.location.href = 'Cambio_Contraseña.html'; 
             } else {
                 alert("❌ El código es incorrecto. Prueba con '1234'.");
@@ -129,5 +129,7 @@
         });
     </script>
     <script src="/JS/limpiar-cache-formularios.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+

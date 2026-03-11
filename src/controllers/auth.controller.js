@@ -1,7 +1,12 @@
 const authService = require("../services/auth.service");
 const usuariosService = require("../services/usuarios.service");
 const { success, error } = require("../utils/response");
-const { validateLoginInput, validateRegisterInput, validatePasswordInput } = require("../utils/validators");
+const {
+  validateLoginInput,
+  validateRegisterInput,
+  validatePasswordInput,
+  validateRecoveryPasswordInput
+} = require("../utils/validators");
 
 async function login(req, res, next) {
   try {
@@ -71,9 +76,27 @@ async function actualizarPassword(req, res, next) {
   }
 }
 
+async function recuperarPassword(req, res, next) {
+  try {
+    const { email, passwordNueva, passwordConfirm } = req.body;
+
+    const { isValid, errors } = validateRecoveryPasswordInput(email, passwordNueva, passwordConfirm);
+    if (!isValid) {
+      return error(res, errors.join(", "), 400);
+    }
+
+    await usuariosService.actualizarPasswordPorEmail(email, passwordNueva);
+
+    return success(res, null, "Contraseña restablecida correctamente", 200);
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   login,
   registro,
   logout,
-  actualizarPassword
+  actualizarPassword,
+  recuperarPassword
 };

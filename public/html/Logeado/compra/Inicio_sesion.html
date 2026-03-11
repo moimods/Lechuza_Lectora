@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingresar - La Lechuza Lectora</title>
@@ -92,23 +93,26 @@
 
         try {
             // Petición a la API que definimos en index.js
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
 
             const data = await response.json();
+            const ok = data.ok ?? data.success;
+            const user = data.usuario || data.user || data.data?.usuario || data.data?.user;
 
-            if (data.success) {
+            if (ok && user) {
                 // GUARDADO ÓPTIMO: Guardamos el objeto usuario completo
                 // Esto incluye el id_usuario necesario para la compra
-                localStorage.setItem('usuario_logeado', JSON.stringify(data.user));
+                localStorage.setItem('usuario_logeado', JSON.stringify(user));
+                localStorage.setItem('usuario', JSON.stringify(user));
                 
                 // Redirección exitosa
                 window.location.href = '/html/Logeado/Catalogo_Logeado.html';
             } else {
-                errorMsg.innerText = data.error;
+                errorMsg.innerText = data.error || 'Credenciales incorrectas';
                 errorMsg.style.display = 'block';
                 btnText.innerText = "Entrar";
             }
@@ -121,5 +125,8 @@
     });
 </script>
 
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

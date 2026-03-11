@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,7 +48,7 @@
 
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+                        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -74,7 +75,7 @@
     
     <header class="navbar user-navbar">
         <div class="logo-container" onclick="window.location.href='/index.html'" style="cursor: pointer;">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <img src="/Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         <div class="auth-actions user-actions">
@@ -155,11 +156,11 @@
         </div>
     </div>
 
+        <script src="/JS/api.js" defer></script>
         <script>
         // Verificación de sesión antes de cargar el resto de la página
         document.addEventListener('DOMContentLoaded', () => {
-            const usuario = JSON.parse(localStorage.getItem('usuario_logeado'));
-            if (!usuario || !usuario.id_usuario) {
+            if (!window.API || !API.tieneSesion()) {
                 alert("Debes estar logeado para agregar un domicilio");
                 window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
                 return;
@@ -171,19 +172,26 @@
     document.getElementById('address-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const usuarioJson = localStorage.getItem('usuario_logeado');
-        const usuario = usuarioJson ? JSON.parse(usuarioJson) : null;
-        const idUsuario = usuario ? usuario.id_usuario : null;
-
-        if (!idUsuario) {
+        if (!window.API || !API.tieneSesion()) {
             alert("No se encontró una sesión activa.");
             window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
             return;
         }
 
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-        data.id_usuario = idUsuario;
+        const calleBase = document.getElementById('direccion').value.trim();
+        const numeroInt = document.getElementById('numero').value.trim();
+        const estado = document.getElementById('estado').value.trim();
+        const municipio = document.getElementById('municipio').value.trim();
+        const colonia = document.getElementById('colonia').value.trim();
+        const cp = document.getElementById('cp').value.trim();
+
+        const data = {
+            calle_numero: numeroInt ? `${calleBase} Int ${numeroInt}` : calleBase,
+            colonia,
+            codigo_postal: cp,
+            ciudad_estado: `${municipio}, ${estado}`,
+            es_principal: true
+        };
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerText;
@@ -191,15 +199,9 @@
         submitBtn.disabled = true;
 
         try {
-            const response = await fetch('http://localhost:3000/api/direcciones/agregar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            const result = await API.post('/usuario/direcciones', data);
 
-            const result = await response.json();
-
-            if (result.success) {
+            if (result.ok || result.success) {
                 document.getElementById('custom-success-modal').style.display = 'flex';
             } else {
                 alert("Error: " + (result.error || "No se pudo guardar el domicilio."));
@@ -208,7 +210,12 @@
             }
         } catch (error) {
             console.error("Error al enviar:", error);
-            alert("Hubo un error al conectar con el servidor.");
+            const message = String(error?.message || '');
+            if (message.toLowerCase().includes('ruta no encontrada') || message.toLowerCase().includes('not found')) {
+                alert("No se encontro la ruta de guardado del domicilio. Verifica que la API este levantada en /api/usuario/direcciones.");
+            } else {
+                alert("No se pudo guardar el domicilio. Verifica los datos e intenta de nuevo.");
+            }
             submitBtn.innerText = originalText;
             submitBtn.disabled = false;
         }
@@ -218,5 +225,8 @@
         window.location.href = '/html/Logeado/domicilio.html'; 
     };
     </script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

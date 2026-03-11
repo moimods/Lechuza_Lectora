@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Login Administrador</title>
-    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -33,7 +33,7 @@
 
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+                        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0;
@@ -50,17 +50,19 @@
 
         <div class="form-card login-card admin-login-card" style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
             <div class="center-logo-box" style="text-align: center;">
-                <img src="../../Imagenes/logo.png" alt="Logo Central" class="main-logo" style="width: 100px; height: 100px; object-fit: contain;">
+                <img src="/Imagenes/logo.png" alt="Logo Central" class="main-logo" style="width: 100px; height: 100px; object-fit: contain;">
                 <h2 style="color: #5d4037; margin-top: 10px; font-weight: bold;">Acceso Panel Control</h2>
             </div>
             
-            <form class="login-form" id="adminLoginForm" style="margin-top: 20px;">
+                 <form class="login-form" id="adminLoginForm" style="margin-top: 20px;" autocomplete="off">
                 <label for="correo" style="display: block; text-align: left; font-weight: bold; color: #5d4037;">Administrador:</label>
                 <input type="email" id="correo" placeholder="correo@admin.com" required 
+                      autocomplete="off"
                        style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;">
 
                 <label for="contrasena" style="display: block; text-align: left; font-weight: bold; color: #5d4037;">Contraseña:</label>
                 <input type="password" id="contrasena" placeholder="********" required 
+                      autocomplete="new-password"
                        style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;">
 
                 <button type="submit" class="btn-primary" 
@@ -87,7 +89,7 @@
         </div>
     </footer>
 
-<script src="/JS/api.js"></script>
+<script src="/JS/api.js" defer></script>
 <script src="/JS/limpiar-cache-formularios.js" defer></script>
 <script>
 document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
@@ -115,14 +117,14 @@ document.getElementById('adminLoginForm').addEventListener('submit', async (e) =
                 localStorage.setItem('usuarioCompleto', JSON.stringify(user));
                 localStorage.setItem('admin_session', 'true'); // Flag extra para paneles admin
 
-                alert("🔓 Acceso administrativo concedido. Bienvenido, " + (user.nombre_completo || user.nombre || 'Admin'));
+                alert("ðŸ”“ Acceso administrativo concedido. Bienvenido, " + (user.nombre_completo || user.nombre || 'Admin'));
                 
                 // Redirigir al panel admin real
                 window.location.href = '/html/Admin/panel_de_admin.html'; 
 
             } else {
                 // Si el usuario existe pero es un cliente normal
-                alert("🚫 Acceso denegado: Esta cuenta no tiene permisos de administrador.");
+                alert("ðŸš« Acceso denegado: Esta cuenta no tiene permisos de administrador.");
                 // Opcional: Cerrar sesión por seguridad
                 localStorage.clear();
             }
@@ -135,6 +137,15 @@ document.getElementById('adminLoginForm').addEventListener('submit', async (e) =
         alert("⚠️ " + (error.message || "No se pudo conectar con el servidor. Verifica que Node.js esté activo."));
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const correo = document.getElementById('correo');
+    const contrasena = document.getElementById('contrasena');
+    if (correo) correo.value = '';
+    if (contrasena) contrasena.value = '';
+});
 </script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+

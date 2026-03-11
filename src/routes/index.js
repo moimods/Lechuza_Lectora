@@ -8,6 +8,7 @@ const paymentsRoutes = require("./payments.routes");
 const ventasRoutes = require("./ventas.routes");
 const adminRoutes = require("./admin.routes");
 const reportesRoutes = require("./reportes.routes");
+const chatbotRoutes = require("./chatbot.routes");
 
 const router = express.Router();
 
@@ -50,5 +51,6 @@ router.use("/payments", paymentsRoutes);
 router.use("/ventas", ventasRoutes);
 router.use("/admin", adminRoutes);
 router.use("/reportes", reportesRoutes);
+router.use("/chatbot", chatbotRoutes);
 
 module.exports = router;

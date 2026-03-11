@@ -129,6 +129,27 @@ function validatePasswordInput(passwordActual, passwordNueva, passwordConfirm) {
 }
 
 /**
+ * Valida recuperación de contraseña por correo
+ */
+function validateRecoveryPasswordInput(email, passwordNueva, passwordConfirm) {
+  const errors = [];
+
+  if (!isValidEmail(email)) {
+    errors.push("Email inválido");
+  }
+
+  if (!isValidPassword(passwordNueva)) {
+    errors.push("Contraseña nueva debe tener al menos 8 caracteres");
+  }
+
+  if (passwordNueva !== passwordConfirm) {
+    errors.push("Las contraseñas no coinciden");
+  }
+
+  return { isValid: errors.length === 0, errors };
+}
+
+/**
  * Valida objeto de producto
  */
 function validateProductInput(titulo, precio, stock) {
@@ -208,6 +229,7 @@ module.exports = {
   validateLoginInput,
   validateRegisterInput,
   validatePasswordInput,
+  validateRecoveryPasswordInput,
   validateProductInput,
   validateAddressInput
 };

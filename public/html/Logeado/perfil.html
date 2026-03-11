@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Mi Perfil - La Lechuza Lectora</title>
@@ -111,7 +112,7 @@
     
     <header class="navbar detail-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <img src="/Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
 
@@ -139,23 +140,23 @@
             <button class="icon-button" onclick="window.location.href='/index.html'"><i class="fa-solid fa-house"></i></button>
 
             <div class="avatar-dropdown-container" style="position: relative;">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
+                <img src="/Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="/html/Logeado/perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
-                    <a href="/index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    <a href="/index.html" onclick="return appLogout(event)"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
     </header>
     
     <main class="main-content">
-        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
+        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
         
         <div class="profile-main-wrapper" style="position: relative; z-index: 5; padding: 20px;">
             <h1 style="color: #ffffff; text-align: center; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Panel de Usuario</h1>
 
             <div class="profile-header-card" style="background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; display: flex; align-items: center; gap: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 0 auto 30px; max-width: 800px;">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar" id="profile-avatar-img" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #fbc02d;">
+                <img src="/Imagenes/miku.png.jpg" alt="Avatar" id="profile-avatar-img" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #fbc02d;">
                 <div class="profile-text-custom">
                     <h2 id="user-name" style="color: #5d4037; margin: 0;">Cargando...</h2> 
                     <p id="user-email" class="email-text" style="color: #777; margin: 5px 0;">...</p>
@@ -242,8 +243,8 @@
                     }
 
                     // Fallback si la imagen falla
-                    profileImg.onerror = () => profileImg.src = "../../Imagenes/miku.png.jpg";
-                    navAvatar.onerror = () => navAvatar.src = "../../Imagenes/miku.png.jpg";
+                    profileImg.onerror = () => profileImg.src = "/Imagenes/miku.png.jpg";
+                    navAvatar.onerror = () => navAvatar.src = "/Imagenes/miku.png.jpg";
 
                     cargarHistorialPedidos(datos.id_usuario);
                 }
@@ -323,6 +324,10 @@
 
         document.addEventListener('DOMContentLoaded', cargarDatosUsuario);
     </script>
-    <script src="/JS/nav-toggle-global.js"></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
+<script src="/JS/api.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

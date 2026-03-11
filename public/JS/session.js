@@ -51,6 +51,29 @@ function mostrarUsuario() {
 // CERRAR SESIÓN
 // ================================================
 function logout() {
-    localStorage.removeItem("usuario");
-    window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
+    const doRedirect = () => {
+        [
+            "usuario",
+            "usuario_logeado",
+            "usuarioCompleto",
+            "userId",
+            "userName",
+            "userRole",
+            "admin_session",
+            "postLoginRedirect"
+        ].forEach((key) => localStorage.removeItem(key));
+
+        if (window.API && typeof window.API.eliminarToken === "function") {
+            window.API.eliminarToken();
+        }
+
+        window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
+    };
+
+    if (window.API && typeof window.API.logout === "function") {
+        window.API.logout().finally(doRedirect);
+        return;
+    }
+
+    doRedirect();
 }

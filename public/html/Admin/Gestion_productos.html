@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Registro de Libros</title>
@@ -58,7 +59,7 @@
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
+            <img src="/Imagenes/logo.png" alt="Logo" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
@@ -70,14 +71,14 @@
                 <a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
                 <a href="/html/Admin/Reporte_de_ventas.html">Ventas</a>
                 <a href="/html/Admin/Reporte_de_compras.html">Pedidos</a>
-                <a href="/index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
+                <a href="/index.html" onclick="return appLogout(event)">Cerrar Sesión</a>
             </div>
         </nav>
 
         <div class="auth-actions user-actions">
             <a href="/html/Admin/panel_de_admin.html" class="icon-button"><i class="fa-solid fa-house"></i></a>
             <span class="admin-label" id="admin-display-name">Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+            <img src="/Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
         </div>
     </header>
 
@@ -89,7 +90,7 @@
                 <a href="/html/Admin/panel_de_admin.html" style="color: inherit; text-decoration: none;">
                     <i class="fa-solid fa-circle-chevron-left fa-2xl" style="margin-right: 15px; cursor: pointer;"></i>
                 </a>
-                <h2 style="margin: 0;">Registrar Nuevo Libro</h2>
+                <h2 style="margin: 0;" id="product-form-title">Registrar Nuevo Libro</h2>
             </div>
 
             <form id="productForm">
@@ -123,7 +124,7 @@
 
                 <div class="form-group">
                     <label>Imagen de Portada (URL o Nombre de archivo):</label>
-                    <input type="text" id="imagen_url" placeholder="../../Imagenes/Libros/libro_nuevo.jpg">
+                    <input type="text" id="imagen_url" placeholder="/Imagenes/Libros/libro_nuevo.jpg">
                     <div class="preview-box" id="imagePreview">
                         <i class="fa-solid fa-image fa-2x"></i>
                     </div>
@@ -138,8 +139,32 @@
     </main>
 
     <div id="listaProductos"></div>
-<script src="/JS/productos.js"></script>
     <script>
+        const params = new URLSearchParams(window.location.search);
+        const editId = params.get('id');
+
+        function getToken() {
+            return localStorage.getItem('laLechuza_jwt_token');
+        }
+
+        async function apiCall(url, options = {}) {
+            const token = getToken();
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                ...options
+            });
+
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || 'Error en la operación');
+            }
+
+            return data;
+        }
+
         // 1. Verificación de Seguridad
         const user = JSON.parse(
             localStorage.getItem('usuario') ||
@@ -150,8 +175,11 @@
         if (!user || user.rol !== 'admin') {
             window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
         } else {
-            document.getElementById('admin-display-name').innerText = user.nombre;
+            document.getElementById('admin-display-name').innerText = user.nombre_completo || user.nombre || 'Admin';
             cargarCategorias();
+            if (editId) {
+                activarModoEdicion(editId);
+            }
         }
 
         async function cargarCategorias() {
@@ -176,6 +204,31 @@
             }
         }
 
+        async function activarModoEdicion(id) {
+            document.getElementById('product-form-title').innerText = `Editar Libro #${id}`;
+            document.getElementById('btnGuardar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios';
+
+            try {
+                const payload = await apiCall(`/api/productos/${id}`);
+                const producto = payload.data || payload;
+
+                document.getElementById('titulo').value = producto.titulo || '';
+                document.getElementById('autor').value = producto.autor || '';
+                document.getElementById('precio').value = producto.precio ?? '';
+                document.getElementById('stock').value = producto.stock ?? '';
+                document.getElementById('imagen_url').value = producto.imagen_url || '';
+
+                const categoriaSel = document.getElementById('categoria');
+                if (producto.categoria) {
+                    categoriaSel.value = producto.categoria;
+                } else if (producto.id_categoria) {
+                    categoriaSel.value = String(producto.id_categoria);
+                }
+            } catch (error) {
+                alert('No se pudo cargar el producto para edición: ' + error.message);
+            }
+        }
+
         // 2. Lógica de Envío a la API
         document.getElementById('productForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -191,24 +244,25 @@
                 precio: parseFloat(document.getElementById('precio').value),
                 stock: parseInt(document.getElementById('stock').value),
                 categoria: document.getElementById('categoria').value,
-                imagen_url: document.getElementById('imagen_url').value || "../../Imagenes/Libros/default.jpg"
+                imagen_url: document.getElementById('imagen_url').value || "/Imagenes/Libros/default.jpg"
             };
 
             try {
-                const response = await fetch('http://localhost:3000/api/productos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datosLibro)
-                });
-
-                const resultado = await response.json();
-
-                if (response.ok) {
-                    alert(`✅ ¡Éxito! El libro "${datosLibro.titulo}" ha sido guardado.`);
-                    window.location.href = '/html/Admin/Gestion_de_inventario.html'; 
+                if (editId) {
+                    await apiCall(`/api/productos/${editId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(datosLibro)
+                    });
+                    alert(`âœ… Cambios guardados para "${datosLibro.titulo}".`);
                 } else {
-                    throw new Error(resultado.error || "Error al registrar");
+                    await apiCall('/api/productos', {
+                        method: 'POST',
+                        body: JSON.stringify(datosLibro)
+                    });
+                    alert(`âœ… ¡Éxito! El libro "${datosLibro.titulo}" ha sido guardado.`);
                 }
+
+                window.location.href = '/html/Admin/Gestion_de_inventario.html';
             } catch (error) {
                 console.error("Error API:", error);
                 alert("❌ Error: " + error.message);
@@ -226,6 +280,10 @@
             menuDesplegable.classList.toggle('show-menu');
         });
     </script>
-    <script src="/JS/nav-toggle-global.js"></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
+<script src="/JS/api.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

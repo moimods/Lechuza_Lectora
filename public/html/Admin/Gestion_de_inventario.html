@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Gestión de Inventario</title>
@@ -64,11 +65,11 @@
     <button type="submit">Agregar</button>
 </form>
 
-<script src="/JS/inventario.js"></script>
+<script src="/JS/inventario.js" defer></script>
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
+            <img src="/Imagenes/logo.png" alt="Logo" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
@@ -81,14 +82,14 @@
                 <a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
                 <a href="/html/Admin/Reporte_de_ventas.html">Ventas</a>
                 <a href="/html/Admin/Reporte_de_compras.html">Pedidos</a>
-                <a href="/index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
+                <a href="/index.html" onclick="return appLogout(event)">Cerrar Sesión</a>
             </div>
         </nav>
 
         <div class="auth-actions user-actions">
             <a href="/html/Admin/panel_de_admin.html" class="home-icon"><i class="fa-solid fa-house"></i></a>
             <span class="admin-label" id="admin-name">Admin</span>
-            <img src="../../Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="object-fit: cover; border-radius: 50%; width: 40px; height: 40px;">
+            <img src="/Imagenes/miku.png.jpg" alt="Avatar" class="avatar" style="object-fit: cover; border-radius: 50%; width: 40px; height: 40px;">
         </div>
     </header>
 
@@ -148,6 +149,7 @@
 
     <script>
         let todosLosProductos = []; // Almacén local para búsqueda rápida
+        let indiceBusqueda = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             const usuario = JSON.parse(
@@ -191,11 +193,20 @@
 
         async function cargarInventario() {
             try {
-                const response = await fetch('/api/productos');
+                const token = localStorage.getItem('laLechuza_jwt_token');
+                const response = await fetch('/api/productos', {
+                    headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    }
+                });
                 if (!response.ok) throw new Error('Error en servidor');
                 
                 const payload = await response.json();
                 todosLosProductos = Array.isArray(payload) ? payload : (payload.data || []);
+                indiceBusqueda = todosLosProductos.map((p) => ({
+                    id: p.id_producto,
+                    source: `${p.id_producto} ${p.titulo || ''} ${p.autor || ''} ${p.categoria || ''}`.toLowerCase()
+                }));
                 renderizarTabla(todosLosProductos);
 
             } catch (error) {
@@ -218,11 +229,8 @@
 
             let htmlRows = '';
             lista.forEach(prod => {
-                const stockVal = parseInt(prod.stock);
-                let claseE = 'available', textoE = 'En Stock';
-                
-                if (stockVal <= 0) { claseE = 'sold-out'; textoE = 'Agotado'; }
-                else if (stockVal <= 5) { claseE = 'low-stock'; textoE = 'Crítico'; }
+                const stockVal = parseInt(prod.stock, 10) || 0;
+                const claseE = stockVal <= 0 ? 'sold-out' : (stockVal <= 5 ? 'low-stock' : 'available');
 
                 const precioMXN = new Intl.NumberFormat('es-MX', {
                     style: 'currency', currency: 'MXN'
@@ -234,9 +242,9 @@
                         <td style="font-weight: bold; color: #5d4037;">${prod.titulo}</td>
                         <td>${prod.autor || 'N/A'}</td>
                         <td>${prod.categoria || 'Sin género'}</td>
-                        <td style="text-align:center;">${prod.stock} uds</td>
+                        <td style="text-align:center;">${stockVal}</td>
                         <td style="text-align:center; font-weight: 600;">${precioMXN}</td>
-                        <td style="text-align:center;"><span class="status-tag ${claseE}">${textoE}</span></td>
+                        <td style="text-align:center;"><span class="status-tag ${claseE}">${stockVal}</span></td>
                         <td style="text-align:center;">
                             <button class="btn-edit" onclick="editarProducto(${prod.id_producto})" title="Editar">
                                 <i class="fa-solid fa-pen-to-square"></i>
@@ -253,15 +261,27 @@
 
         function initSearch() {
             const searchInput = document.getElementById('inventory-search');
+            let debounce = null;
+
             searchInput.addEventListener('input', (e) => {
-                const term = e.target.value.toLowerCase();
-                const filtrados = todosLosProductos.filter(p => 
-                    p.titulo.toLowerCase().includes(term) || 
-                    p.autor?.toLowerCase().includes(term) ||
-                    p.categoria?.toLowerCase().includes(term) ||
-                    p.id_producto.toString().includes(term)
-                );
-                renderizarTabla(filtrados);
+                const term = e.target.value.toLowerCase().trim();
+
+                clearTimeout(debounce);
+                debounce = setTimeout(() => {
+                    if (!term) {
+                        renderizarTabla(todosLosProductos);
+                        return;
+                    }
+
+                    const ids = new Set(
+                        indiceBusqueda
+                            .filter((item) => item.source.includes(term))
+                            .map((item) => item.id)
+                    );
+
+                    const filtrados = todosLosProductos.filter((p) => ids.has(p.id_producto));
+                    renderizarTabla(filtrados);
+                }, 150);
             });
         }
 
@@ -269,15 +289,45 @@
             if (!confirm(`¿Eliminar permanentemente "${nombre}"?`)) return;
 
             try {
-                const response = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
+                const token = localStorage.getItem('laLechuza_jwt_token');
+                const response = await fetch(`/api/productos/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    }
+                });
+
                 if (response.ok) {
-                    alert("✅ Eliminado correctamente.");
+                    alert("Eliminado correctamente.");
                     cargarInventario(); 
                 } else {
-                    alert("❌ No se puede eliminar: El libro tiene ventas registradas.");
+                    const err = await response.json().catch(() => ({}));
+                    const mensaje = err.error || "No se puede eliminar este libro.";
+
+                    if (!confirm(`No se puede eliminar: ${mensaje}\n\n¿Deseas marcarlo como agotado (stock = 0) en lugar de eliminarlo?`)) {
+                        return;
+                    }
+
+                    const fallback = await fetch(`/api/productos/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token ? { Authorization: `Bearer ${token}` } : {})
+                        },
+                        body: JSON.stringify({ stock: 0 })
+                    });
+
+                    if (!fallback.ok) {
+                        const errFallback = await fallback.json().catch(() => ({}));
+                        alert("No fue posible actualizar el estado del producto: " + (errFallback.error || 'Error desconocido'));
+                        return;
+                    }
+
+                    alert("Producto marcado como agotado.");
+                    cargarInventario();
                 }
             } catch (error) {
-                alert("🚨 Error de conexión.");
+                alert("Error de conexión.");
             }
         }
 
@@ -294,6 +344,10 @@
             });
         }
     </script>
-    <script src="/JS/nav-toggle-global.js"></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
+<script src="/JS/api.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

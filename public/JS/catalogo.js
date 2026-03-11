@@ -39,7 +39,17 @@ function normalizeApiProducts(payload) {
 
 function getImageSrc(product) {
   const numericId = Number(product.id_producto || 1);
-  const fallbackById = `/Imagenes/Libro${((numericId - 1) % 8) + 1}.png`;
+  const fallbackImages = [
+    "/Imagenes/The_Sisters_Brothers.png",
+    "/Imagenes/perfume.png",
+    "/Imagenes/diario_de_ana_frank.png",
+    "/Imagenes/viagem_ao_centro_da_terra.png",
+    "/Imagenes/don_quijote_de_la_mancha.png",
+    "/Imagenes/el_instituto.png",
+    "/Imagenes/el_hobbit.png",
+    "/Imagenes/Cuando_Reescribamos_La_Historia.png"
+  ];
+  const fallbackById = fallbackImages[((numericId - 1) % fallbackImages.length + fallbackImages.length) % fallbackImages.length];
 
   if (!product.imagen_url || typeof product.imagen_url !== "string") {
     return fallbackById;
@@ -92,7 +102,7 @@ function createProductCard(product) {
 
   card.innerHTML = `
     <div>
-      <img src="${imageSrc}" alt="${safeTitle}" onerror="this.onerror=null;this.src='/Imagenes/Libros/default.jpg';">
+      <img src="${imageSrc}" alt="${safeTitle}" onerror="this.onerror=null;this.src='/Imagenes/The_Sisters_Brothers.png';">
       <h3 style="font-size:1rem; margin:10px 0; color:#5d4037;">${safeTitle}</h3>
       <p style="font-size:0.8rem; color:#777; margin-bottom:10px;">${safeAuthor}</p>
     </div>

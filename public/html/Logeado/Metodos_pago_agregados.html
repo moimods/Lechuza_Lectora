@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Métodos de Pago</title>
-    <link rel="icon" type="image/x-icon" href="/Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -18,7 +18,7 @@
         /* Fondo */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+                        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -68,7 +68,7 @@
 
     <header class="navbar-minimal" style="padding: 15px; background: rgba(240, 231, 203, 0.98); box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <div class="logo-container" onclick="window.location.href='/html/Logeado/Catalogo_Logeado.html'" style="cursor: pointer; display: flex; align-items: center; max-width: 1200px; margin: 0 auto;">
-            <img src="../../Imagenes/logo.png" alt="Logo" style="height: 35px; margin-right: 10px;"> 
+            <img src="/Imagenes/logo.png" alt="Logo" style="height: 35px; margin-right: 10px;"> 
             <span style="font-weight: bold; color: #5d4037; letter-spacing: 1px;">LA LECHUZA LECTORA</span>
         </div>
     </header>
@@ -110,37 +110,31 @@
     </main>
 
     <footer style="text-align: center; padding: 20px; color: #ffffff; font-size: 0.85rem;">
-        © 2026 La Lechuza Lectora — Transacciones Seguras
+        © 2026 La Lechuza Lectora - Transacciones Seguras
     </footer>
 
+    <script src="/JS/api.js" defer></script>
     <script>
-        function getSessionKey() {
-            const uid = localStorage.getItem('userId') || 'anon';
-            return `metodosPagoSesion_${uid}`;
-        }
+        let metodos = [];
 
-        function readMethods() {
-            try {
-                return JSON.parse(sessionStorage.getItem(getSessionKey()) || '[]');
-            } catch {
-                return [];
+        function getReferenceFromMetodo(metodo) {
+            if (metodo.tipo === 'paypal') {
+                return metodo.referencia || 'Cuenta PayPal';
             }
-        }
 
-        function saveMethods(methods) {
-            sessionStorage.setItem(getSessionKey(), JSON.stringify(methods));
+            const last4 = String(metodo.last_four || '').trim();
+            return last4 ? `**** ${last4}` : 'Tarjeta';
         }
 
         function renderMethods() {
-            const methods = readMethods();
             const container = document.getElementById('payment-method-list');
 
-            if (!methods.length) {
-                container.innerHTML = '<p style="color:#777;margin-bottom:15px;">No hay métodos guardados en esta sesión.</p>';
+            if (!metodos.length) {
+                container.innerHTML = '<p style="color:#777;margin-bottom:15px;">No hay métodos guardados en tu cuenta.</p>';
                 return;
             }
 
-            container.innerHTML = methods.map((m, index) => {
+            container.innerHTML = metodos.map((m, index) => {
                 const selectedClass = m.selected ? 'selected' : '';
                 const icon = m.tipo === 'paypal' ? 'fa-brands fa-paypal' : 'fa-solid fa-credit-card';
                 const bg = m.tipo === 'paypal' ? '#0070ba' : '#333';
@@ -153,7 +147,7 @@
                     </div>
                     <div style="text-align: left; flex:1;">
                         <span style="display: block; font-size: 0.75rem; color: #888; text-transform: uppercase;">${title}</span>
-                        <p style="margin: 0; font-weight: bold; color: #333;">${m.referencia}</p>
+                        <p style="margin: 0; font-weight: bold; color: #333;">${getReferenceFromMetodo(m)}</p>
                     </div>
                     <button type="button" onclick="event.stopPropagation(); removeOption(${index})" style="background:none;border:none;color:#a00;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
                 </div>
@@ -162,58 +156,101 @@
         }
 
         function selectOption(index) {
-            const methods = readMethods().map((m, i) => ({ ...m, selected: i === index }));
-            saveMethods(methods);
+            metodos = metodos.map((m, i) => ({ ...m, selected: i === index }));
             renderMethods();
         }
 
-        function removeOption(index) {
-            const methods = readMethods();
-            methods.splice(index, 1);
-            if (methods.length && !methods.some((m) => m.selected)) {
-                methods[0].selected = true;
+        async function cargarMetodos() {
+            try {
+                const response = await API.get('/usuario/metodos-pago');
+                const rows = Array.isArray(response.data) ? response.data : [];
+                metodos = rows.map((m) => ({ ...m, selected: Boolean(m.es_principal) }));
+
+                if (metodos.length && !metodos.some((m) => m.selected)) {
+                    metodos[0].selected = true;
+                }
+
+                renderMethods();
+            } catch (err) {
+                console.error('No se pudieron cargar métodos de pago:', err);
+                metodos = [];
+                renderMethods();
             }
-            saveMethods(methods);
-            renderMethods();
         }
 
-        document.getElementById('payment-method-form').addEventListener('submit', (e) => {
+        async function removeOption(index) {
+            const metodo = metodos[index];
+            if (!metodo) return;
+
+            if (!confirm('¿Eliminar este método de pago?')) {
+                return;
+            }
+
+            try {
+                await API.delete(`/usuario/metodos-pago/${metodo.id_metodo}`);
+                await cargarMetodos();
+            } catch (err) {
+                alert('No se pudo eliminar el método de pago.');
+            }
+        }
+
+        document.getElementById('payment-method-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const tipo = document.getElementById('tipo-metodo').value;
             const referencia = document.getElementById('referencia-metodo').value.trim();
 
             if (!referencia) {
-                alert('Ingresa una referencia valida del metodo.');
+                alert('Ingresa una referencia válida del método.');
                 return;
             }
 
-            const methods = readMethods();
-            methods.forEach((m) => { m.selected = false; });
-            methods.push({ tipo, referencia, selected: true, createdAt: new Date().toISOString() });
-            saveMethods(methods);
-            e.target.reset();
-            renderMethods();
+            const payload = {
+                tipo,
+                token_pago: referencia,
+                last_four: tipo === 'tarjeta' ? referencia.slice(-4).replace(/\D/g, '') : null,
+                referencia,
+                es_principal: metodos.length === 0
+            };
+
+            try {
+                await API.post('/usuario/metodos-pago', payload);
+                e.target.reset();
+                await cargarMetodos();
+            } catch (err) {
+                alert('No se pudo guardar el método de pago. Verifica los datos e intenta de nuevo.');
+            }
         });
 
-        function confirmarPago() {
-            const selected = readMethods().find((m) => m.selected);
+        async function confirmarPago() {
+            const selected = metodos.find((m) => m.selected);
             if (!selected) {
-                alert('Selecciona un metodo de pago guardado en tu sesion.');
+                alert('Selecciona un método de pago guardado en tu cuenta.');
                 return;
             }
 
-            alert(`Metodo seleccionado en sesion activa: ${selected.referencia}. No se realizo ninguna transaccion.`);
-            window.location.href = "/html/Logeado/Mis_pedidos.html";
+            try {
+                if (selected.id_metodo) {
+                    await API.put(`/usuario/metodos-pago/${selected.id_metodo}`, { es_principal: true });
+                }
+
+                alert(`Método seleccionado: ${getReferenceFromMetodo(selected)}. No se realizó ninguna transacción.`);
+                window.location.href = "/html/Logeado/Mis_pedidos.html";
+            } catch (err) {
+                alert('No se pudo confirmar el método seleccionado.');
+            }
         }
 
-        // Métodos demo por sesión si está vacío
-        if (!readMethods().length) {
-            saveMethods([
-                { tipo: 'paypal', referencia: 'demo@paypal.com', selected: true, createdAt: new Date().toISOString() }
-            ]);
-        }
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!API.tieneSesion()) {
+                alert('Debes iniciar sesión para gestionar métodos de pago.');
+                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+                return;
+            }
 
-        renderMethods();
+            await cargarMetodos();
+        });
     </script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+

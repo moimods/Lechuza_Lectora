@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>La Lechuza Lectora - Catálogo</title>
@@ -12,7 +13,7 @@
         body { margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                        url('../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+                        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -83,7 +84,7 @@
         </button>
 
         <div class="logo-container">
-            <img src="../Imagenes/logo.png" alt="Logo" class="logo">
+            <img src="/Imagenes/logo.png" alt="Logo" class="logo">
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
 
@@ -143,17 +144,21 @@
                 <div class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px;"></div>
 
                 <div class="carousel-nav" style="text-align: center; padding: 50px 0; display: flex; justify-content: center; gap: 15px; align-items: center;">
-                    <button class="btn-primary" id="prev-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">← Anterior</button>
+                    <button class="btn-primary" id="prev-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">â† Anterior</button>
                     <span id="page-info" style="color: white; font-weight: bold; background: #5d4037; padding: 5px 15px; border-radius: 20px;">Página 1</span>
-                    <button class="btn-primary" id="next-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">Siguiente →</button>
+                    <button class="btn-primary" id="next-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">Siguiente â†’</button>
                 </div>
             </section>
         </div>
     </main>
 
-    <script src="/JS/cartManager.js"></script>
-    <script src="/JS/carrito.js"></script>
-    <script src="/JS/catalogo.js"></script>
-    <script src="/JS/nav-toggle-global.js"></script>
+    <script src="/JS/cartManager.js" defer></script>
+    <script src="/JS/carrito.js" defer></script>
+    <script src="/JS/catalogo.js" defer></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+
+

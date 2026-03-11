@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Carrito</title>
@@ -56,7 +57,7 @@
         </div>
     </main>
 
-    <script src="/JS/carrito.js"></script>
+    <script src="/JS/carrito.js" defer></script>
     <script>
         function buildCheckoutCart() {
             const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
@@ -100,5 +101,9 @@
             window.location.href = '/html/Logeado/compra/resumen_compra.html';
         });
     </script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+
+

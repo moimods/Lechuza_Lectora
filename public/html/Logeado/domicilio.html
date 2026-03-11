@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seleccionar Dirección - La Lechuza Lectora</title>
@@ -81,7 +82,7 @@
     
     <header class="navbar detail-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
+            <img src="/Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
         
@@ -95,17 +96,17 @@
         <div class="auth-actions user-actions">
             <button class="icon-button" onclick="window.history.back()"><i class="fa-solid fa-arrow-left"></i> Volver</button>
             <div class="avatar-dropdown-container" style="position: relative;">
-                <img src="../../Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
+                <img src="/Imagenes/miku.png.jpg" alt="Avatar Usuario" class="avatar" id="avatar-btn" onclick="forceToggleMenu()">
                 <div class="dropdown-menu" id="avatar-dropdown">
                     <a href="/html/Logeado/perfil.html"><i class="fa-solid fa-user"></i> Mi Perfil</a>
-                    <a href="/index.html" onclick="localStorage.clear()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                    <a href="/index.html" onclick="return appLogout(event)"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
     </header>
     
     <main class="main-content">
-        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
+        <div class="background-overlay" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div> 
         
         <div class="profile-main-wrapper" style="position: relative; z-index: 5; max-width: 900px; margin: 40px auto; padding: 20px;">
             <div id="status-msg" style="display:none; background: #fbc02d; color: #5d4037; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
@@ -229,5 +230,9 @@
             document.getElementById('avatar-dropdown').classList.toggle('show');
         }
     </script>
+<script src="/JS/api.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

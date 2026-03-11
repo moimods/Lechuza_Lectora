@@ -1,7 +1,9 @@
 -- =========================================
--- OPTIMIZACIÓN: ÍNDICES PARA BD
+-- OPTIMIZACION: INDICES PARA BD (IDEMPOTENTE)
 -- =========================================
--- Estos índices mejoran significativamente el rendimiento de queries
+-- Puedes ejecutar este archivo varias veces sin errores.
+
+BEGIN;
 
 -- Usuarios
 CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
@@ -10,15 +12,16 @@ CREATE INDEX IF NOT EXISTS idx_usuarios_rol ON usuarios(rol);
 -- Direcciones
 CREATE INDEX IF NOT EXISTS idx_direcciones_usuario ON direcciones(id_usuario);
 
--- Métodos de pago
+-- Metodos de pago
 CREATE INDEX IF NOT EXISTS idx_metodos_pago_usuario ON metodos_pago(id_usuario);
 CREATE INDEX IF NOT EXISTS idx_metodos_pago_tipo ON metodos_pago(tipo);
 
 -- Productos
 CREATE INDEX IF NOT EXISTS idx_productos_categoria ON productos(id_categoria);
 CREATE INDEX IF NOT EXISTS idx_productos_stock ON productos(stock);
+CREATE INDEX IF NOT EXISTS idx_productos_titulo ON productos(titulo);
 
--- Categorías
+-- Categorias
 CREATE INDEX IF NOT EXISTS idx_categorias_nombre ON categorias(LOWER(nombre));
 
 -- Ventas
@@ -32,30 +35,47 @@ CREATE INDEX IF NOT EXISTS idx_detalles_ventas_venta ON detalles_ventas(id_venta
 CREATE INDEX IF NOT EXISTS idx_detalles_ventas_producto ON detalles_ventas(id_producto);
 
 -- =========================================
--- CONSTRAINTS Y VALIDACIONES ADICIONALES
+-- CONSTRAINTS Y VALIDACIONES ADICIONALES (IDEMPOTENTE)
 -- =========================================
 
--- Asegurar que el stock no sea negativo
-ALTER TABLE productos
-ADD CONSTRAINT chk_stock_positivo CHECK (stock >= 0);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_stock_positivo') THEN
+    ALTER TABLE productos
+    ADD CONSTRAINT chk_stock_positivo CHECK (stock >= 0);
+  END IF;
 
--- Asegurar que el precio no sea negativo
-ALTER TABLE productos
-ADD CONSTRAINT chk_precio_positivo CHECK (precio >= 0);
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_precio_positivo') THEN
+    ALTER TABLE productos
+    ADD CONSTRAINT chk_precio_positivo CHECK (precio >= 0);
+  END IF;
 
--- Asegurar que la cantidad no sea negativa
-ALTER TABLE detalles_ventas
-ADD CONSTRAINT chk_cantidad_positiva CHECK (cantidad > 0);
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_cantidad_positiva') THEN
+    ALTER TABLE detalles_ventas
+    ADD CONSTRAINT chk_cantidad_positiva CHECK (cantidad > 0);
+  END IF;
 
--- Asegurar que el total no sea negativo
-ALTER TABLE ventas
-ADD CONSTRAINT chk_total_positivo CHECK (total >= 0);
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_total_positivo') THEN
+    ALTER TABLE ventas
+    ADD CONSTRAINT chk_total_positivo CHECK (total >= 0);
+  END IF;
+END
+$$;
+
+-- Regla de negocio: solo un principal por usuario
+CREATE UNIQUE INDEX IF NOT EXISTS uq_direcciones_principal_por_usuario
+ON direcciones(id_usuario)
+WHERE es_principal;
+
+CREATE UNIQUE INDEX IF NOT EXISTS uq_metodo_principal_por_usuario
+ON metodos_pago(id_usuario)
+WHERE es_principal;
 
 -- =========================================
--- VISTAS ÚTILES
+-- VISTAS UTILES (CREATE OR REPLACE YA ES IDEMPOTENTE)
 -- =========================================
 
--- Vista de ventas con información de usuario
+-- Vista de ventas con informacion de usuario
 CREATE OR REPLACE VIEW vw_ventas_completas AS
 SELECT
   v.id_venta,
@@ -84,7 +104,7 @@ FROM productos
 WHERE stock <= stock_minimo
 ORDER BY diferencia;
 
--- Vista de ventas por categoría
+-- Vista de ventas por categoria
 CREATE OR REPLACE VIEW vw_ventas_por_categoria AS
 SELECT
   c.id_categoria,
@@ -97,3 +117,5 @@ JOIN productos p ON p.id_producto = dv.id_producto
 JOIN categorias c ON c.id_categoria = p.id_categoria
 GROUP BY c.id_categoria, c.nombre
 ORDER BY total_vendido DESC;
+
+COMMIT;

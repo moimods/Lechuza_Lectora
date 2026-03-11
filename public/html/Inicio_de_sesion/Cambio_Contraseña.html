@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Nueva Contraseña</title>
-    <link rel="icon" type="image/x-icon" href="../../Imagenes/logo.png">
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <link rel="stylesheet" href="/Estilos/Estilo1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -15,7 +15,7 @@
 
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+                        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -140,7 +140,7 @@
             e.preventDefault();
             
             if (!validate()) {
-                alert("🦉 ¡Oye! Debes cumplir todos los requisitos de seguridad antes de continuar.");
+                alert("ðŸ¦‰ ¡Oye! Debes cumplir todos los requisitos de seguridad antes de continuar.");
                 return;
             }
 
@@ -154,28 +154,33 @@
             }
 
             try {
-                const response = await fetch('/api/actualizar-password', {
-                    method: 'PUT',
+                const response = await fetch('/api/auth/recuperar-password', {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({
+                        email,
+                        passwordNueva: password,
+                        passwordConfirm: confPass.value
+                    })
                 });
 
                 const data = await response.json();
 
-                if (data.success) {
-                    alert("✨ ¡Contraseña actualizada! La lechuza ha guardado tus nuevos datos.");
+                if (response.ok && data.ok) {
+                    alert("âœ¨ ¡Contraseña actualizada! La lechuza ha guardado tus nuevos datos.");
                     localStorage.removeItem('email_recuperacion'); 
                     window.location.href = 'Inicio_sesion.html';
                 } else {
-                    alert("❌ Error del servidor: " + data.error);
+                    alert("❌ Error del servidor: " + (data.error || 'No fue posible actualizar la contraseña'));
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert("⚠️ Simulación: En un entorno real esto se guardaría en la BD. ¡Contraseña lista!");
-                window.location.href = 'Inicio_sesion.html';
+                alert("⚠️ No se pudo conectar con el servidor. Inténtalo nuevamente.");
             }
         });
     </script>
     <script src="/JS/limpiar-cache-formularios.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+

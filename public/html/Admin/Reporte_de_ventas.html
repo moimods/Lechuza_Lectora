@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Reporte de Ventas</title>
@@ -48,10 +49,10 @@
     </style>
 </head>
 <body class="dashboard-page">
-    <div class="background-overlay dashboard-bg" style="filter: brightness(0.4); background: url('../../Imagenes/Carrusel/5.jpg') center/cover;"></div>
+    <div class="background-overlay dashboard-bg" style="filter: brightness(0.4); background: url('/Imagenes/Carrusel/5.jpg') center/cover;"></div>
 
     <header class="navbar">
-        <div class="logo">🦉 Análisis de Ventas</div>
+        <div class="logo">ðŸ¦‰ Análisis de Ventas</div>
         <div class="menu-items">
             <a href="/html/Admin/panel_de_admin.html"><i class="fa-solid fa-house"></i> Panel</a>
             <a href="/html/Admin/Reporte_de_compras.html"><i class="fa-solid fa-cart-flatbed"></i> Pedidos</a>
@@ -98,7 +99,7 @@
         </div>
     </main>
 
-    <script src="/JS/api.js"></script>
+    <script src="/JS/api.js" defer></script>
     <script>
         function renderReporte(data) {
             const resumen = data?.resumen || {};
@@ -162,5 +163,8 @@
 
         window.onload = inicializarReporte;
     </script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -13,9 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
-/* RESPONSIVE LOGIN */
 @media (max-width: 768px) {
-
     .form-card.login-card {
         width: 90% !important;
         padding: 30px 20px !important;
@@ -45,7 +44,7 @@
 .background-overlay {
     background:
         linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-        url('../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
     background-size: cover;
 
     position: fixed;
@@ -75,15 +74,14 @@ style="max-width:450px;margin:50px auto;background:white;padding:40px;border-rad
     </div>
 
     <div style="text-align:center;">
-        <img src="../../Imagenes/logo.png" class="main-logo" style="width:100px;">
+        <img src="/Imagenes/logo.png" class="main-logo" style="width:100px;">
     </div>
 
     <h2 style="text-align:center;color:#5d4037;margin-top:10px;">
         Iniciar Sesión
     </h2>
 
-    <!-- FORM LOGIN -->
-    <form id="form-login-usuario" style="margin-top:20px;">
+    <form id="form-login-usuario" style="margin-top:20px;" autocomplete="off">
 
         <label style="font-weight:bold;color:#5d4037;">
             Correo:
@@ -94,6 +92,7 @@ style="max-width:450px;margin:50px auto;background:white;padding:40px;border-rad
             id="correo"
             placeholder="ejemplo@correo.com"
             required
+            autocomplete="off"
             style="width:100%;padding:12px;margin-bottom:15px;border-radius:5px;border:1px solid #ccc;"
         >
 
@@ -106,6 +105,7 @@ style="max-width:450px;margin:50px auto;background:white;padding:40px;border-rad
             id="contrasena"
             placeholder="********"
             required
+            autocomplete="new-password"
             style="width:100%;padding:12px;margin-bottom:10px;border-radius:5px;border:1px solid #ccc;"
         >
 
@@ -165,8 +165,7 @@ style="text-align:center;padding:20px;color:#5d4037;font-size:.85em;">
 
 </footer>
 
-<script src="/JS/api.js"></script>
-<!-- ================= LOGIN SCRIPT ================= -->
+<script src="/JS/api.js" defer></script>
 <script>
 
 document.getElementById('form-login-usuario')
@@ -176,7 +175,6 @@ document.getElementById('form-login-usuario')
 
     const email = document.getElementById('correo').value.trim();
     const password = document.getElementById('contrasena').value.trim();
-
     if(!email || !password){
         alert("⚠️ Completa todos los campos");
         return;
@@ -188,9 +186,7 @@ document.getElementById('form-login-usuario')
         const user = data.usuario || data.user || data.data?.usuario || data.data?.user;
 
         if(ok && user){
-
-            // Guardar sesión
-            localStorage.setItem('userId', String(user.id_usuario || ''));
+            localStorage.setItem('userId', String(user.id_usuario || user.id || ''));
             localStorage.setItem('userName', user.nombre_completo || user.nombre || 'Usuario');
             localStorage.setItem('userRole', user.rol || 'cliente');
             localStorage.setItem('usuarioCompleto', JSON.stringify(user));
@@ -200,7 +196,6 @@ document.getElementById('form-login-usuario')
             const redirectTo = localStorage.getItem('postLoginRedirect') || '/html/Logeado/Catalogo_Logeado.html';
             localStorage.removeItem('postLoginRedirect');
 
-            // Redirigir
             window.location.href = redirectTo;
 
         }else{
@@ -214,8 +209,22 @@ document.getElementById('form-login-usuario')
 
 });
 
- </script>
-<script src="/JS/limpiar-cache-formularios.js" defer></script>
+document.addEventListener('DOMContentLoaded', () => {
+    const correo = document.getElementById('correo');
+    const contrasena = document.getElementById('contrasena');
 
+    // Requisito: quitar recordar credenciales y borrar guardados previos.
+    API.limpiarCredencialesGuardadas();
+    API.limpiarRecordatorioLogin();
+
+    if (correo) correo.value = '';
+    if (contrasena) contrasena.value = '';
+});
+
+</script>
+<script src="/JS/limpiar-cache-formularios.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

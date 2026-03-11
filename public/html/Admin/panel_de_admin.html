@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Panel Administrativo</title>
@@ -88,7 +89,7 @@
 
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
-            <img src="../../Imagenes/logo.png" alt="Logo" class="logo"> 
+            <img src="/Imagenes/logo.png" alt="Logo" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
 
@@ -106,7 +107,7 @@
 
         <div class="auth-actions user-actions">
             <a href="/index.html" class="icon-button" title="Ir al Inicio"><i class="fa-solid fa-house"></i></a>
-            <img src="../../Imagenes/miku.png.jpg" alt="Admin" id="avatar-mini" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+            <img src="/Imagenes/miku.png.jpg" alt="Admin" id="avatar-mini" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
         </div>
     </header>
 
@@ -117,7 +118,7 @@
             <h1 style="text-align: center; color: white; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Panel Administrativo</h1>
 
             <div class="profile-info-card" style="display: flex; align-items: center; gap: 20px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                <img src="../../Imagenes/miku.png.jpg" alt="Admin" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid #5d4037;">
+                <img src="/Imagenes/miku.png.jpg" alt="Admin" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid #5d4037;">
                 <div class="profile-text">
                     <h2 id="admin-nombre" style="margin: 0; color: #5d4037;">Cargando...</h2>
                     <p id="admin-correo" style="margin: 5px 0; color: #777;">admin@lechuza.com</p>
@@ -247,6 +248,9 @@
             menuDesplegable?.addEventListener('click', (e) => e.stopPropagation());
         }
     </script>
-    <script src="/JS/nav-toggle-global.js"></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

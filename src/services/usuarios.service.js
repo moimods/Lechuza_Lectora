@@ -142,6 +142,32 @@ async function actualizarPassword(idUsuario, passwordActual, passwordNueva) {
 }
 
 /**
+ * Recuperar contraseña por email (flujo sin sesión)
+ */
+async function actualizarPasswordPorEmail(email, passwordNueva) {
+  if (!email || !String(email).trim()) {
+    throw new ValidationError("Email es obligatorio");
+  }
+
+  if (!passwordNueva || String(passwordNueva).length < 8) {
+    throw new ValidationError("Contraseña nueva debe tener al menos 8 caracteres");
+  }
+
+  const usuario = await obtenerPorEmail(String(email).trim());
+  if (!usuario) {
+    throw new NotFoundError("Usuario no encontrado");
+  }
+
+  const passwordHash = await bcrypt.hash(passwordNueva, 10);
+  await pool.query(
+    "UPDATE usuarios SET password_hash = $1 WHERE id_usuario = $2",
+    [passwordHash, usuario.id_usuario]
+  );
+
+  return { message: "Contraseña restablecida exitosamente" };
+}
+
+/**
  * Actualizar perfil
  */
 async function actualizarPerfil(idUsuario, datos) {
@@ -198,5 +224,6 @@ module.exports = {
   crear,
   validarPassword,
   actualizarPassword,
+  actualizarPasswordPorEmail,
   actualizarPerfil
 };

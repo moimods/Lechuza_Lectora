@@ -8,6 +8,16 @@ const { UnauthorizedError, ValidationError } = require("../utils/errors");
 
 const JWT_SECRET = process.env.JWT_SECRET || "tu_clave_secreta_super_segura_12345";
 const JWT_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES || process.env.JWT_EXPIRES || "24h";
+const revokedTokens = new Map();
+
+function cleanupRevokedTokens() {
+  const nowSec = Math.floor(Date.now() / 1000);
+  for (const [token, exp] of revokedTokens.entries()) {
+    if (!exp || exp <= nowSec) {
+      revokedTokens.delete(token);
+    }
+  }
+}
 
 /**
  * Generar JWT token
@@ -28,11 +38,30 @@ function generarToken(usuarioId, email, rol) {
  * Verificar JWT token
  */
 function verificarToken(token) {
+  cleanupRevokedTokens();
+
+  if (revokedTokens.has(token)) {
+    throw new UnauthorizedError("Sesion cerrada. Inicia sesion nuevamente");
+  }
+
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
     throw new UnauthorizedError("Token inválido o expirado");
+  }
+}
+
+function revocarToken(token) {
+  if (!token) return;
+
+  try {
+    const decoded = jwt.decode(token);
+    const exp = decoded && decoded.exp ? Number(decoded.exp) : null;
+    revokedTokens.set(token, exp);
+    cleanupRevokedTokens();
+  } catch {
+    revokedTokens.set(token, null);
   }
 }
 
@@ -89,5 +118,6 @@ module.exports = {
   verificarToken,
   extraerToken,
   login,
-  refreshToken
+  refreshToken,
+  revocarToken
 };

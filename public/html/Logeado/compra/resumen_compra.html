@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resumen de Compra - Paso 1</title>
@@ -38,7 +39,7 @@
         /* Estabilización del fondo */
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('../../../Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
+                        url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
             background-size: cover;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -178,5 +179,8 @@ function renderizarResumen() {
     localStorage.setItem('total_compra_actual', subtotal.toFixed(2));
 }
 </script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+

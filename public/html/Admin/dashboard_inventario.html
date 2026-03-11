@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Lechuza Lectora - Dashboard</title>
@@ -16,7 +17,7 @@
 </head>
 <body class="dashboard-page">
     <header class="navbar dashboard-navbar">
-        <div class="logo">🦉 La Lechuza Admin</div>
+        <div class="logo">ðŸ¦‰ La Lechuza Admin</div>
         
         <button class="hamburger" id="hamburger-btn">
             <i class="fa-solid fa-bars"></i>
@@ -25,7 +26,7 @@
         <div class="menu-items" id="menu-items">
             <a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
             <a href="/html/Admin/Reporte_de_ventas.html">Reportes</a>
-            <a href="/index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
+            <a href="/index.html" onclick="return appLogout(event)">Cerrar Sesión</a>
         </div>
     </header>
 
@@ -59,7 +60,7 @@
         </div>
     </main>
 
-    <script src="/JS/auth.js"></script>
+    <script src="/JS/auth.js" defer></script>
     <script>
     
         // --- LÓGICA DEL MENÚ HAMBURGUESA (CORREGIDA) ---
@@ -99,6 +100,10 @@
 
         document.addEventListener('DOMContentLoaded', cargarDashboard);
     </script>
-    <script src="/JS/nav-toggle-global.js"></script>
+    <script src="/JS/nav-toggle-global.js" defer></script>
+<script src="/JS/api.js" defer></script>
+<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
+
+
