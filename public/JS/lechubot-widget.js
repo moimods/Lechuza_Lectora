@@ -1,313 +1,653 @@
-(function () {
-  if (window.__LECHUBOT_LOADED__) return;
-  window.__LECHUBOT_LOADED__ = true;
+(() => {
 
-  const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || "/api";
-  const API_ENDPOINT = `${String(API_BASE).replace(/\/$/, "")}/chatbot/message`;
-  const MAX_HISTORY = 5;
-  const QUICK_ACTIONS = [
-    { label: "Buscar libros", prompt: "Busco libros de fantasia" },
-    { label: "Recomendaciones", prompt: "Recomiendame libros" },
-    { label: "Como comprar", prompt: "Como comprar un libro" },
-    { label: "Consultar pedido", prompt: "Quiero consultar mi pedido" }
-  ];
+if (window.__LECHUBOT_LOADED__) return;
+window.__LECHUBOT_LOADED__ = true;
 
-  function escapeHtml(value) {
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/\"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
+/* =========================
+CONFIG
+========================= */
 
-  function withBreaks(text) {
-    return escapeHtml(text).replace(/\n/g, "<br>");
-  }
+const CONFIG = {
+  API_BASE: (window.APP_CONFIG?.API_BASE) || "/api",
+  MAX_HISTORY: 10,
+  MESSAGE_LIMIT: 300,
+  RATE_LIMIT: 700,
+  STORAGE_KEY: "lechubot_history"
+};
 
-  function buildWidget() {
-    const style = document.createElement("style");
-    style.textContent = `
-      .lechubot-toggle {
-        position: fixed;
-        right: 18px;
-        bottom: 18px;
-        z-index: 10000;
-        background: #5d4037;
-        color: #fff;
-        border: 0;
-        border-radius: 999px;
-        width: 58px;
-        height: 58px;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
-        cursor: pointer;
-        font-size: 24px;
-      }
-      .lechubot-panel {
-        position: fixed;
-        right: 18px;
-        bottom: 86px;
-        width: min(360px, calc(100vw - 24px));
-        height: min(560px, calc(100vh - 110px));
-        background: #fff;
-        border-radius: 14px;
-        border: 1px solid #ddd;
-        overflow: hidden;
-        z-index: 10000;
-        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.25);
-        display: none;
-        flex-direction: column;
-      }
-      .lechubot-header {
-        background: linear-gradient(135deg, #5d4037, #7a5648);
-        color: white;
-        padding: 12px 14px;
-        font-weight: 700;
-        font-family: Georgia, 'Times New Roman', serif;
-      }
-      .lechubot-body {
-        flex: 1;
-        overflow-y: auto;
-        background: #faf7f3;
-        padding: 12px;
-        font-family: Roboto, sans-serif;
-      }
-      .lechubot-quick-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 10px;
-      }
-      .lechubot-quick-actions button {
-        border: 1px solid #d8c8bf;
-        background: #fff;
-        color: #5d4037;
-        border-radius: 999px;
-        padding: 6px 10px;
-        font-size: 12px;
-        cursor: pointer;
-      }
-      .lechubot-quick-actions button:hover {
-        background: #f1e7e1;
-      }
-      .lechubot-msg {
-        margin-bottom: 10px;
-        max-width: 92%;
-        border-radius: 10px;
-        padding: 10px;
-        line-height: 1.4;
-        white-space: normal;
-        font-size: 14px;
-      }
-      .lechubot-msg.user {
-        margin-left: auto;
-        background: #ece0db;
-      }
-      .lechubot-msg.bot {
-        margin-right: auto;
-        background: #fff;
-        border: 1px solid #e4d6cf;
-      }
-      .lechubot-input {
-        display: flex;
-        border-top: 1px solid #ddd;
-        background: #fff;
-      }
-      .lechubot-input input {
-        flex: 1;
-        border: 0;
-        padding: 12px;
-        outline: none;
-        font-size: 14px;
-      }
-      .lechubot-input button {
-        border: 0;
-        background: #5d4037;
-        color: white;
-        padding: 0 14px;
-        cursor: pointer;
-        font-weight: 700;
-      }
-      @media (max-width: 560px) {
-        .lechubot-panel {
-          right: 8px;
-          left: 8px;
-          bottom: 78px;
-          width: auto;
-          height: min(70vh, calc(100vh - 96px));
-        }
-        .lechubot-toggle {
-          right: 10px;
-          bottom: 10px;
-        }
-      }
-    `;
+const API_ENDPOINT = `${CONFIG.API_BASE.replace(/\/$/,"")}/chatbot/message`;
 
-    const toggle = document.createElement("button");
-    toggle.className = "lechubot-toggle";
-    toggle.type = "button";
-    toggle.title = "Abrir LechuBot";
-    toggle.innerText = "🤖";
+let controller = null;
+let lastMessageTime = 0;
 
-    const panel = document.createElement("section");
-    panel.className = "lechubot-panel";
-    panel.innerHTML = `
-      <header class="lechubot-header">LechuBot | La Lechuza Lectora</header>
-      <div class="lechubot-body" id="lechubot-body">
-        <div class="lechubot-quick-actions" id="lechubot-quick-actions"></div>
+/* =========================
+QUICK ACTIONS
+========================= */
+
+const QUICK_ACTIONS = [
+ {label:"📚 Buscar libros",prompt:"Busco libros de fantasia"},
+ {label:"⭐ Recomendaciones",prompt:"Recomiendame libros"},
+ {label:"🛒 Como comprar",prompt:"Como comprar un libro"},
+ {label:"📦 Consultar pedido",prompt:"Quiero consultar mi pedido"}
+];
+
+/* =========================
+UTILIDADES
+========================= */
+
+const escapeHtml = str =>
+ String(str ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+const formatText = text =>
+ escapeHtml(text).replace(/\n/g,"<br>");
+
+const now = () =>
+ new Date().toLocaleTimeString([],{
+  hour:"2-digit",
+  minute:"2-digit"
+ });
+
+/* =========================
+STORAGE
+========================= */
+
+function loadHistory(){
+
+ try{
+  return JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY)) || [];
+ }
+ catch{
+  return [];
+ }
+
+}
+
+function saveHistory(history){
+
+ localStorage.setItem(
+  CONFIG.STORAGE_KEY,
+  JSON.stringify(history)
+ );
+
+}
+
+/* =========================
+HISTORIAL
+========================= */
+
+function pushHistory(history,entry){
+
+ history.push(entry);
+
+ if(history.length > CONFIG.MAX_HISTORY)
+  history.shift();
+
+ saveHistory(history);
+
+}
+
+/* =========================
+RATE LIMIT
+========================= */
+
+function canSend(){
+
+ const nowTime = Date.now();
+
+ if(nowTime - lastMessageTime < CONFIG.RATE_LIMIT)
+  return false;
+
+ lastMessageTime = nowTime;
+ return true;
+
+}
+
+/* =========================
+WIDGET
+========================= */
+
+function buildWidget(){
+
+const style = document.createElement("style");
+
+style.textContent = `
+
+.lechubot-toggle{
+position:fixed;
+right:18px;
+bottom:18px;
+z-index:10000;
+width:60px;
+height:60px;
+border-radius:50%;
+border:none;
+background:#5d4037;
+color:#fff;
+font-size:26px;
+cursor:pointer;
+box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+
+.lechubot-panel{
+position:fixed;
+right:18px;
+bottom:90px;
+width:360px;
+height:520px;
+background:#fff;
+border-radius:14px;
+display:none;
+flex-direction:column;
+overflow:hidden;
+box-shadow:0 20px 40px rgba(0,0,0,.25);
+z-index:10000;
+}
+
+.lechubot-header{
+background:linear-gradient(135deg,#5d4037,#7a5648);
+color:white;
+padding:14px;
+font-weight:bold;
+font-family:Georgia;
+}
+
+.lechubot-body{
+flex:1;
+overflow-y:auto;
+padding:12px;
+background:#faf7f3;
+font-family:Roboto,Arial;
+}
+
+.lechubot-msg{
+margin-bottom:10px;
+padding:10px;
+border-radius:10px;
+font-size:14px;
+max-width:90%;
+}
+
+.lechubot-msg.user{
+margin-left:auto;
+background:#ece0db;
+}
+
+.lechubot-msg.bot{
+background:#fff;
+border:1px solid #e4d6cf;
+}
+
+.lechubot-books{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:10px;
+}
+
+.lechubot-book{
+display:flex;
+gap:10px;
+background:#fff;
+border-radius:8px;
+padding:8px;
+border:1px solid #e0d6cf;
+}
+
+.lechubot-book-card{
+cursor:pointer;
+display:flex;
+flex-direction:column;
+gap:6px;
+flex:1;
+}
+
+.lechubot-book img{
+width:70px;
+height:100px;
+object-fit:cover;
+border-radius:4px;
+background:#f5f5f5;
+margin-bottom:0;
+}
+
+.lechubot-book-card img{
+transition:transform .2s;
+}
+
+.lechubot-book-card:hover img{
+transform:scale(1.05);
+}
+
+.lechubot-book-title{
+font-weight:700;
+color:#5d4037;
+margin-bottom:4px;
+}
+
+.lechubot-book-price{
+font-weight:bold;
+color:#2e7d32;
+}
+
+.lechubot-book-info{
+font-size:13px;
+display:flex;
+flex-direction:column;
+gap:3px;
+}
+
+.lechubot-add{
+margin-top:4px;
+border:none;
+background:#5d4037;
+color:white;
+padding:4px 8px;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+}
+
+.lechubot-add:hover{
+background:#4e342e;
+}
+
+.lechubot-book-meta{
+color:#6d4c41;
+line-height:1.3;
+}
+
+.lechubot-time{
+font-size:10px;
+opacity:.6;
+margin-top:3px;
+}
+
+.lechubot-input{
+display:flex;
+border-top:1px solid #ddd;
+}
+
+.lechubot-input input{
+flex:1;
+border:0;
+padding:12px;
+font-size:14px;
+outline:none;
+}
+
+.lechubot-input button{
+border:0;
+background:#5d4037;
+color:white;
+padding:0 16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.lechubot-quick{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+padding:8px;
+border-top:1px solid #eee;
+background:#faf7f3;
+}
+
+.lechubot-quick button{
+border:1px solid #ddd;
+background:white;
+border-radius:20px;
+padding:6px 10px;
+font-size:12px;
+cursor:pointer;
+}
+
+.typing{
+opacity:.7;
+font-style:italic;
+}
+
+@media(max-width:560px){
+
+.lechubot-panel{
+right:8px;
+left:8px;
+width:auto;
+}
+
+}
+
+`;
+
+const toggle = document.createElement("button");
+toggle.className="lechubot-toggle";
+toggle.textContent="🦉";
+
+const panel = document.createElement("div");
+panel.className="lechubot-panel";
+
+panel.innerHTML=`
+<header class="lechubot-header">
+LechuBot | La Lechuza Lectora
+</header>
+
+<div id="lechubot-body" class="lechubot-body"></div>
+
+<div id="lechubot-quick" class="lechubot-quick"></div>
+
+<form id="lechubot-form" class="lechubot-input">
+<input id="lechubot-input" placeholder="Escribe tu mensaje..." autocomplete="off">
+<button>Enviar</button>
+</form>
+`;
+
+document.head.appendChild(style);
+document.body.append(toggle,panel);
+
+return {toggle,panel};
+
+}
+
+/* =========================
+MENSAJES
+========================= */
+
+function appendMessage(container,text,role){
+
+const msg = document.createElement("div");
+msg.className=`lechubot-msg ${role}`;
+msg.innerHTML=formatText(text);
+
+const time=document.createElement("div");
+time.className="lechubot-time";
+time.textContent=now();
+
+msg.appendChild(time);
+container.appendChild(msg);
+
+container.scrollTo({
+ top:container.scrollHeight,
+ behavior:"smooth"
+});
+
+}
+
+function appendBotBooks(body, text, books = []) {
+
+ const msg = document.createElement("div");
+ msg.className = "lechubot-msg bot";
+
+ let html = `<div>${formatText(text)}</div>`;
+
+ if (Array.isArray(books) && books.length) {
+  html += `<div class="lechubot-books">`;
+
+  books.forEach((book) => {
+   const imagen = String(book.imagen || "").trim();
+   const titulo = String(book.titulo || "Sin titulo");
+   const categoria = String(book.categoria || "Sin categoria");
+   const precio = Number(book.precio || 0).toFixed(2);
+   const id = Number(book.id || 0);
+
+   html += `
+    <div class="lechubot-book">
+      <img src="${escapeHtml(imagen || "/Imagenes/The_Sisters_Brothers.png")}" alt="${escapeHtml(titulo)}" onerror="this.onerror=null;this.src='/Imagenes/The_Sisters_Brothers.png';">
+      <div class="lechubot-book-card" data-id="${id}">
+        <div class="lechubot-book-info">
+          <div><b>📘 ${escapeHtml(titulo)}</b></div>
+          <div>📚 ${escapeHtml(categoria)}</div>
+          <div class="lechubot-book-price">💰 $${escapeHtml(precio)} MXN</div>
+          <button class="lechubot-add" data-id="${id}">Agregar al carrito</button>
+        </div>
       </div>
-      <form class="lechubot-input" id="lechubot-form">
-        <input id="lechubot-text" type="text" placeholder="Escribe tu mensaje..." autocomplete="off" />
-        <button type="submit">Enviar</button>
-      </form>
-    `;
+    </div>
+   `;
+  });
 
-    document.head.appendChild(style);
-    document.body.appendChild(toggle);
-    document.body.appendChild(panel);
+  html += `</div>`;
+ }
 
-    return { toggle, panel };
+ msg.innerHTML = html;
+
+ const time = document.createElement("div");
+ time.className = "lechubot-time";
+ time.textContent = now();
+
+ msg.appendChild(time);
+ body.appendChild(msg);
+
+ body.scrollTo({
+  top: body.scrollHeight,
+  behavior: "smooth"
+ });
+}
+
+/* =========================
+API
+========================= */
+
+async function askBot(message,history){
+
+if(controller) controller.abort();
+
+controller=new AbortController();
+
+const token=localStorage.getItem("laLechuza_jwt_token");
+
+const response = await fetch(API_ENDPOINT,{
+ method:"POST",
+ signal:controller.signal,
+ headers:{
+  "Content-Type":"application/json",
+  ...(token?{Authorization:`Bearer ${token}`}:{})
+ },
+ body:JSON.stringify({message,history})
+});
+
+const data=await response.json().catch(()=>({}));
+
+if(!response.ok)
+ throw new Error(data.error || "Error del servidor");
+
+return data.data || data;
+
+}
+
+/* =========================
+INIT
+========================= */
+
+function init(){
+
+const {toggle,panel}=buildWidget();
+
+const body = panel.querySelector("#lechubot-body");
+const form = panel.querySelector("#lechubot-form");
+const input = panel.querySelector("#lechubot-input");
+const quick = panel.querySelector("#lechubot-quick");
+
+const history = loadHistory();
+
+const welcome=`Hola 👋
+Soy Lechu, el asistente virtual de La Lechuza Lectora 🦉
+
+Puedo ayudarte a:
+
+📚 Buscar libros
+📖 Recibir recomendaciones
+🛒 Resolver dudas sobre compras
+📦 Consultar pedidos
+
+¿En qué puedo ayudarte?`;
+
+if (history.length === 0) {
+ appendMessage(body,welcome,"bot");
+} else {
+ history.forEach((entry) => {
+  const role = entry && entry.role === "bot" ? "bot" : "user";
+  const text = String(entry && entry.text ? entry.text : "").trim();
+  if (!text) return;
+  appendMessage(body, text, role);
+ });
+}
+
+/* QUICK BUTTONS */
+
+quick.innerHTML = QUICK_ACTIONS
+.map(a=>`<button data-prompt="${escapeHtml(a.prompt)}">${escapeHtml(a.label)}</button>`)
+.join("");
+
+/* ENVIAR */
+
+async function send(text){
+
+if(!text || text.length>CONFIG.MESSAGE_LIMIT) return;
+if(!canSend()) return;
+
+appendMessage(body,text,"user");
+
+pushHistory(history,{role:"user",text});
+
+const typing=document.createElement("div");
+typing.className="lechubot-msg bot typing";
+typing.textContent="Lechu está escribiendo...";
+body.appendChild(typing);
+
+try{
+
+const res=await askBot(text,history);
+
+typing.remove();
+
+const reply=res.reply || "No tengo una respuesta disponible.";
+
+appendBotBooks(body, reply, res.books || []);
+
+pushHistory(history,{
+ role:"bot",
+ text:reply,
+ intent:res.intent ?? null
+});
+
+}
+catch{
+
+typing.remove();
+
+const fallback="No pude procesar tu solicitud.";
+
+appendMessage(body,fallback,"bot");
+
+pushHistory(history,{role:"bot",text:fallback});
+
+}
+
+}
+
+/* EVENTOS */
+
+toggle.onclick=()=>{
+
+panel.style.display=
+ panel.style.display==="flex"
+  ?"none"
+  :"flex";
+
+if(panel.style.display==="flex"){
+ input.focus();
+
+ if(history.length===0 && body.children.length<3){
+  send("recomiendame libros");
+ }
+}
+
+};
+
+form.onsubmit=e=>{
+
+e.preventDefault();
+
+const text=input.value.trim();
+input.value="";
+
+send(text);
+
+};
+
+quick.onclick=e=>{
+
+if(!(e.target instanceof HTMLButtonElement))
+ return;
+
+send(e.target.dataset.prompt);
+
+};
+
+/* CERRAR CLICK FUERA */
+
+document.addEventListener("click",e=>{
+
+if(!panel.contains(e.target) && !toggle.contains(e.target))
+ panel.style.display="none";
+
+});
+
+/* ESC */
+
+document.addEventListener("keydown",e=>{
+
+if(e.key==="Escape")
+ panel.style.display="none";
+
+});
+
+body.addEventListener("click",(e)=>{
+
+ const card=e.target.closest(".lechubot-book-card");
+
+ if(card && !e.target.classList.contains("lechubot-add")){
+  const id=card.dataset.id;
+  if(id && id !== "0"){
+   window.location.href="/html/Logeado/Catalogo_Logeado.html?producto="+encodeURIComponent(id);
   }
+ }
 
-  function appendMessage(body, text, from) {
-    const div = document.createElement("div");
-    div.className = `lechubot-msg ${from}`;
-    div.innerHTML = withBreaks(text);
-    body.appendChild(div);
-    body.scrollTop = body.scrollHeight;
-  }
+ if(e.target.classList.contains("lechubot-add")){
+  const id=e.target.dataset.id;
 
-  function pushHistory(history, entry) {
-    history.push(entry);
-    if (history.length > MAX_HISTORY) {
-      history.splice(0, history.length - MAX_HISTORY);
-    }
-  }
+  let cart=[];
+  try{
+   cart=JSON.parse(localStorage.getItem("carrito"))||[];
+  }catch{}
 
-  async function askBot(text, history) {
-    const token = localStorage.getItem("laLechuza_jwt_token");
-
-    const response = await fetch(API_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
-      },
-      body: JSON.stringify({ message: text, history })
-    });
-
-    const payload = await response.json().catch(function () {
-      return {};
-    });
-
-    if (!response.ok) {
-      throw new Error((payload && (payload.error || payload.message)) || "No se pudo procesar la consulta");
-    }
-
-    return payload.data || payload;
-  }
-
-  function init() {
-    if (!document.body) return;
-
-    const { toggle, panel } = buildWidget();
-    const body = document.getElementById("lechubot-body");
-    const form = document.getElementById("lechubot-form");
-    const input = document.getElementById("lechubot-text");
-    const quickActions = document.getElementById("lechubot-quick-actions");
-    const history = [];
-
-    const welcome = [
-      "Hola 👋",
-      "Soy Lechu, el asistente virtual de La Lechuza Lectora 🦉",
-      "",
-      "Puedo ayudarte a:",
-      "📚 Buscar libros",
-      "📖 Recibir recomendaciones",
-      "🛒 Resolver dudas sobre compras",
-      "📦 Consultar pedidos",
-      "",
-      "¿En qué puedo ayudarte?"
-    ].join("\n");
-
-    appendMessage(body, welcome, "bot");
-
-    if (quickActions) {
-      quickActions.innerHTML = QUICK_ACTIONS
-        .map((item) => `<button type="button" data-prompt="${escapeHtml(item.prompt)}">${escapeHtml(item.label)}</button>`)
-        .join("");
-    }
-
-    async function sendMessage(text) {
-      const cleaned = String(text || "").trim();
-      if (!cleaned) return;
-
-      appendMessage(body, cleaned, "user");
-      pushHistory(history, { role: "user", text: cleaned });
-
-      try {
-        const answer = await askBot(cleaned, history);
-        appendMessage(body, answer.reply || "No tengo una respuesta disponible.", "bot");
-        pushHistory(history, {
-          role: "bot",
-          text: answer.reply || "",
-          intent: answer.intent || null
-        });
-      } catch (err) {
-        const fallback = "No tengo esa información en este momento, pero puedo ayudarte a buscar libros o guiarte en el proceso de compra.";
-        appendMessage(body, fallback, "bot");
-        pushHistory(history, { role: "bot", text: fallback });
-      }
-    }
-
-    toggle.addEventListener("click", function () {
-      const opened = panel.style.display === "flex";
-      panel.style.display = opened ? "none" : "flex";
-      if (!opened) {
-        input.focus();
-      }
-    });
-
-    document.addEventListener("click", function (event) {
-      const isOpen = panel.style.display === "flex";
-      if (!isOpen) return;
-
-      const target = event.target;
-      const clickedInsidePanel = panel.contains(target);
-      const clickedToggle = toggle.contains(target);
-
-      if (!clickedInsidePanel && !clickedToggle) {
-        panel.style.display = "none";
-      }
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && panel.style.display === "flex") {
-        panel.style.display = "none";
-      }
-    });
-
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
-
-      const text = String(input.value || "").trim();
-      input.value = "";
-      await sendMessage(text);
-    });
-
-    quickActions?.addEventListener("click", async function (event) {
-      const target = event.target;
-      if (!(target instanceof HTMLButtonElement)) return;
-
-      const prompt = target.dataset.prompt || "";
-      input.value = "";
-      await sendMessage(prompt);
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+  const exists = cart.find((item) => String(item.id) === String(id));
+  if (exists) {
+    exists.qty = Number(exists.qty || 1) + 1;
   } else {
-    init();
+    cart.push({id,qty:1});
   }
+
+  localStorage.setItem("carrito",JSON.stringify(cart));
+
+  e.target.textContent="✔ Agregado";
+  setTimeout(()=>{
+   e.target.textContent="Agregar al carrito";
+  },1500);
+ }
+
+});
+
+}
+
+/* START */
+
+document.readyState==="loading"
+?document.addEventListener("DOMContentLoaded",init)
+:init();
+
 })();

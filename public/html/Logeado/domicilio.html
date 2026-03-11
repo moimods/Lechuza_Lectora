@@ -139,26 +139,30 @@
         let direccionIdSeleccionada = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(localStorage.getItem('user'));
+            const user = JSON.parse(
+                localStorage.getItem('usuario') ||
+                localStorage.getItem('usuario_logeado') ||
+                localStorage.getItem('usuarioCompleto') ||
+                'null'
+            );
             if (!user) {
-                window.location.href = '/index.html';
+                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
                 return;
             }
 
-            cargarDirecciones(user.id_usuario);
+            cargarDirecciones();
             
             if (localStorage.getItem('compra_en_progreso')) {
                 document.getElementById('status-msg').style.display = 'block';
             }
         });
 
-        async function cargarDirecciones(idUsuario) {
+        async function cargarDirecciones() {
             const contenedor = document.getElementById('lista-direcciones');
 
             try {
-                // Ajustado a la ruta del servidor optimizado
-                const respuesta = await fetch(`/api/usuarios/${idUsuario}/direcciones`);
-                const direcciones = await respuesta.json();
+            const respuesta = await API.get('/usuario/direcciones');
+            const direcciones = Array.isArray(respuesta.data) ? respuesta.data : [];
 
                 if (direcciones.length === 0) {
                     contenedor.innerHTML = "<div style='background:white; padding:20px; border-radius:10px; text-align:center;'>No tienes direcciones guardadas. Agrega una para continuar.</div>";
@@ -215,13 +219,10 @@
         async function eliminarDireccion(id) {
             if(confirm('¿Estás seguro de eliminar esta dirección?')) {
                 try {
-                    const res = await fetch(`/api/direcciones/${id}`, { method: 'DELETE' });
-                    if(res.ok) {
-                        const user = JSON.parse(localStorage.getItem('user'));
-                        cargarDirecciones(user.id_usuario);
-                    }
+                    await API.delete(`/usuario/direcciones/${id}`);
+                    cargarDirecciones();
                 } catch (err) {
-                    console.error("Error al eliminar");
+                    console.error("Error al eliminar", err);
                 }
             }
         }

@@ -4,7 +4,8 @@ const { success, error } = require("../utils/response");
 
 async function responderMensaje(req, res, next) {
   try {
-    const message = String(req.body && req.body.message ? req.body.message : "").trim();
+    const rawMessage = req.body && req.body.message;
+    const message = String(rawMessage ? rawMessage : "").trim();
     const rawHistory = Array.isArray(req.body && req.body.history) ? req.body.history : [];
     const history = rawHistory
       .slice(-5)
@@ -16,6 +17,10 @@ async function responderMensaje(req, res, next) {
 
     if (!message) {
       return error(res, "El mensaje es obligatorio", 400);
+    }
+
+    if (message.length > 500) {
+      return error(res, "El mensaje es demasiado largo", 400);
     }
 
     let user = null;

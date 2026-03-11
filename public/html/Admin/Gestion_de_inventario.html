@@ -46,27 +46,6 @@
     </style>
 </head>
 <body class="dashboard-page">
-    <h2>Inventario</h2>
-
-<form id="formAgregarProducto">
-    <input type="text" id="titulo" placeholder="Título">
-    <input type="text" id="autor" placeholder="Autor">
-    <input type="number" id="precio" placeholder="Precio">
-    <input type="number" id="stock" placeholder="Stock">
-
-    <select id="categoria">
-        <option>Novela</option>
-        <option>Ciencia</option>
-        <option>Historia</option>
-    </select>
-
-    <input type="text" id="imagen_url" placeholder="URL Imagen">
-
-    <button type="submit">Agregar</button>
-</form>
-
-<script src="/JS/inventario.js" defer></script>
-
     <header class="navbar dashboard-navbar">
         <div class="logo-container">
             <img src="/Imagenes/logo.png" alt="Logo" class="logo"> 
@@ -102,6 +81,9 @@
                     <a href="/html/Admin/panel_de_admin.html" style="color: white; margin-right: 15px;"><i class="fa-solid fa-circle-left fa-2x"></i></a>
                     <h1 class="dashboard-title" style="color: white; margin: 0;">Control de Existencias</h1>
                 </div>
+                <button class="btn-primary" onclick="window.location.href='/html/Admin/Gestion_productos.html'" style="background:#fbc02d; color:#5d4037; border:none; padding:12px 16px; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    <i class="fa-solid fa-book-medical"></i> Agregar Libro
+                </button>
             </div>
 
             <div class="search-container" style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px;">

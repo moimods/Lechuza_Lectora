@@ -158,23 +158,27 @@
 
         <script src="/JS/api.js" defer></script>
         <script>
-        // Verificación de sesión antes de cargar el resto de la página
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!window.API || !API.tieneSesion()) {
-                alert("Debes estar logeado para agregar un domicilio");
-                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
-                return;
-            }
-        });
-    </script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const usuario = JSON.parse(
+                    localStorage.getItem('usuario') ||
+                    localStorage.getItem('usuario_logeado') ||
+                    localStorage.getItem('usuarioCompleto') ||
+                    'null'
+                );
+
+                if (!usuario) {
+                    alert("Debes iniciar sesión para agregar un domicilio.");
+                    window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+                }
+            });
+        </script>
 
     <script>
     document.getElementById('address-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        if (!window.API || !API.tieneSesion()) {
-            alert("No se encontró una sesión activa.");
-            window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+        if (!window.API) {
+            alert("No se pudo cargar la API. Recarga la página.");
             return;
         }
 

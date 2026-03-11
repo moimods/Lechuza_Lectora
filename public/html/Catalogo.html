@@ -76,7 +76,8 @@
 <body class="catalog-page"
       data-catalog-mode="public"
       data-catalog-login-path="/html/Inicio_de_sesion/Inicio_sesion.html"
-      data-catalog-cart-path="/html/Logeado/carrito.html">
+    data-catalog-cart-path="/html/Logeado/carrito.html"
+    data-catalog-detail-path="/html/Detalle_producto.html">
 
     <header class="navbar detail-navbar">
         <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Abrir menú" aria-expanded="false">
@@ -144,9 +145,9 @@
                 <div class="product-grid" id="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px;"></div>
 
                 <div class="carousel-nav" style="text-align: center; padding: 50px 0; display: flex; justify-content: center; gap: 15px; align-items: center;">
-                    <button class="btn-primary" id="prev-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">â† Anterior</button>
+                    <button class="btn-primary" id="prev-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">← Anterior</button>
                     <span id="page-info" style="color: white; font-weight: bold; background: #5d4037; padding: 5px 15px; border-radius: 20px;">Página 1</span>
-                    <button class="btn-primary" id="next-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">Siguiente â†’</button>
+                    <button class="btn-primary" id="next-page" style="background: white; color: #5d4037; border: 1px solid #5d4037;">Siguiente →</button>
                 </div>
             </section>
         </div>

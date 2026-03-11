@@ -1,256 +1,426 @@
-﻿<!DOCTYPE html>
+﻿<!DOCTYPE html> 
 <html lang="es">
 <head>
-    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Lechuza Lectora - Panel Administrativo</title>
-    <link rel="stylesheet" href="/Estilos/Estilo1.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        /* Optimizaciones de Layout y Diseño */
-        .admin-actions-grid {
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 20px; 
-            margin-top: 25px;
-        }
+<link rel="icon" type="image/png" href="/Imagenes/logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        @media (max-width: 768px) {
-            .admin-actions-grid { grid-template-columns: 1fr; }
-            .profile-info-card { flex-direction: column; text-align: center; }
-            .stats-row { flex-direction: column; }
-        }
+<title>La Lechuza Lectora - Panel Administrativo</title>
 
-        .action-module {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border-bottom: 5px solid #5d4037;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
+<link rel="stylesheet" href="/Estilos/Estilo1.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-        .action-module:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
-            background-color: #fdfaf8;
-        }
+<style>
 
-        .stats-row {
-            margin-top: 20px; 
-            display: flex; 
-            gap: 15px;
-        }
+.admin-actions-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+margin-top:25px;
+}
 
-        .stat-box {
-            background: white; 
-            padding: 15px; 
-            border-radius: 10px; 
-            flex: 1; 
-            text-align: center; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+@media (max-width:768px){
 
-        .stat-box small { color: #888; text-transform: uppercase; font-weight: bold; font-size: 0.7rem; }
-        .stat-box div { font-size: 1.6rem; font-weight: bold; color: #5d4037; margin-top: 5px; }
+.admin-actions-grid{
+grid-template-columns:1fr;
+}
 
-        .btn-logout {
-            background: #555;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: bold;
-        }
+.profile-info-card{
+flex-direction:column;
+text-align:center;
+}
 
-        .btn-logout:hover { background: #d32f2f; }
+.stats-row{
+flex-direction:column;
+}
 
-        /* Estado del Menú Hamburguesa */
-        .menu-items.show-menu {
-            display: flex !important;
-            flex-direction: column;
-            position: absolute;
-            top: 70px;
-            right: 20px;
-            background: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            border-radius: 8px;
-            padding: 10px;
-            z-index: 1000;
-        }
-    </style>
+}
+
+.action-module{
+background:white;
+padding:30px;
+border-radius:12px;
+text-align:center;
+cursor:pointer;
+transition:all 0.3s cubic-bezier(.25,.8,.25,1);
+border-bottom:5px solid #5d4037;
+box-shadow:0 4px 6px rgba(0,0,0,.05);
+}
+
+.action-module:hover{
+transform:translateY(-8px);
+box-shadow:0 12px 20px rgba(0,0,0,.15);
+background-color:#fdfaf8;
+}
+
+.stats-row{
+margin-top:20px;
+display:flex;
+gap:15px;
+}
+
+.stat-box{
+background:white;
+padding:15px;
+border-radius:10px;
+flex:1;
+text-align:center;
+box-shadow:0 2px 5px rgba(0,0,0,.05);
+}
+
+.stat-box small{
+color:#888;
+text-transform:uppercase;
+font-weight:bold;
+font-size:.7rem;
+}
+
+.stat-box div{
+font-size:1.6rem;
+font-weight:bold;
+color:#5d4037;
+margin-top:5px;
+}
+
+.btn-logout{
+background:#555;
+color:white;
+border:none;
+padding:12px 25px;
+border-radius:5px;
+cursor:pointer;
+transition:.3s;
+font-weight:bold;
+}
+
+.btn-logout:hover{
+background:#d32f2f;
+}
+
+.menu-items.show-menu{
+display:flex!important;
+flex-direction:column;
+position:absolute;
+top:70px;
+right:20px;
+background:white;
+box-shadow:0 5px 15px rgba(0,0,0,.2);
+border-radius:8px;
+padding:10px;
+z-index:1000;
+}
+
+.dashboard-title{
+text-align:center;
+color:white;
+margin:25px 0;
+font-size:28px;
+font-weight:bold;
+text-shadow:2px 2px 4px rgba(0,0,0,.6);
+}
+
+</style>
 </head>
+
+
 <body class="admin-profile-page">
 
-    <header class="navbar dashboard-navbar">
-        <div class="logo-container">
-            <img src="/Imagenes/logo.png" alt="Logo" class="logo"> 
-            <span class="site-name">LA LECHUZA LECTORA</span>
-        </div>
+<header class="navbar dashboard-navbar">
 
-        <nav class="nav-links">
-            <button class="hamburger-btn" id="hamburger-btn">
-                <div class="burger-icon"><span></span><span></span><span></span></div>
-            </button>
-            <div class="menu-items" id="menu-items">
-                <a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
-                <a href="/html/Admin/Reporte_de_ventas.html">Ventas</a>
-                <a href="/html/Admin/Reporte_de_compras.html">Pedidos</a>
-                <a href="#" onclick="cerrarSesion()">Cerrar Sesión</a>
-            </div>
-        </nav>
+<div class="logo-container">
+<img src="/Imagenes/logo.png" alt="Logo" class="logo">
+<span class="site-name">LA LECHUZA LECTORA</span>
+</div>
 
-        <div class="auth-actions user-actions">
-            <a href="/index.html" class="icon-button" title="Ir al Inicio"><i class="fa-solid fa-house"></i></a>
-            <img src="/Imagenes/miku.png.jpg" alt="Admin" id="avatar-mini" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
-        </div>
-    </header>
 
-    <main class="main-content profile-main">
-        <div class="background-overlay admin-profile-bg" style="filter: brightness(0.5);"></div>
+<nav class="nav-links">
 
-        <div class="profile-container" style="max-width: 800px; margin: 0 auto; position: relative; z-index: 10;">
-            <h1 style="text-align: center; color: white; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Panel Administrativo</h1>
+<button class="hamburger-btn" id="hamburger-btn">
+<div class="burger-icon">
+<span></span>
+<span></span>
+<span></span>
+</div>
+</button>
 
-            <div class="profile-info-card" style="display: flex; align-items: center; gap: 20px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                <img src="/Imagenes/miku.png.jpg" alt="Admin" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid #5d4037;">
-                <div class="profile-text">
-                    <h2 id="admin-nombre" style="margin: 0; color: #5d4037;">Cargando...</h2>
-                    <p id="admin-correo" style="margin: 5px 0; color: #777;">admin@lechuza.com</p>
-                    <span style="background: #2e7d32; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold;">SESIÓN ACTIVA</span>
-                </div>
-            </div>
+<div class="menu-items" id="menu-items">
 
-            <div class="stats-row">
-                <div class="stat-box" style="border-left: 5px solid #ff9800;">
-                    <small>Libros en Almacén</small>
-                    <div id="total-stock">0 uds</div>
-                </div>
-                <div class="stat-box" style="border-left: 5px solid #4caf50;">
-                    <small>Ingresos Totales (Bruto)</small>
-                    <div id="total-revenue">$0.00</div>
-                </div>
-            </div>
+<a href="/html/Admin/Gestion_de_inventario.html">Inventario</a>
+<a href="/html/Admin/Reporte_de_ventas.html">Ventas</a>
+<a href="/html/Admin/Reporte_de_compras.html">Pedidos</a>
+<a href="#" onclick="cerrarSesion()">Cerrar Sesión</a>
 
-            <div class="admin-actions-grid">
-                <div class="action-module" onclick="navegar('/html/Admin/Gestion_de_inventario.html')">
-                    <i class="fa-solid fa-boxes-stacked" style="font-size: 45px; color: #5d4037;"></i>
-                    <h3>Almacén de Libros</h3>
-                    <p>Gestionar stock y existencias</p>
-                </div>
-                
-                <div class="action-module" onclick="navegar('/html/Admin/Reporte_de_ventas.html')">
-                    <i class="fa-solid fa-chart-line" style="font-size: 45px; color: #5d4037;"></i>
-                    <h3>Reportes de Ventas</h3>
-                    <p>Gráficas de ingresos mensuales</p>
-                </div>
+</div>
+</nav>
 
-                <div class="action-module" onclick="navegar('/html/Admin/Reporte_de_compras.html')">
-                    <i class="fa-solid fa-clipboard-list" style="font-size: 45px; color: #5d4037;"></i>
-                    <h3>Reportes de Compras</h3>
-                    <p>Historial de pedidos realizados</p>
-                </div>
 
-                <div class="action-module" onclick="navegar('/html/Admin/Gestion_productos.html')" style="background: #5d4037; color: white; border-bottom: 5px solid #3e2723;">
-                    <i class="fa-solid fa-plus-circle" style="font-size: 45px; color: #fdf5e6;"></i>
-                    <h3>Nuevo Producto</h3>
-                    <p style="color: #d7ccc8;">Registrar libro en catálogo</p>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 40px; padding-bottom: 40px;">
-                <button class="btn-logout" onclick="cerrarSesion()">
-                    <i class="fa-solid fa-power-off"></i> Finalizar Sesión
-                </button>
-            </div>
-        </div>
-    </main>
+<div class="auth-actions user-actions">
 
-    <script>
-        // --- 1. CARGA INICIAL Y SEGURIDAD ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const usuario = JSON.parse(localStorage.getItem('usuario'));
-            
-            // Verificación de Rango
-            if (!usuario || usuario.rol !== 'admin') {
-                alert("Acceso denegado. Se requieren permisos de administrador.");
-                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
-                return;
-            }
+<a href="/index.html" class="icon-button" title="Ir al Inicio">
+<i class="fa-solid fa-house"></i>
+</a>
 
-            // Llenar datos de perfil
-            document.getElementById('admin-nombre').innerText = usuario.nombre || "Administrador";
-            document.getElementById('admin-correo').innerText = usuario.email || "admin@lechuza.com";
+<img src="/Imagenes/miku.png.jpg"
+alt="Admin"
+id="avatar-mini"
+class="avatar"
+style="width:35px;height:35px;border-radius:50%;object-fit:cover;">
 
-            cargarEstadisticasDashboard();
-            initMenu();
-        });
+</div>
 
-        // --- 2. NAVEGACIÓN (Solución Punto 1) ---
-        function navegar(url) {
-            console.log("Navegando a:", url);
-            window.location.href = url;
-        }
+</header>
 
-        // --- 3. CARGA DE DATOS DESDE API ---
-        async function cargarEstadisticasDashboard() {
-            try {
-                // Obtener Stock desde la API de productos
-                const resProd = await fetch('http://localhost:3000/api/productos');
-                if (resProd.ok) {
-                    const payload = await resProd.json();
-                    const productos = Array.isArray(payload) ? payload : (payload.data || []);
-                    const totalS = productos.reduce((acc, p) => acc + (parseInt(p.stock, 10) || 0), 0);
-                    document.getElementById('total-stock').innerText = `${totalS} uds`;
-                }
 
-                // Obtener métricas del módulo admin
-                const resAdmin = await fetch('http://localhost:3000/api/admin/estadisticas');
-                if (resAdmin.ok) {
-                    const payloadAdmin = await resAdmin.json();
-                    const dataAdmin = payloadAdmin.data || {};
-                    const totalR = Number(dataAdmin.ventasHoy || 0);
-                    document.getElementById('total-revenue').innerText = `$${totalR.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
-                }
+<main class="main-content profile-main">
 
-            } catch (error) {
-                console.error("Error cargando estadísticas:", error);
-                document.getElementById('total-stock').innerText = "Error";
-            }
-        }
+<div class="background-overlay admin-profile-bg" style="filter:brightness(.5);"></div>
 
-        // --- 4. UTILIDADES (Cerrar Sesión y Menú) ---
-        function cerrarSesion() {
-            if(confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-                localStorage.clear();
-                window.location.href = '/index.html';
-            }
-        }
+<div class="profile-container"
+style="max-width:800px;margin:0 auto;position:relative;z-index:10;">
 
-        function initMenu() {
-            const btnHamburguesa = document.getElementById('hamburger-btn');
-            const menuDesplegable = document.getElementById('menu-items');
 
-            btnHamburguesa?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menuDesplegable.classList.toggle('show-menu');
-            });
 
-            document.addEventListener('click', () => {
-                menuDesplegable.classList.remove('show-menu');
-            });
+<div class="profile-info-card"
+style="display:flex;align-items:center;gap:20px;background:white;padding:25px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,.2);">
 
-            menuDesplegable?.addEventListener('click', (e) => e.stopPropagation());
-        }
-    </script>
-    <script src="/JS/nav-toggle-global.js" defer></script>
+<img src="/Imagenes/miku.png.jpg"
+alt="Admin"
+style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:4px solid #5d4037;">
+
+
+<div class="profile-text">
+
+<h2 id="admin-nombre" style="margin:0;color:#5d4037;">
+Cargando...
+</h2>
+
+<p id="admin-correo" style="margin:5px 0;color:#777;">
+admin@lechuza.com
+</p>
+
+<span style="background:#2e7d32;color:white;padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:bold;">
+SESIÓN ACTIVA
+</span>
+
+</div>
+
+</div>
+
+
+<h1 class="dashboard-title">
+Panel Administrativo
+</h1>
+
+
+
+<div class="stats-row">
+
+<div class="stat-box" style="border-left:5px solid #ff9800;">
+<small>Libros en Almacén</small>
+<div id="total-stock">0 uds</div>
+</div>
+
+<div class="stat-box" style="border-left:5px solid #4caf50;">
+<small>Ingresos Totales (Bruto)</small>
+<div id="total-revenue">$0.00</div>
+</div>
+
+</div>
+
+
+
+<div class="admin-actions-grid">
+
+<div class="action-module"
+onclick="navegar('/html/Admin/Gestion_de_inventario.html')">
+
+<i class="fa-solid fa-boxes-stacked"
+style="font-size:45px;color:#5d4037;"></i>
+
+<h3>Almacén de Libros</h3>
+
+<p>Gestionar stock y existencias</p>
+
+</div>
+
+
+
+<div class="action-module"
+onclick="navegar('/html/Admin/Reporte_de_ventas.html')">
+
+<i class="fa-solid fa-chart-line"
+style="font-size:45px;color:#5d4037;"></i>
+
+<h3>Reportes de Ventas</h3>
+
+<p>Gráficas de ingresos mensuales</p>
+
+</div>
+
+
+
+<div class="action-module"
+onclick="navegar('/html/Admin/Reporte_de_compras.html')">
+
+<i class="fa-solid fa-clipboard-list"
+style="font-size:45px;color:#5d4037;"></i>
+
+<h3>Reportes de Compras</h3>
+
+<p>Historial de pedidos realizados</p>
+
+</div>
+
+
+
+<div class="action-module"
+onclick="navegar('/html/Admin/Gestion_productos.html')"
+style="background:#5d4037;color:white;border-bottom:5px solid #3e2723;">
+
+<i class="fa-solid fa-plus-circle"
+style="font-size:45px;color:#fdf5e6;"></i>
+
+<h3>Nuevo Producto</h3>
+
+<p style="color:#d7ccc8;">
+Registrar libro en catálogo
+</p>
+
+</div>
+
+</div>
+
+
+
+<div style="text-align:center;margin-top:40px;padding-bottom:40px;">
+
+<button class="btn-logout" onclick="cerrarSesion()">
+
+<i class="fa-solid fa-power-off"></i>
+Finalizar Sesión
+
+</button>
+
+</div>
+
+
+</div>
+
+</main>
+
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded',()=>{
+
+const usuario=JSON.parse(localStorage.getItem('usuario'));
+
+if(!usuario||usuario.rol!=='admin'){
+alert("Acceso denegado. Se requieren permisos de administrador.");
+window.location.href='/html/Inicio_de_sesion/Inicio_sesion.html';
+return;
+}
+
+document.getElementById('admin-nombre').innerText=usuario.nombre||"Administrador";
+document.getElementById('admin-correo').innerText=usuario.email||"admin@lechuza.com";
+
+cargarEstadisticasDashboard();
+initMenu();
+
+});
+
+
+function navegar(url){
+window.location.href=url;
+}
+
+
+
+async function cargarEstadisticasDashboard(){
+
+try{
+
+const resProd=await fetch('http://localhost:3000/api/productos');
+
+if(resProd.ok){
+
+const payload=await resProd.json();
+const productos=Array.isArray(payload)?payload:(payload.data||[]);
+
+const totalS=productos.reduce((acc,p)=>acc+(parseInt(p.stock,10)||0),0);
+
+document.getElementById('total-stock').innerText=`${totalS} uds`;
+
+}
+
+
+const resAdmin=await fetch('http://localhost:3000/api/admin/estadisticas');
+
+if(resAdmin.ok){
+
+const payloadAdmin=await resAdmin.json();
+const dataAdmin=payloadAdmin.data||{};
+
+const totalR=Number(dataAdmin.ventasHoy||0);
+
+document.getElementById('total-revenue').innerText=
+`$${totalR.toLocaleString('es-MX',{minimumFractionDigits:2})}`;
+
+}
+
+}
+catch(error){
+
+console.error("Error cargando estadísticas:",error);
+document.getElementById('total-stock').innerText="Error";
+
+}
+
+}
+
+
+
+function cerrarSesion(){
+
+if(confirm("¿Estás seguro de que deseas cerrar sesión?")){
+
+localStorage.clear();
+window.location.href='/index.html';
+
+}
+
+}
+
+
+
+function initMenu(){
+
+const btnHamburguesa=document.getElementById('hamburger-btn');
+const menuDesplegable=document.getElementById('menu-items');
+
+btnHamburguesa?.addEventListener('click',(e)=>{
+
+e.stopPropagation();
+menuDesplegable.classList.toggle('show-menu');
+
+});
+
+document.addEventListener('click',()=>{
+
+menuDesplegable.classList.remove('show-menu');
+
+});
+
+menuDesplegable?.addEventListener('click',(e)=>e.stopPropagation());
+
+}
+
+</script>
+
+
+<script src="/JS/nav-toggle-global.js" defer></script>
 <script src="/JS/lechubot-widget.js" defer></script>
+
 </body>
 </html>
-
-

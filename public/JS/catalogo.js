@@ -8,7 +8,8 @@ const bodyConfig = {
   mode: document.body?.dataset?.catalogMode || "public",
   loginPath: document.body?.dataset?.catalogLoginPath || "/html/Inicio_de_sesion/Inicio_sesion.html",
   homePath: document.body?.dataset?.catalogHomePath || "/index.html",
-  cartPath: document.body?.dataset?.catalogCartPath || "/html/Logeado/carrito.html"
+  cartPath: document.body?.dataset?.catalogCartPath || "/html/Logeado/carrito.html",
+  detailPath: document.body?.dataset?.catalogDetailPath || "/html/Detalle_producto.html"
 };
 
 function toggleMobileMenu() {
@@ -102,13 +103,14 @@ function createProductCard(product) {
 
   card.innerHTML = `
     <div>
-      <img src="${imageSrc}" alt="${safeTitle}" onerror="this.onerror=null;this.src='/Imagenes/The_Sisters_Brothers.png';">
+      <img class="btn-open-detail" data-product-id="${product.id_producto}" src="${imageSrc}" alt="${safeTitle}" onerror="this.onerror=null;this.src='/Imagenes/The_Sisters_Brothers.png';" style="cursor:pointer;">
       <h3 style="font-size:1rem; margin:10px 0; color:#5d4037;">${safeTitle}</h3>
       <p style="font-size:0.8rem; color:#777; margin-bottom:10px;">${safeAuthor}</p>
     </div>
     <div>
       <span style="font-weight:bold; color:#d32f2f; font-size:1.2rem; display:block; margin-bottom:15px;">$${safePrice.toFixed(2)}</span>
       <div style="display:flex; gap:8px;">
+        <button class="btn-open-detail" data-product-id="${product.id_producto}" style="flex:2; background:#fff; color:#5d4037; border:1px solid #5d4037; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Detalle</button>
         <button class="btn-add-cart" data-product-id="${product.id_producto}" style="flex:1; background:#5d4037; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-cart-plus"></i></button>
         <button class="btn-buy-now" data-product-id="${product.id_producto}" style="flex:2; background:#fbc02d; color:#5d4037; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Comprar</button>
       </div>
@@ -281,12 +283,18 @@ function setupProductActions() {
   container.addEventListener("click", (event) => {
     const addBtn = event.target.closest(".btn-add-cart");
     const buyBtn = event.target.closest(".btn-buy-now");
+    const detailBtn = event.target.closest(".btn-open-detail");
 
-    if (!addBtn && !buyBtn) return;
+    if (!addBtn && !buyBtn && !detailBtn) return;
 
-    const productId = Number((addBtn || buyBtn).dataset.productId);
+    const productId = Number((addBtn || buyBtn || detailBtn).dataset.productId);
     const product = allProducts.find((item) => Number(item.id_producto) === productId);
     if (!product) return;
+
+    if (detailBtn) {
+      window.location.href = `${bodyConfig.detailPath}?producto=${encodeURIComponent(product.id_producto)}&mode=${encodeURIComponent(bodyConfig.mode)}`;
+      return;
+    }
 
     if (typeof window.agregarAlCarrito === "function") {
       window.agregarAlCarrito(product);

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="/Imagenes/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Lechuza Lectora - Detalle de Producto</title>
+    <link rel="stylesheet" href="/Estilos/Estilo1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body { margin: 0; min-height: 100vh; background: #f6f1ea; }
+        .detail-wrap {
+            max-width: 1050px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 28px;
+        }
+        .book-image {
+            width: 100%;
+            height: 420px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #faf6f2;
+            border: 1px solid #f0e6db;
+        }
+        .meta { color: #6d4c41; margin: 8px 0; }
+        .desc {
+            background: #faf8f5;
+            border: 1px solid #eee2d7;
+            border-radius: 10px;
+            padding: 14px;
+            color: #4f3a32;
+            line-height: 1.55;
+        }
+        .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+        .badge {
+            background: #d32f2f;
+            color: white;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 0.85rem;
+        }
+        @media (max-width: 860px) {
+            .detail-wrap { margin: 16px; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .book-image { height: 320px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar dashboard-navbar" style="background:#5d4037; color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:10px; font-weight:bold;">
+            <img src="/Imagenes/logo.png" alt="Logo" style="width:34px; height:34px; border-radius:50%; object-fit:cover;">
+            LA LECHUZA LECTORA
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+            <a id="link-back-catalog" href="/html/Catalogo.html" style="color:#fff; text-decoration:none;"><i class="fa-solid fa-store"></i> Catálogo</a>
+            <a href="/html/Logeado/carrito.html" style="color:#fff; text-decoration:none; position:relative;">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-count" class="badge">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="detail-wrap">
+        <div id="detail-status" style="text-align:center; color:#5d4037; font-weight:bold;">Cargando información del libro...</div>
+
+        <section id="detail-content" style="display:none;" class="detail-grid">
+            <div>
+                <img id="book-image" class="book-image" src="/Imagenes/The_Sisters_Brothers.png" alt="Portada del libro">
+            </div>
+            <div>
+                <h1 id="book-title" style="margin-top:0; color:#5d4037;"></h1>
+                <p class="meta"><strong>Autor:</strong> <span id="book-author"></span></p>
+                <p class="meta"><strong>Categoría:</strong> <span id="book-category"></span></p>
+                <p class="meta"><strong>Disponibilidad:</strong> <span id="book-stock"></span></p>
+                <p style="font-size:2rem; color:#d32f2f; font-weight:bold; margin:14px 0;" id="book-price"></p>
+
+                <div class="desc" id="book-description"></div>
+
+                <div class="actions">
+                    <button id="btn-add-cart" class="btn-primary" style="background:#5d4037; color:#fff; border:none; padding:11px 18px; border-radius:8px; cursor:pointer;">
+                        <i class="fa-solid fa-cart-plus"></i> Agregar al carrito
+                    </button>
+                    <button id="btn-buy" class="btn-primary" style="background:#fbc02d; color:#5d4037; border:none; padding:11px 18px; border-radius:8px; cursor:pointer; font-weight:bold;">
+                        Comprar ahora
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/JS/cartManager.js" defer></script>
+    <script src="/JS/carrito.js" defer></script>
+    <script src="/JS/detalle-producto.js" defer></script>
+    <script src="/JS/lechubot-widget.js" defer></script>
+</body>
+</html>

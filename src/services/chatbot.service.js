@@ -1,13 +1,22 @@
 const pool = require("../config/db");
+const openAIService = require("./openai.service");
 
-const FALLBACK_MESSAGE = "No tengo esa información en este momento, pero puedo ayudarte a buscar libros o guiarte en el proceso de compra.";
+const FALLBACK_MESSAGE = [
+  "Lo siento, no entendi tu solicitud.",
+  "Puedo ayudarte a:",
+  "📚 Buscar libros",
+  "⭐ Recibir recomendaciones",
+  "🛒 Explicar como comprar",
+  "📦 Consultar pedidos"
+].join("\n");
 
 const HELP_MESSAGE = [
+  "Soy LechuBot 🦉 de La Lechuza Lectora.",
   "Te puedo ayudar con:",
-  "- Buscar libros por titulo, autor o genero.",
-  "- Recomendar libros disponibles.",
-  "- Explicar el proceso de compra y carrito.",
-  "- Consultar el estado de un pedido con su numero."
+  "📚 Buscar libros por titulo, autor o categoria.",
+  "⭐ Recomendar lecturas.",
+  "🛒 Explicar como comprar.",
+  "📦 Consultar el estado de un pedido."
 ].join("\n");
 
 const GENRE_HINTS = ["programacion", "fantasia", "ciencia ficcion", "historia", "novela", "terror", "romance", "misterio"];
@@ -30,11 +39,11 @@ function detectIntent(message) {
 
   if (!text) return "help";
 
-  if (/pedido|orden|seguimiento|donde esta/.test(text)) return "order";
+  if (/consultar pedido|estado de mi pedido|seguimiento de pedido|pedido|orden|donde esta/.test(text)) return "order";
   if (/carrito|agregar al carrito|eliminar del carrito|ver carrito/.test(text)) return "cart";
-  if (/checkout|pago|metodo de pago|comprar|proceso de compra/.test(text)) return "purchase";
-  if (/recomiend|suger|popular/.test(text)) return "recommend";
-  if (/tienen|busco|buscar|libro|catalogo|ciencia ficcion|fantasia|programacion|historia/.test(text)) return "search";
+  if (/checkout|pago|metodo de pago|como comprar|como hago un pedido|comprar|proceso de compra/.test(text)) return "purchase";
+  if (/recomiend|suger|popular|algo bueno para leer|que me recomiendas/.test(text)) return "recommend";
+  if (/tienen|busco|buscar|quiero|libro|catalogo|novela|autor|titulo|categoria|genero|ciencia ficcion|fantasia|programacion|historia|terror|romance/.test(text)) return "search";
   if (/hola|buenas|ayuda|que puedes hacer/.test(text)) return "help";
 
   return "unknown";
@@ -123,6 +132,26 @@ function resolveIntent(message, context) {
   return "unknown";
 }
 
+function mapAIIntent(aiIntent) {
+  const normalized = String(aiIntent || "").toLowerCase();
+  if (normalized === "buscar_libro") return "search";
+  if (normalized === "recomendacion") return "recommend";
+  if (normalized === "ayuda_compra") return "purchase";
+  if (normalized === "consultar_pedido") return "order";
+  if (normalized === "help") return "help";
+  return "unknown";
+}
+
+function toBookPayload(book) {
+  return {
+    id: Number(book.id_producto || 0),
+    titulo: book.titulo,
+    categoria: book.categoria || "Sin categoria",
+    precio: Number(book.precio || 0).toFixed(2),
+    imagen: book.imagen || ""
+  };
+}
+
 async function searchBooks(rawQuery, limit = 5) {
   const queryText = normalizeText(rawQuery);
   const compact = queryText.replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
@@ -134,7 +163,8 @@ async function searchBooks(rawQuery, limit = 5) {
       p.id_producto,
       p.titulo,
       COALESCE(c.nombre, 'Sin categoria') AS categoria,
-      p.precio
+      p.precio,
+      COALESCE(p.imagen_url, '') AS imagen
      FROM productos p
      LEFT JOIN categorias c ON c.id_categoria = p.id_categoria
      WHERE p.stock > 0
@@ -153,7 +183,8 @@ async function searchBooks(rawQuery, limit = 5) {
         p.id_producto,
         p.titulo,
         COALESCE(c.nombre, 'Sin categoria') AS categoria,
-        p.precio
+        p.precio,
+        COALESCE(p.imagen_url, '') AS imagen
        FROM productos p
        LEFT JOIN categorias c ON c.id_categoria = p.id_categoria
        WHERE p.stock > 0
@@ -188,7 +219,8 @@ async function recommendBooks(rawQuery) {
         p.id_producto,
         p.titulo,
         COALESCE(c.nombre, 'Sin categoria') AS categoria,
-        p.precio
+        p.precio,
+        COALESCE(p.imagen_url, '') AS imagen
        FROM productos p
        LEFT JOIN categorias c ON c.id_categoria = p.id_categoria
        WHERE p.stock > 0
@@ -249,14 +281,15 @@ async function getOrderStatus(orderId, user) {
 
 function buildBooksReply(prefix, books) {
   if (!books.length) {
-    return `${prefix}\n${FALLBACK_MESSAGE}`;
+    return `${prefix}\nNo encontre resultados con ese criterio. ¿Quieres que busque por autor o categoria?`;
   }
 
   const lines = books.map((book) => {
     return [
       `📘 Libro: ${book.titulo}`,
       `📚 Categoria: ${book.categoria || "Sin categoria"}`,
-      `💲 Precio: $${Number(book.precio || 0).toFixed(2)} MXN`
+      `💰 Precio: $${Number(book.precio || 0).toFixed(2)} MXN`,
+      ...(book.imagen ? [`🖼 Imagen: ${book.imagen}`] : [])
     ].join("\n");
   });
 
@@ -265,25 +298,31 @@ function buildBooksReply(prefix, books) {
 
 async function processMessage(message, user = null, history = []) {
   const context = buildConversationContext(message, history);
-  const intent = resolveIntent(message, context);
+  const aiDecision = await openAIService.analyzeMessage(message, history).catch(() => null);
+  const aiMappedIntent = mapAIIntent(aiDecision && aiDecision.intent);
+  const intent = aiMappedIntent !== "unknown"
+    ? aiMappedIntent
+    : resolveIntent(message, context);
   const normalized = normalizeText(message);
   const contextualQuery = context.lastGenre && !extractGenre(message)
     ? `${message} ${context.lastGenre}`
     : message;
 
   if (intent === "help") {
-    return { reply: HELP_MESSAGE, intent };
+    return { reply: HELP_MESSAGE, intent, books: [] };
   }
 
   if (intent === "purchase") {
     return {
       intent,
+      books: [],
       reply: [
-        "Para comprar un libro sigue estos pasos:",
+        "Para comprar en La Lechuza Lectora 🦉:",
         "1) Busca el libro en el catalogo.",
         "2) Haz clic en \"Agregar al carrito\".",
         "3) Ve a tu carrito de compras.",
-        "4) Procede al checkout para completar el pago."
+        "4) Procede al checkout para completar el pago.",
+        "Si quieres, puedo ayudarte a encontrar un libro 📚."
       ].join("\n")
     };
   }
@@ -291,6 +330,7 @@ async function processMessage(message, user = null, history = []) {
   if (intent === "cart") {
     return {
       intent,
+      books: [],
       reply: [
         "Sobre tu carrito 🛒:",
         "- Para agregar un libro: entra al catalogo y pulsa \"Agregar al carrito\".",
@@ -302,33 +342,46 @@ async function processMessage(message, user = null, history = []) {
 
   if (intent === "order") {
     const orderIdMatch = normalized.match(/(pedido|orden)?\s*#?\s*(\d{1,10})/);
-    const orderId = orderIdMatch ? Number(orderIdMatch[2]) : null;
+    const orderId = Number.isFinite(aiDecision && aiDecision.orderId)
+      ? Number(aiDecision.orderId)
+      : (orderIdMatch ? Number(orderIdMatch[2]) : null);
+    if (!orderId) {
+      return {
+        intent,
+        books: [],
+        reply: "Por favor ingresa tu numero de pedido para consultarlo 📦"
+      };
+    }
+
     const result = await getOrderStatus(orderId, user);
-    return { intent, reply: result.message, order: result.order || null };
+    return { intent, reply: result.message, books: [], order: result.order || null };
   }
 
   if (intent === "recommend") {
-    const books = await recommendBooks(contextualQuery);
+    const books = await recommendBooks((aiDecision && aiDecision.query) || contextualQuery);
+    const payloadBooks = books.map(toBookPayload);
     return {
       intent,
-      books,
-      reply: buildBooksReply("Aqui tienes algunas recomendaciones:", books)
+      books: payloadBooks,
+      reply: buildBooksReply("Te recomiendo estos libros ⭐:", books)
     };
   }
 
   if (intent === "search") {
-    const query = buildSearchQuery(message, context);
+    const query = (aiDecision && aiDecision.query) || buildSearchQuery(message, context);
     const books = await searchBooks(query, 5);
+    const payloadBooks = books.map(toBookPayload);
     return {
       intent,
-      books,
+      books: payloadBooks,
       reply: buildBooksReply("Estos libros estan disponibles en el catalogo:", books)
     };
   }
 
   return {
     intent: "unknown",
-    reply: FALLBACK_MESSAGE
+    reply: FALLBACK_MESSAGE,
+    books: []
   };
 }
 

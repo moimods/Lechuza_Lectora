@@ -117,24 +117,28 @@ document.getElementById('adminLoginForm').addEventListener('submit', async (e) =
                 localStorage.setItem('usuarioCompleto', JSON.stringify(user));
                 localStorage.setItem('admin_session', 'true'); // Flag extra para paneles admin
 
-                alert("ðŸ”“ Acceso administrativo concedido. Bienvenido, " + (user.nombre_completo || user.nombre || 'Admin'));
+                alert("Acceso administrativo concedido. Bienvenido, " + (user.nombre_completo || user.nombre || 'Admin'));
                 
                 // Redirigir al panel admin real
                 window.location.href = '/html/Admin/panel_de_admin.html'; 
 
             } else {
                 // Si el usuario existe pero es un cliente normal
-                alert("ðŸš« Acceso denegado: Esta cuenta no tiene permisos de administrador.");
-                // Opcional: Cerrar sesión por seguridad
-                localStorage.clear();
+                alert("Acceso denegado: esta cuenta no tiene permisos de administrador.");
+                localStorage.removeItem('admin_session');
+                localStorage.removeItem('userRole');
             }
         } else {
             // Error de credenciales (correo o contraseña mal)
-            alert("❌ " + (data.error || 'Credenciales incorrectas'));
+            alert((data.error || 'Credenciales incorrectas'));
         }
     } catch (error) {
         console.error("Error de conexión:", error);
-        alert("⚠️ " + (error.message || "No se pudo conectar con el servidor. Verifica que Node.js esté activo."));
+        if (String(error.message || '').toLowerCase().includes('no autorizado')) {
+            alert('Credenciales incorrectas o sesión inválida. Intenta nuevamente.');
+            return;
+        }
+        alert(error.message || "No se pudo conectar con el servidor. Verifica que Node.js esté activo.");
     }
 });
 

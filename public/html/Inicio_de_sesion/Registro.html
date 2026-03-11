@@ -30,6 +30,17 @@
             z-index: 1000;
         }
 
+        .robot-box { background: #f9f9f9; border: 1px solid #dcdcdc; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; border-radius: 4px; }
+        .checkbox-wrapper { width: 24px; height: 24px; border: 2px solid #c1c1c1; cursor: pointer; background: #fff; position: relative; }
+        .checkbox-wrapper.checked::after { content: '✓'; position: absolute; color: #009b5a; font-size: 20px; top: -5px; left: 3px; }
+        .image-captcha { background: #fff; border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; text-align: center; }
+        .image-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 10px; }
+        .img-item { width: 100%; height: 80px; cursor: pointer; border: 2px solid transparent; object-fit: cover; }
+        .img-item.selected { border-color: #4A90E2; opacity: 0.8; }
+        .code-container { background: #eee; padding: 15px; border-radius: 5px; text-align: center; margin-bottom: 15px; }
+        #captchaCode { font-family: monospace; font-size: 22px; font-weight: bold; background: #333; color: #fff; padding: 8px; letter-spacing: 5px; text-decoration: line-through; display: inline-block; margin-bottom: 10px; }
+        .refresh-link { color: #4A90E2; font-size: 12px; cursor: pointer; text-decoration: underline; display: block; margin-bottom: 10px; border:none; background:none; width:100%; }
+
         @media (max-width: 768px) {
             .registration-grid { grid-template-columns: 1fr !important; }
             .form-card { width: 95% !important; padding: 20px !important; }
@@ -79,11 +90,25 @@
                         </div>
                     </div>
                     
-                    <div class="captcha-group" style="text-align: center; margin-top: 10px;">
-                        <div class="captcha-display-wrapper" style="margin-bottom: 10px;">
-                            <span id="captcha-display" style="background: #eee; padding: 5px 15px; font-weight: bold; letter-spacing: 5px; border: 1px dashed #999;">JUPRO</span> 
+                    <div class="robot-box">
+                        <div class="checkbox-wrapper" id="robotCheck"></div>
+                        <span style="margin-left:10px; font-size:14px; flex-grow:1;">No soy un robot</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/RecaptchaLogo.svg" width="25" alt="Recaptcha">
+                    </div>
+
+                    <div class="image-captcha">
+                        <span style="font-size:13px; font-weight:bold;">Selecciona el GATO:</span>
+                        <div class="image-grid">
+                            <img src="https://placehold.co/100x100?text=Perro" class="img-item" data-id="1" alt="Perro">
+                            <img src="https://placehold.co/100x100?text=Gato" class="img-item" data-id="2" alt="Gato">
+                            <img src="https://placehold.co/100x100?text=Pajaro" class="img-item" data-id="3" alt="Pajaro">
                         </div>
-                        <input type="text" id="captcha-input" placeholder="Escribe JUPRO" required style="width:100%; padding:8px;"> 
+                    </div>
+
+                    <div class="code-container">
+                        <div id="captchaCode">......</div>
+                        <button type="button" class="refresh-link" id="captcha-refresh-all">Generar captcha nuevo</button>
+                        <input type="text" id="captcha-input" placeholder="Código de arriba" required style="width:100%; padding:8px;">
                     </div>
                 </div>
             </form>
@@ -106,6 +131,30 @@
 
 <script src="/JS/api.js" defer></script>
 <script>
+    let currentCode = "";
+    let robotChecked = false;
+    let selectedImgId = null;
+
+    function resetCaptchaOnly() {
+        const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        currentCode = "";
+        for (let i = 0; i < 6; i++) {
+            currentCode += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const codeBox = document.getElementById('captchaCode');
+        if (codeBox) codeBox.innerText = currentCode;
+
+        const captchaInput = document.getElementById('captcha-input');
+        if (captchaInput) captchaInput.value = '';
+
+        robotChecked = false;
+        const robotCheck = document.getElementById('robotCheck');
+        if (robotCheck) robotCheck.classList.remove('checked');
+
+        selectedImgId = null;
+        document.querySelectorAll('.img-item').forEach(i => i.classList.remove('selected'));
+    }
+
     // 1. Función para mostrar/ocultar contraseña
     function togglePass(id) {
         const input = document.getElementById(id);
@@ -126,11 +175,10 @@
         const pass = document.getElementById('password').value;
         const confirm = document.getElementById('confirm_password').value;
         const captchaInput = document.getElementById('captcha-input').value.trim().toUpperCase();
-        const captchaReal = "JUPRO"; 
 
         // 3. Validaciones de Frontend antes de molestar al servidor
         if (pass.length < 6) {
-            alert("ðŸ¦‰ La lechuza dice que tu contraseña es muy corta (mínimo 6 caracteres).");
+            alert("La contraseña es muy corta (mínimo 6 caracteres).");
             return;
         }
 
@@ -139,8 +187,20 @@
             return; 
         }
 
-        if (captchaInput !== captchaReal) { 
-            alert("⚠️ El código de verificación JUPRO es incorrecto."); 
+        if (!robotChecked) {
+            alert("Marca la casilla 'No soy un robot'.");
+            return;
+        }
+
+        if (selectedImgId !== '2') {
+            alert("Imagen incorrecta. Selecciona el Gato.");
+            resetCaptchaOnly();
+            return;
+        }
+
+        if (captchaInput !== currentCode) {
+            alert("El código CAPTCHA es incorrecto.");
+            resetCaptchaOnly();
             return; 
         }
 
@@ -179,6 +239,7 @@
                 // Mostrar modal de éxito
                 document.getElementById('success-modal').style.display = 'flex';
                 this.reset(); // Limpiar el formulario
+                resetCaptchaOnly();
             } else {
                 alert("❌ Error: " + (result.error || result.message || "No se pudo completar el registro."));
                 btnSubmit.innerText = originalText;
@@ -190,6 +251,22 @@
             document.querySelector('button[type="submit"]').disabled = false;
         }
     });
+
+    document.getElementById('robotCheck').addEventListener('click', function() {
+        robotChecked = !robotChecked;
+        this.classList.toggle('checked', robotChecked);
+    });
+
+    document.querySelectorAll('.img-item').forEach(img => {
+        img.addEventListener('click', function() {
+            document.querySelectorAll('.img-item').forEach(i => i.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedImgId = this.getAttribute('data-id');
+        });
+    });
+
+    document.getElementById('captcha-refresh-all').addEventListener('click', resetCaptchaOnly);
+    document.addEventListener('DOMContentLoaded', resetCaptchaOnly);
 
     // Acción del botón Aceptar en el Modal
     document.getElementById('btn-modal-accept').onclick = function() {
