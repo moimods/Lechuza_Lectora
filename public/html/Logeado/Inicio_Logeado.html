@@ -84,7 +84,7 @@
 </head>
 <body class="logged-in-home">
 
-    <header class="navbar">
+    <header class="navbar detail-navbar">
         <button class="hamburger-btn" id="hamburger-btn" aria-label="Abrir menú">
             <i class="fa-solid fa-bars"></i>
         </button>
@@ -189,22 +189,21 @@
     <script>
         // --- 1. SEGURIDAD Y PERSONALIZACIÓN (EL GUARDIÁN) ---
         document.addEventListener('DOMContentLoaded', async () => {
-            // Mantener sesión al recargar: si hay token, API puede hidratar userName.
-            if (window.API?.tieneSesion && window.API.tieneSesion()) {
-                await window.API.hidratarSesionDesdeToken();
-            }
-
-            const userName = localStorage.getItem('userName');
-
-            // Si no hay token ni usuario local, redirigimos al login.
-            if (!(window.API?.tieneSesion && window.API.tieneSesion()) && !userName) {
-                alert("Sesión no válida. Por favor, inicia sesión.");
-                window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
-                return;
+            if (window.API?.requireSession) {
+                const usuario = await window.API.requireSession({
+                    redirectToLogin: false,
+                    rememberCurrentPath: true
+                });
+                if (!usuario) {
+                    localStorage.setItem('postLoginRedirect', '/html/Logeado/Inicio_Logeado.html');
+                    alert("Sesión no válida. Por favor, inicia sesión.");
+                    window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
+                    return;
+                }
             }
 
             // Aplicar nombre al saludo
-            const finalName = localStorage.getItem('userName') || userName || 'USUARIO';
+            const finalName = localStorage.getItem('userName') || 'USUARIO';
             document.getElementById('welcome-title').textContent = `¡HOLA, ${finalName.toUpperCase()}!`;
             
             // Actualizar contador del carrito

@@ -107,9 +107,22 @@
     </footer>
     
 
+<script src="/JS/api.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+document.addEventListener('DOMContentLoaded', async () => {
+    let usuario = null;
+    if (window.API?.requireSession) {
+        usuario = await window.API.requireSession({
+            redirectToLogin: false,
+            rememberCurrentPath: true
+        });
+    } else {
+        try {
+            usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+        } catch {
+            usuario = null;
+        }
+    }
 
     if (!usuario) {
         localStorage.setItem('postLoginRedirect', '/html/Logeado/compra/resumen_compra.html');

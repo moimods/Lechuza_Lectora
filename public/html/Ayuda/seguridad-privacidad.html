@@ -15,11 +15,10 @@
     <section style="background:#fff;padding:16px;border-radius:10px;margin-bottom:16px;">
       <h2 style="color:#5d4037;">Controles implementados en el proyecto</h2>
       <ul style="line-height:1.8;">
-        <li>Autenticación con JWT y expiración de sesión.</li>
-        <li>Hash de contraseñas con bcrypt (no se guardan en texto plano).</li>
-        <li>Validaciones de entrada en backend y frontend.</li>
-        <li>Protección de rutas por rol (cliente y administrador).</li>
-        <li>Manejo centralizado de errores para evitar fuga de datos sensibles.</li>
+        <li>Sesión autenticada por token JWT.</li>
+        <li>Contraseñas protegidas con hash bcrypt.</li>
+        <li>Rutas privadas con control por rol (cliente/admin).</li>
+        <li>Validación de datos antes de guardar en base de datos.</li>
       </ul>
     </section>
 
@@ -41,7 +40,13 @@
     </section>
     <a href="/html/Logeado/perfil.html" class="btn-primary" style="display:inline-block;margin-top:20px;">Ir a mi perfil</a>
   </main>
+  <script src="/JS/api.js" defer></script>
   <script>
+    if (!localStorage.getItem('laLechuza_jwt_token')) {
+      localStorage.setItem('postLoginRedirect', '/html/Ayuda/seguridad-privacidad.html');
+      window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+    }
+
     const token = localStorage.getItem("laLechuza_jwt_token");
     const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
 
@@ -71,6 +76,7 @@
       alert("Sesión local cerrada correctamente.");
       window.location.href = "/html/Inicio_de_sesion/Inicio_sesion.html";
     });
+
   </script>
 <script src="/JS/lechubot-widget.js" defer></script>
 </body>

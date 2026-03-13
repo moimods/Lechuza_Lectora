@@ -1,5 +1,5 @@
 /**
- * Servicio de Métodos de Pago - Gestión de tarjetas y paypal
+ * Servicio de Métodos de Pago - Gestión de Mercado Pago
  */
 
 const pool = require("../config/db");
@@ -14,7 +14,7 @@ async function obtenerPorUsuario(idUsuario) {
   }
 
   const result = await pool.query(
-    `SELECT id_metodo, tipo, last_four, es_principal
+    `SELECT id_metodo, tipo, token_pago, last_four, es_principal
      FROM metodos_pago
      WHERE id_usuario = $1
      ORDER BY es_principal DESC, id_metodo`,
@@ -34,22 +34,21 @@ async function crear(idUsuario, datos) {
 
   const { tipo, token_pago, last_four, es_principal } = datos;
 
-  if (!tipo || !["tarjeta", "paypal"].includes(tipo)) {
-    throw new ValidationError("Tipo de método de pago inválido (tarjeta|paypal)");
-  }
+  const rawTipo = String(tipo || "mercadopago").trim().toLowerCase();
+  const tipoNormalizado = rawTipo === "paypal" ? "paypal" : "mercadopago";
 
   if (!token_pago || token_pago.trim() === "") {
     throw new ValidationError("Token de pago es obligatorio");
   }
 
-  // last_four es opcional
+  // last_four solo aplica en casos tipo tarjeta; para paypal/mp puede quedar null.
   const lastFour = last_four ? String(last_four).trim().slice(-4) : null;
 
   const result = await pool.query(
     `INSERT INTO metodos_pago (id_usuario, tipo, token_pago, last_four, es_principal)
      VALUES ($1, $2, $3, $4, $5)
-     RETURNING id_metodo, tipo, last_four, es_principal`,
-    [idUsuario, tipo, token_pago, lastFour, es_principal || false]
+      RETURNING id_metodo, tipo, token_pago, last_four, es_principal`,
+    [idUsuario, tipoNormalizado, token_pago, lastFour, es_principal || false]
   );
 
   return result.rows[0];
@@ -87,7 +86,7 @@ async function actualizar(idMetodo, idUsuario, datos) {
 
   const result = await pool.query(
     `UPDATE metodos_pago SET es_principal = $1 WHERE id_metodo = $2
-     RETURNING id_metodo, tipo, last_four, es_principal`,
+     RETURNING id_metodo, tipo, token_pago, last_four, es_principal`,
     [es_principal !== undefined ? es_principal : true, idMetodo]
   );
 

@@ -181,7 +181,7 @@ document.getElementById('form-login-usuario')
     }
 
     try{
-        const data = await API.login(email, password);
+        const data = await API.login(email, password, { rememberCredentials: false });
         const ok = data.ok ?? data.success;
         const user = data.usuario || data.user || data.data?.usuario || data.data?.user;
 
@@ -193,6 +193,11 @@ document.getElementById('form-login-usuario')
 
             const redirectTo = localStorage.getItem('postLoginRedirect') || '/html/Logeado/Catalogo_Logeado.html';
             localStorage.removeItem('postLoginRedirect');
+
+            if ((user.rol || '').toLowerCase() === 'admin') {
+                window.location.href = '/html/Admin/panel_de_admin.html';
+                return;
+            }
 
             window.location.href = redirectTo;
 
@@ -208,19 +213,12 @@ document.getElementById('form-login-usuario')
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const correo = document.getElementById('correo');
     const contrasena = document.getElementById('contrasena');
 
-    // Requisito: quitar recordar credenciales y borrar guardados previos.
-    API.limpiarCredencialesGuardadas();
-    API.limpiarRecordatorioLogin();
-
-    if (correo) correo.value = '';
     if (contrasena) contrasena.value = '';
 });
 
 </script>
-<script src="/JS/limpiar-cache-formularios.js" defer></script>
 <script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>

@@ -100,17 +100,62 @@
         </div>
     </main>
 
+    <script src="/JS/api.js"></script>
     <script>
-        // Pequeño script para generar un número visual aleatorio si el servidor no lo envió
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const provider = (params.get('provider') || '').toLowerCase();
+
+            const explicitVentaId = params.get('id_venta');
+            const externalReference = params.get('external_reference') || params.get('merchant_order_id');
+            const paypalOrderId = params.get('token') || params.get('order_id');
+            const ventaId = explicitVentaId || externalReference || '';
+
             const randomID = Math.floor(100000 + Math.random() * 900000);
-            document.getElementById('display-order-id').innerText = `#LL-${randomID}`;
-            
+            const orderText = ventaId ? `#LL-${ventaId}` : `#LL-${randomID}`;
+            document.getElementById('display-order-id').innerText = orderText;
+
+            let pagoValidado = true;
+            try {
+                if (provider === 'paypal' && paypalOrderId) {
+                    const captureResult = await API.post('/payments/paypal/capture', {
+                        order_id: paypalOrderId,
+                        id_venta: ventaId || null
+                    });
+
+                    const status = String(captureResult?.data?.status || '').toUpperCase();
+                    if (status !== 'COMPLETED') {
+                        pagoValidado = false;
+                        throw new Error('PayPal no devolvió estado COMPLETED');
+                    }
+                } else if (ventaId) {
+                    await API.post('/payments/confirmar', {
+                        id_venta: ventaId,
+                        estado: 'completado'
+                    });
+                }
+            } catch (paymentSyncError) {
+                pagoValidado = false;
+                console.warn('No se pudo confirmar/capturar el pago automáticamente:', paymentSyncError?.message || paymentSyncError);
+            }
+
+            if (!pagoValidado && provider === 'paypal') {
+                document.querySelector('h1').innerText = 'Validación de pago pendiente';
+                document.querySelector('.success-icon').className = 'fas fa-triangle-exclamation success-icon';
+                document.querySelector('.success-icon').style.color = '#e67e22';
+                document.querySelector('.success-container p').innerText = 'No pudimos validar el pago de PayPal todavía. No se vació tu carrito. Intenta nuevamente en unos minutos.';
+                return;
+            }
+
             // Asegurarnos de que el carrito esté realmente vacío
             localStorage.removeItem('laLechuzaLectoraCart');
             localStorage.removeItem('cart');
             localStorage.removeItem('carrito');
             localStorage.removeItem('id_direccion_pedido');
+            localStorage.removeItem('id_metodo_pago_pedido');
+            localStorage.removeItem('metodo_pago');
+            localStorage.removeItem('metodo_pago_checkout');
+            localStorage.removeItem('direccion_envio');
             localStorage.removeItem('compra_en_progreso');
         });
     </script>

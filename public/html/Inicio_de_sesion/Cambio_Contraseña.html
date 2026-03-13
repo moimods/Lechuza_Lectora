@@ -140,15 +140,22 @@
             e.preventDefault();
             
             if (!validate()) {
-                alert("ðŸ¦‰ ¡Oye! Debes cumplir todos los requisitos de seguridad antes de continuar.");
+                alert("Debes cumplir todos los requisitos de seguridad antes de continuar.");
                 return;
             }
 
             const email = localStorage.getItem('email_recuperacion');
+            const codigo = sessionStorage.getItem('codigo_recuperacion_validado');
             const password = newPass.value;
 
             if (!email) {
                 alert("❌ No encontramos tu correo. Por seguridad, reinicia el proceso de recuperación.");
+                window.location.href = 'Recuperacion.html';
+                return;
+            }
+
+            if (!codigo) {
+                alert("No encontramos un código de verificación válido. Solicita uno nuevo.");
                 window.location.href = 'Recuperacion.html';
                 return;
             }
@@ -159,6 +166,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email,
+                        code: codigo,
                         passwordNueva: password,
                         passwordConfirm: confPass.value
                     })
@@ -167,8 +175,9 @@
                 const data = await response.json();
 
                 if (response.ok && data.ok) {
-                    alert("âœ¨ ¡Contraseña actualizada! La lechuza ha guardado tus nuevos datos.");
+                    alert("Contraseña actualizada correctamente.");
                     localStorage.removeItem('email_recuperacion'); 
+                    sessionStorage.removeItem('codigo_recuperacion_validado');
                     window.location.href = 'Inicio_sesion.html';
                 } else {
                     alert("❌ Error del servidor: " + (data.error || 'No fue posible actualizar la contraseña'));

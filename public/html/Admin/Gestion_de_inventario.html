@@ -201,7 +201,7 @@
         async function cargarInventario() {
             try {
                 const token = localStorage.getItem('laLechuza_jwt_token');
-                const response = await fetch('/api/productos', {
+                const response = await fetch('/api/productos?page=1&limit=500', {
                     headers: {
                         ...(token ? { Authorization: `Bearer ${token}` } : {})
                     }
@@ -209,7 +209,11 @@
                 if (!response.ok) throw new Error('Error en servidor');
                 
                 const payload = await response.json();
-                todosLosProductos = Array.isArray(payload) ? payload : (payload.data || []);
+                const rawProducts = Array.isArray(payload) ? payload : (payload.data || []);
+                todosLosProductos = rawProducts.map((p) => ({
+                    ...p,
+                    id_producto: p.id_producto ?? p.id ?? null
+                }));
                 indiceBusqueda = todosLosProductos.map((p) => ({
                     id: p.id_producto,
                     source: `${p.id_producto} ${p.titulo || ''} ${p.autor || ''} ${p.categoria || ''}`.toLowerCase()

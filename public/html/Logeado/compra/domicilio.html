@@ -116,12 +116,25 @@
 let direccionSeleccionadaObjeto = null;
 let direccionesCache = [];
 
-document.addEventListener('DOMContentLoaded', () => {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+document.addEventListener('DOMContentLoaded', async () => {
+    let usuario = null;
+    if (window.API?.requireSession) {
+        usuario = await window.API.requireSession({
+            redirectToLogin: false,
+            rememberCurrentPath: true
+        });
+    } else {
+        try {
+            usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+        } catch {
+            usuario = null;
+        }
+    }
     const checkoutCart = JSON.parse(localStorage.getItem('laLechuzaLectoraCart') || '[]');
     const legacyCart = JSON.parse(localStorage.getItem('carrito') || '[]');
     
-    if (!usuario || !usuario.id_usuario) {
+    if (!usuario) {
+        localStorage.setItem('postLoginRedirect', '/html/Logeado/compra/domicilio.html');
         alert("Sesión no detectada. Por favor, inicia sesión.");
         window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
         return;

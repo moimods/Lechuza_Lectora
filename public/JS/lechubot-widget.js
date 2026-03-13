@@ -12,10 +12,24 @@ const CONFIG = {
   MAX_HISTORY: 10,
   MESSAGE_LIMIT: 300,
   RATE_LIMIT: 700,
-  STORAGE_KEY: "lechubot_history"
+  STORAGE_KEY: "lechubot_history",
+  QA_STORAGE_KEY: "lechubot_qa_mode"
 };
 
 const API_ENDPOINT = `${CONFIG.API_BASE.replace(/\/$/,"")}/chatbot/message`;
+const API_ROOT = CONFIG.API_BASE.replace(/\/$/,"");
+
+function getPaths(){
+ const isLoggedView = window.location.pathname.includes("/html/Logeado/");
+ return {
+  CATALOGO: isLoggedView ? "/html/Logeado/Catalogo_Logeado.html" : "/html/Catalogo.html",
+  CARRITO: "/html/Logeado/carrito.html",
+  PEDIDOS: "/html/Logeado/Mis_pedidos.html",
+  LOGIN: "/html/Inicio_de_sesion/Inicio_sesion.html"
+ };
+}
+
+const PATHS = getPaths();
 
 let controller = null;
 let lastMessageTime = 0;
@@ -25,10 +39,10 @@ QUICK ACTIONS
 ========================= */
 
 const QUICK_ACTIONS = [
- {label:"📚 Buscar libros",prompt:"Busco libros de fantasia"},
- {label:"⭐ Recomendaciones",prompt:"Recomiendame libros"},
- {label:"🛒 Como comprar",prompt:"Como comprar un libro"},
- {label:"📦 Consultar pedido",prompt:"Quiero consultar mi pedido"}
+ {label:"📚 Buscar libros",prompt:"buscar libros"},
+ {label:"⭐ Recomendaciones",prompt:"recomiendame libros"},
+ {label:"🛒 Como comprar",prompt:"como comprar"},
+ {label:"📦 Consultar pedido",prompt:"consultar pedido"}
 ];
 
 /* =========================
@@ -51,6 +65,122 @@ const now = () =>
   hour:"2-digit",
   minute:"2-digit"
  });
+
+function isQaMode(){
+ const params = new URLSearchParams(window.location.search);
+ const queryValue = params.get("lechubotQA");
+ if(queryValue === "1") return true;
+ if(queryValue === "0") return false;
+ return localStorage.getItem(CONFIG.QA_STORAGE_KEY) === "1";
+}
+
+function setQaMode(enabled){
+ localStorage.setItem(CONFIG.QA_STORAGE_KEY, enabled ? "1" : "0");
+}
+
+function qaLog(message, payload){
+ if(!isQaMode()) return;
+ if(typeof payload === "undefined"){
+  console.info("[LechuBot QA]", message);
+  return;
+ }
+ console.info("[LechuBot QA]", message, payload);
+}
+
+function getToken(){
+ return localStorage.getItem("laLechuza_jwt_token");
+}
+
+async function apiGet(path){
+ const token = getToken();
+ const response = await fetch(`${API_ROOT}${path}`, {
+  method: "GET",
+  headers: {
+   ...(token ? { Authorization: `Bearer ${token}` } : {})
+  }
+ });
+
+ const data = await response.json().catch(() => ({}));
+ if(!response.ok) throw new Error(data.error || "Error consultando API");
+ return data.data ?? data;
+}
+
+function normalizeBook(book){
+ const id = Number(book.id ?? book.id_producto ?? 0);
+ const title = String(book.titulo ?? book.title ?? "Sin titulo");
+ const categoria = String(book.categoria ?? book.genero ?? "General");
+ const precio = Number(book.precio ?? book.price ?? 0);
+ const imagen = String(book.imagen ?? book.imagen_url ?? "/Imagenes/The_Sisters_Brothers.png");
+
+ return {
+  id,
+  titulo: title,
+  categoria,
+  precio,
+  imagen: imagen.startsWith("/") ? imagen : `/${imagen}`
+ };
+}
+
+function readCart(){
+ let current = [];
+ try{
+  current = JSON.parse(localStorage.getItem("laLechuzaLectoraCart")) || [];
+ }catch{}
+ if(Array.isArray(current) && current.length) return current;
+
+ try{
+  const legacy = JSON.parse(localStorage.getItem("carrito")) || [];
+  if(Array.isArray(legacy) && legacy.length){
+   return legacy.map((item) => ({
+    id: Number(item.id ?? item.id_producto ?? 0),
+    title: String(item.title ?? item.titulo ?? "Libro"),
+    price: Number(item.price ?? item.precio ?? 0),
+    quantity: Number(item.quantity ?? item.qty ?? item.cantidad ?? 1),
+    image: String(item.image ?? item.imagen ?? item.imagen_url ?? "/Imagenes/The_Sisters_Brothers.png")
+   }));
+  }
+ }catch{}
+
+ return [];
+}
+
+function saveCart(cart){
+ localStorage.setItem("laLechuzaLectoraCart", JSON.stringify(cart));
+ const legacy = cart.map((item) => ({
+  id_producto: item.id,
+  titulo: item.title,
+  precio: item.price,
+  cantidad: item.quantity,
+  imagen_url: item.image
+ }));
+ localStorage.setItem("carrito", JSON.stringify(legacy));
+}
+
+function addBookToCart(book){
+ const cart = readCart();
+ const found = cart.find((item) => Number(item.id) === Number(book.id));
+ if(found){
+  found.quantity = Number(found.quantity || 0) + 1;
+ } else {
+  cart.push({
+   id: Number(book.id || 0),
+   title: String(book.titulo || "Libro"),
+   price: Number(book.precio || 0),
+   quantity: 1,
+   image: String(book.imagen || "/Imagenes/The_Sisters_Brothers.png")
+  });
+ }
+ saveCart(cart);
+ return cart;
+}
+
+const normalizeText = (value) =>
+ String(value || "")
+  .toLowerCase()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .replace(/\s+/g, " ")
+  .trim();
 
 /* =========================
 STORAGE
@@ -154,6 +284,7 @@ color:white;
 padding:14px;
 font-weight:bold;
 font-family:Georgia;
+text-align:center;
 }
 
 .lechubot-body{
@@ -333,7 +464,7 @@ panel.className="lechubot-panel";
 
 panel.innerHTML=`
 <header class="lechubot-header">
-LechuBot | La Lechuza Lectora
+LechuBot
 </header>
 
 <div id="lechubot-body" class="lechubot-body"></div>
@@ -402,7 +533,7 @@ function appendBotBooks(body, text, books = []) {
           <div><b>📘 ${escapeHtml(titulo)}</b></div>
           <div>📚 ${escapeHtml(categoria)}</div>
           <div class="lechubot-book-price">💰 $${escapeHtml(precio)} MXN</div>
-          <button class="lechubot-add" data-id="${id}">Agregar al carrito</button>
+          <button class="lechubot-add" data-id="${id}" data-title="${escapeHtml(titulo)}" data-price="${escapeHtml(precio)}" data-image="${escapeHtml(imagen || "/Imagenes/The_Sisters_Brothers.png")}">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -427,6 +558,223 @@ function appendBotBooks(body, text, books = []) {
  });
 }
 
+const LOCAL_RESPONSES = {
+ "menu": `
+🦉 Puedo ayudarte con:
+
+📚 Buscar libros
+⭐ Recomendaciones
+🛒 Como comprar
+📦 Consultar pedido
+`,
+
+ "menu principal": `
+🦉 Puedo ayudarte con:
+
+📚 Buscar libros
+⭐ Recomendaciones
+🛒 Como comprar
+📦 Consultar pedido
+`,
+
+ "como comprar": `
+🛒 Comprar en La Lechuza Lectora es muy facil:
+
+1️⃣ Busca un libro en el catalogo
+2️⃣ Presiona "Agregar al carrito"
+3️⃣ Ve al carrito
+4️⃣ Completa tu domicilio
+5️⃣ Finaliza tu compra
+`,
+
+ "consultar pedido": `
+📦 Para consultar tu pedido:
+
+1️⃣ Ve a tu perfil
+2️⃣ Entra a "Mis pedidos"
+`
+};
+
+const INTENT_PATTERNS = {
+ menu: /(menu|menu principal|ayuda|opciones|que puedes hacer)/,
+ comprar: /(como comprar|comprar|proceso de compra|checkout)/,
+ pedidos: /(consultar pedido|pedido|pedidos|mis pedidos|orden)/,
+ recomendaciones: /(recomienda|recomendacion|recomendaciones|sugerencia)/,
+ fantasia: /(fantasia|fantasy)/,
+ carrito: /(carrito|mi carrito)/,
+ buscar: /(buscar libros|buscar|libros de)/
+};
+
+function detectIntent(normalized){
+ const keys = Object.keys(INTENT_PATTERNS);
+ for(const key of keys){
+  if(INTENT_PATTERNS[key].test(normalized)) return key;
+ }
+ return null;
+}
+
+async function handleLocalEcommerceIntent(text, body, history, typing){
+ const normalized = normalizeText(text);
+ const isAuthenticated = Boolean(getToken());
+
+ if(LOCAL_RESPONSES[normalized]){
+  typing.remove();
+  const reply = LOCAL_RESPONSES[normalized];
+  appendMessage(body, reply, "bot");
+  pushHistory(history,{ role:"bot", text:reply, intent:"faq" });
+  return true;
+ }
+
+ const intent = detectIntent(normalized);
+
+ if(intent === "menu"){
+  typing.remove();
+  const reply = LOCAL_RESPONSES["menu"];
+  appendMessage(body, reply, "bot");
+  pushHistory(history,{ role:"bot", text:reply, intent:"menu" });
+  return true;
+ }
+
+ if(intent === "comprar"){
+  typing.remove();
+  const reply = LOCAL_RESPONSES["como comprar"];
+  appendMessage(body, reply, "bot");
+  pushHistory(history,{ role:"bot", text:reply, intent:"faq_compra" });
+  return true;
+ }
+
+ if(intent === "pedidos"){
+  typing.remove();
+  if(!isAuthenticated){
+   const reply = "Para consultar pedidos, primero inicia sesion.";
+   appendMessage(body, reply, "bot");
+   pushHistory(history,{ role:"bot", text:reply, intent:"pedido_login" });
+   return true;
+  }
+  try {
+   const ventas = await apiGet("/ventas/usuario?page=1&limit=1");
+   const last = Array.isArray(ventas) ? ventas[0] : null;
+   if(last){
+    const reply = `📦 Tu ultimo pedido es #LL-${last.id_venta} con estado "${last.estado}" y total $${Number(last.total || 0).toFixed(2)} MXN.`;
+    appendMessage(body, reply, "bot");
+    pushHistory(history,{ role:"bot", text:reply, intent:"pedido_resumen" });
+   } else {
+    const reply = "Aun no encuentro pedidos registrados en tu cuenta.";
+    appendMessage(body, reply, "bot");
+    pushHistory(history,{ role:"bot", text:reply, intent:"pedido_vacio" });
+   }
+  } catch {
+   const reply = LOCAL_RESPONSES["consultar pedido"];
+   appendMessage(body, reply, "bot");
+   pushHistory(history,{ role:"bot", text:reply, intent:"faq_pedido" });
+  }
+  return true;
+ }
+
+ if(intent === "carrito"){
+  typing.remove();
+  if(!isAuthenticated){
+   const reply = `Para gestionar tu carrito, inicia sesion.\n👉 ${PATHS.LOGIN}`;
+   appendMessage(body, reply, "bot");
+   pushHistory(history,{ role:"bot", text:reply, intent:"carrito_login" });
+   return true;
+  }
+  const cart = readCart();
+  const count = Array.isArray(cart)
+   ? cart.reduce((acc, item) => acc + Number(item?.quantity ?? item?.qty ?? item?.cantidad ?? 1), 0)
+   : 0;
+  const reply = count
+   ? `🛒 Tienes ${count} productos en tu carrito.\n👉 ${PATHS.CARRITO}`
+   : "Tu carrito esta vacio";
+  appendMessage(body, reply, "bot");
+  pushHistory(history,{ role:"bot", text:reply, intent:"carrito" });
+  return true;
+ }
+
+ if(intent === "recomendaciones"){
+  typing.remove();
+  try {
+   const productsData = await apiGet("/productos?page=1&limit=6");
+   const products = Array.isArray(productsData?.data) ? productsData.data : (Array.isArray(productsData) ? productsData : []);
+   const books = products.slice(0, 3).map(normalizeBook);
+   if(books.length){
+    appendBotBooks(body, "📚 Te recomiendo estos libros populares:", books);
+    pushHistory(history,{ role:"bot", text:"Recomendaciones", intent:"recomendaciones" });
+    return true;
+   }
+  } catch {}
+
+  appendBotBooks(body,"📚 Te recomiendo estos libros populares:",[
+   { id:1, titulo:"El Hobbit", categoria:"Fantasia", precio:299, imagen:"/Imagenes/The_Sisters_Brothers.png" },
+   { id:2, titulo:"El Instituto", categoria:"Suspenso", precio:320, imagen:"/Imagenes/perfume.png" }
+  ]);
+  pushHistory(history,{ role:"bot", text:"Recomendaciones", intent:"recomendaciones" });
+  return true;
+ }
+
+ if(intent === "fantasia"){
+  typing.remove();
+  try {
+   const productsData = await apiGet("/productos?page=1&limit=20");
+   const products = Array.isArray(productsData?.data) ? productsData.data : (Array.isArray(productsData) ? productsData : []);
+   const fantasy = products
+    .filter((p) => normalizeText(`${p.categoria || ""} ${p.genero || ""}`).includes("fantasia"))
+    .slice(0, 4)
+    .map(normalizeBook);
+   if(fantasy.length){
+    appendBotBooks(body,"📚 Libros de fantasia:", fantasy);
+    pushHistory(history,{ role:"bot", text:"Libros de fantasia", intent:"catalogo_fantasia" });
+    return true;
+   }
+  } catch {}
+
+  appendBotBooks(body,"📚 Libros de fantasia:",[
+   { id:3, titulo:"Juego de Tronos", categoria:"Fantasia", precio:350, imagen:"/Imagenes/The_Sisters_Brothers.png" }
+  ]);
+  pushHistory(history,{ role:"bot", text:"Libros de fantasia", intent:"catalogo_fantasia" });
+  return true;
+ }
+
+ if(intent === "buscar"){
+  typing.remove();
+  const searchTerm = normalized
+   .replace("buscar libros", "")
+   .replace("buscar", "")
+   .replace("libros de", "")
+   .trim();
+
+  try {
+   const productsData = await apiGet("/productos?page=1&limit=24");
+   const products = Array.isArray(productsData?.data) ? productsData.data : (Array.isArray(productsData) ? productsData : []);
+   const filtered = products
+    .filter((p) => {
+     if(!searchTerm) return true;
+     const haystack = normalizeText(`${p.titulo || ""} ${p.autor || ""} ${p.categoria || ""} ${p.genero || ""}`);
+     return haystack.includes(searchTerm);
+    })
+    .slice(0, 4)
+    .map(normalizeBook);
+
+   if(filtered.length){
+    appendBotBooks(body, `📚 Resultados ${searchTerm ? `para "${searchTerm}"` : "de libros"}:`, filtered);
+    pushHistory(history,{ role:"bot", text:"Resultados de busqueda", intent:"busqueda" });
+   } else {
+    const reply = `No encontre resultados para "${searchTerm}". Intenta con otro termino.\n👉 ${PATHS.CATALOGO}`;
+    appendMessage(body, reply, "bot");
+    pushHistory(history,{ role:"bot", text:reply, intent:"busqueda_vacia" });
+   }
+   return true;
+  } catch {
+   const reply = `No pude consultar el catalogo en este momento.\n👉 ${PATHS.CATALOGO}`;
+   appendMessage(body, reply, "bot");
+   pushHistory(history,{ role:"bot", text:reply, intent:"busqueda_error" });
+   return true;
+  }
+ }
+
+ return false;
+}
+
 /* =========================
 API
 ========================= */
@@ -437,7 +785,13 @@ if(controller) controller.abort();
 
 controller=new AbortController();
 
-const token=localStorage.getItem("laLechuza_jwt_token");
+const token=getToken();
+
+qaLog("API request", {
+ endpoint: API_ENDPOINT,
+ hasToken: Boolean(token),
+ historySize: Array.isArray(history) ? history.length : 0
+});
 
 const response = await fetch(API_ENDPOINT,{
  method:"POST",
@@ -450,6 +804,12 @@ const response = await fetch(API_ENDPOINT,{
 });
 
 const data=await response.json().catch(()=>({}));
+
+qaLog("API response", {
+ status: response.status,
+ ok: response.ok,
+ intent: data?.data?.intent ?? data?.intent ?? null
+});
 
 if(!response.ok)
  throw new Error(data.error || "Error del servidor");
@@ -471,30 +831,12 @@ const form = panel.querySelector("#lechubot-form");
 const input = panel.querySelector("#lechubot-input");
 const quick = panel.querySelector("#lechubot-quick");
 
-const history = loadHistory();
+const history = [];
+saveHistory(history);
 
-const welcome=`Hola 👋
-Soy Lechu, el asistente virtual de La Lechuza Lectora 🦉
-
-Puedo ayudarte a:
-
-📚 Buscar libros
-📖 Recibir recomendaciones
-🛒 Resolver dudas sobre compras
-📦 Consultar pedidos
-
-¿En qué puedo ayudarte?`;
-
-if (history.length === 0) {
- appendMessage(body,welcome,"bot");
-} else {
- history.forEach((entry) => {
-  const role = entry && entry.role === "bot" ? "bot" : "user";
-  const text = String(entry && entry.text ? entry.text : "").trim();
-  if (!text) return;
-  appendMessage(body, text, role);
- });
-}
+  if(isQaMode()){
+   appendMessage(body, "[QA] Modo depuracion activo. Usa /qa off para desactivarlo.", "bot");
+  }
 
 /* QUICK BUTTONS */
 
@@ -507,6 +849,23 @@ quick.innerHTML = QUICK_ACTIONS
 async function send(text){
 
 if(!text || text.length>CONFIG.MESSAGE_LIMIT) return;
+
+const qaCommand = String(text).trim().toLowerCase();
+if(qaCommand === "/qa on" || qaCommand === "/qa off" || qaCommand === "/qa status"){
+ appendMessage(body,text,"user");
+
+ if(qaCommand === "/qa on"){
+  setQaMode(true);
+  appendMessage(body,"[QA] Activado.","bot");
+ } else if(qaCommand === "/qa off"){
+  setQaMode(false);
+  appendMessage(body,"[QA] Desactivado.","bot");
+ } else {
+  appendMessage(body, isQaMode() ? "[QA] Estado: activo." : "[QA] Estado: inactivo.", "bot");
+ }
+ return;
+}
+
 if(!canSend()) return;
 
 appendMessage(body,text,"user");
@@ -520,6 +879,28 @@ body.appendChild(typing);
 
 try{
 
+const normalizedForQa = normalizeText(text);
+const predictedIntent = LOCAL_RESPONSES[normalizedForQa]
+ ? "faq"
+ : (detectIntent(normalizedForQa) || "none");
+
+qaLog("Message received", {
+ rawText: text,
+ normalizedText: normalizedForQa,
+ predictedIntent
+});
+
+const handledLocally = await handleLocalEcommerceIntent(text, body, history, typing);
+if(handledLocally){
+ qaLog("Resolved locally", { predictedIntent });
+ if(isQaMode()){
+  appendMessage(body, `[QA] Intent: ${predictedIntent} | Fuente: local`, "bot");
+ }
+ return;
+}
+
+qaLog("Fallback to API", { endpoint: API_ENDPOINT });
+
 const res=await askBot(text,history);
 
 typing.remove();
@@ -527,6 +908,11 @@ typing.remove();
 const reply=res.reply || "No tengo una respuesta disponible.";
 
 appendBotBooks(body, reply, res.books || []);
+
+if(isQaMode()){
+ const apiIntent = res.intent ?? "none";
+ appendMessage(body, `[QA] Intent: ${apiIntent} | Fuente: API`, "bot");
+}
 
 pushHistory(history,{
  role:"bot",
@@ -560,10 +946,6 @@ panel.style.display=
 
 if(panel.style.display==="flex"){
  input.focus();
-
- if(history.length===0 && body.children.length<3){
-  send("recomiendame libros");
- }
 }
 
 };
@@ -612,26 +994,27 @@ body.addEventListener("click",(e)=>{
  if(card && !e.target.classList.contains("lechubot-add")){
   const id=card.dataset.id;
   if(id && id !== "0"){
-   window.location.href="/html/Logeado/Catalogo_Logeado.html?producto="+encodeURIComponent(id);
+   window.location.href=PATHS.CATALOGO+"?producto="+encodeURIComponent(id);
   }
  }
 
  if(e.target.classList.contains("lechubot-add")){
-  const id=e.target.dataset.id;
-
-  let cart=[];
-  try{
-   cart=JSON.parse(localStorage.getItem("carrito"))||[];
-  }catch{}
-
-  const exists = cart.find((item) => String(item.id) === String(id));
-  if (exists) {
-    exists.qty = Number(exists.qty || 1) + 1;
-  } else {
-    cart.push({id,qty:1});
+  if(!getToken()){
+   appendMessage(body, "Para agregar productos al carrito primero inicia sesion.", "bot");
+   return;
   }
 
-  localStorage.setItem("carrito",JSON.stringify(cart));
+  const id = Number(e.target.dataset.id || 0);
+  const title = String(e.target.dataset.title || "Libro");
+  const price = Number(e.target.dataset.price || 0);
+  const image = String(e.target.dataset.image || "/Imagenes/The_Sisters_Brothers.png");
+
+  addBookToCart({
+   id,
+   titulo: title,
+   precio: price,
+   imagen: image
+  });
 
   e.target.textContent="✔ Agregado";
   setTimeout(()=>{

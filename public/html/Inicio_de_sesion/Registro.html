@@ -36,7 +36,46 @@
 
         @media (max-width: 768px) {
             .registration-grid { grid-template-columns: 1fr !important; }
-            .form-card { width: 95% !important; padding: 20px !important; }
+            .form-card {
+                width: 96% !important;
+                padding: 18px !important;
+                margin: 14px auto !important;
+                border-radius: 10px !important;
+            }
+            .section-group {
+                padding: 14px !important;
+            }
+            .form-actions-bottom {
+                flex-direction: column-reverse !important;
+                gap: 10px !important;
+                margin-top: 18px !important;
+            }
+            .form-actions-bottom .btn-primary,
+            .form-actions-bottom .btn-cancel {
+                width: 100% !important;
+                padding: 13px 14px !important;
+            }
+            .input-group input,
+            .password-wrapper input {
+                font-size: 16px !important;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .form-card {
+                width: calc(100% - 16px) !important;
+                padding: 14px !important;
+            }
+            h1 {
+                font-size: 1.35rem !important;
+                margin-bottom: 18px !important;
+            }
+            .section-group h2 {
+                font-size: 1rem !important;
+            }
+            .robot-box {
+                padding: 10px !important;
+            }
         }
     </style>
 </head>

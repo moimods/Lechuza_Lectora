@@ -10,7 +10,7 @@ const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || "http://lo
 const TOKEN_KEY = "laLechuza_jwt_token";
 const LOGIN_REMINDER_KEY = "laLechuza_login_reminder";
 const SAVED_CREDENTIALS_KEY = "laLechuza_saved_credentials";
-const SESSION_TIMEOUT_MS = Number((window.APP_CONFIG && window.APP_CONFIG.SESSION_TIMEOUT_MS) || (30 * 60 * 1000));
+const SESSION_TIMEOUT_MS = Number((window.APP_CONFIG && window.APP_CONFIG.SESSION_TIMEOUT_MS) || (12 * 60 * 60 * 1000));
 
 let csrfToken = null;
 let sessionTimer = null;
@@ -35,6 +35,20 @@ function obtenerToken() {
   return localStorage.getItem(TOKEN_KEY);
 }
 
+function parseJwtPayload(token) {
+  try {
+    const base64Url = String(token || "").split(".")[1] || "";
+    if (!base64Url) return null;
+
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    const json = atob(padded);
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Eliminar JWT (logout)
  */
@@ -53,6 +67,36 @@ function eliminarToken() {
  */
 function tieneSesion() {
   return !!obtenerToken();
+}
+
+function hidratarUsuarioDesdeTokenLocal() {
+  if (!tieneSesion()) return null;
+
+  const usuarioLocal = localStorage.getItem("usuario");
+  if (usuarioLocal) {
+    try {
+      return JSON.parse(usuarioLocal);
+    } catch {
+      localStorage.removeItem("usuario");
+    }
+  }
+
+  const payload = parseJwtPayload(obtenerToken());
+  if (!payload || typeof payload !== "object") return null;
+
+  const usuario = {
+    id_usuario: payload.id || payload.id_usuario || null,
+    email: payload.email || "",
+    rol: payload.rol || "cliente",
+    nombre_completo: payload.nombre_completo || payload.nombre || "Usuario"
+  };
+
+  localStorage.setItem("usuario", JSON.stringify(usuario));
+  localStorage.setItem("userId", String(usuario.id_usuario || ""));
+  localStorage.setItem("userName", usuario.nombre_completo || "Usuario");
+  localStorage.setItem("userRole", usuario.rol || "cliente");
+
+  return usuario;
 }
 
 /**
@@ -453,6 +497,41 @@ async function hidratarSesionDesdeToken() {
 }
 
 API.hidratarSesionDesdeToken = hidratarSesionDesdeToken;
+API.hidratarUsuarioDesdeTokenLocal = hidratarUsuarioDesdeTokenLocal;
+
+API.requireSession = async (options = {}) => {
+  const {
+    redirectToLogin = true,
+    loginPath = "/html/Inicio_de_sesion/Inicio_sesion.html",
+    rememberCurrentPath = true
+  } = options;
+
+  if (tieneSesion()) {
+    const usuarioRapido = hidratarUsuarioDesdeTokenLocal();
+    if (usuarioRapido) return usuarioRapido;
+
+    await hidratarSesionDesdeToken();
+    try {
+      const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+      if (usuario) return usuario;
+    } catch {
+      // Sin accion: se maneja abajo con redireccion si aplica.
+    }
+  }
+
+  if (redirectToLogin) {
+    if (rememberCurrentPath) {
+      const currentPath = `${window.location.pathname || ""}${window.location.search || ""}`;
+      if (currentPath) {
+        localStorage.setItem("postLoginRedirect", currentPath);
+      }
+    }
+    alert("Tu sesión no es válida. Inicia sesión nuevamente.");
+    window.location.href = loginPath;
+  }
+
+  return null;
+};
 
 window.appLogout = function appLogout(event) {
   if (event && typeof event.preventDefault === "function") {
@@ -483,6 +562,7 @@ window.appLogout = function appLogout(event) {
 window.API = API;
 window.apiRequest = apiRequest;
 
+hidratarUsuarioDesdeTokenLocal();
 activarDestruccionSesionPorInactividad();
 hidratarSesionDesdeToken();
 

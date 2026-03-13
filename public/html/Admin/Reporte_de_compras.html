@@ -111,11 +111,25 @@
     </main>
 
     <script>
+        function estadoBadgeClass(estado) {
+            const value = String(estado || '').toLowerCase();
+            if (value === 'completado' || value === 'pagado') return 'status-pagado';
+            if (value === 'enviado' || value === 'entregado') return 'status-enviado';
+            return 'status-pendiente';
+        }
+
+        function fechaTexto(raw) {
+            const d = new Date(raw);
+            if (Number.isNaN(d.getTime())) return 'Sin fecha';
+            return d.toLocaleDateString('es-MX');
+        }
+
         async function cargarPedidos() {
             try {
-                // Nota: Asegúrate de que el server.js tenga el endpoint /api/admin/pedidos
-                const response = await fetch('/api/admin/pedidos');
-                const pedidos = await response.json();
+                const response = await API.get('/admin/pedidos?page=1&limit=100');
+                const pedidos = Array.isArray(response?.data?.data)
+                    ? response.data.data
+                    : (Array.isArray(response?.data) ? response.data : []);
                 
                 const tbody = document.getElementById('tabla-pedidos');
                 tbody.innerHTML = '';
@@ -126,14 +140,14 @@
                 }
 
                 pedidos.forEach(p => {
-                    const fecha = new Date(p.fecha_pedido).toLocaleDateString('es-MX');
+                    const fecha = fechaTexto(p.fecha_venta || p.fecha_pedido);
                     tbody.innerHTML += `
                         <tr>
                             <td><strong>#${p.id_venta}</strong></td>
-                            <td>${p.nombre_cliente}</td>
+                            <td>${p.nombre_completo || 'Cliente'}</td>
                             <td>${fecha}</td>
                             <td>$${parseFloat(p.total).toFixed(2)}</td>
-                            <td><span class="status-badge status-${p.estado}">${p.estado}</span></td>
+                            <td><span class="status-badge ${estadoBadgeClass(p.estado)}">${p.estado || 'pendiente'}</span></td>
                             <td>
                                 <button class="btn-view" onclick="verDetalle(${p.id_venta})">
                                     <i class="fa-solid fa-eye"></i>
@@ -148,8 +162,20 @@
             }
         }
 
-        function verDetalle(idVenta) {
-            alert("Detalle de la venta #" + idVenta + "\nPróximamente: Lista de libros comprados.");
+        async function verDetalle(idVenta) {
+            try {
+                const response = await API.get(`/ventas/${idVenta}`);
+                const venta = response?.data || null;
+                const items = Array.isArray(venta?.items) ? venta.items : [];
+
+                const resumenItems = items.length
+                    ? items.map((item) => `${item.titulo || 'Libro'} x${item.cantidad}`).join('\n')
+                    : 'Sin detalles de productos';
+
+                alert(`Venta #${idVenta}\nEstado: ${venta?.estado || 'pendiente'}\nTotal: $${Number(venta?.total || 0).toFixed(2)}\n\nProductos:\n${resumenItems}`);
+            } catch (error) {
+                alert('No se pudo cargar el detalle de la venta.');
+            }
         }
 
         function initMenu() {
@@ -163,10 +189,13 @@
             menu?.addEventListener('click', (e) => e.stopPropagation());
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(localStorage.getItem('usuario') || 'null');
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await (window.API?.requireSession
+                ? window.API.requireSession({ redirectToLogin: false, rememberCurrentPath: true })
+                : JSON.parse(localStorage.getItem('usuario') || 'null'));
 
-            if (!user || user.rol !== 'admin') {
+            if (!user || String(user.rol || '').toLowerCase() !== 'admin') {
+                alert('Debes iniciar sesión como administrador.');
                 window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
                 return;
             }

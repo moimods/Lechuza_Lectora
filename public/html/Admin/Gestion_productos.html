@@ -165,17 +165,31 @@
             return data;
         }
 
-        // 1. Verificación de Seguridad
-        const user = JSON.parse(localStorage.getItem('usuario') || 'null');
-        if (!user || user.rol !== 'admin') {
-            window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
-        } else {
+        async function initAdminPage() {
+            let user = null;
+            if (window.API?.requireSession) {
+                user = await window.API.requireSession({
+                    redirectToLogin: false,
+                    rememberCurrentPath: true
+                });
+            } else {
+                user = JSON.parse(localStorage.getItem('usuario') || 'null');
+            }
+
+            if (!user || String(user.rol || '').toLowerCase() !== 'admin') {
+                window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+                return;
+            }
+
             document.getElementById('admin-display-name').innerText = user.nombre_completo || user.nombre || 'Admin';
-            cargarCategorias();
+            await cargarCategorias();
+
             if (editId) {
-                activarModoEdicion(editId);
+                await activarModoEdicion(editId);
             }
         }
+
+        document.addEventListener('DOMContentLoaded', initAdminPage);
 
         async function cargarCategorias() {
             const selector = document.getElementById('categoria');
@@ -248,13 +262,13 @@
                         method: 'PUT',
                         body: JSON.stringify(datosLibro)
                     });
-                    alert(`âœ… Cambios guardados para "${datosLibro.titulo}".`);
+                    alert(`Cambios guardados para "${datosLibro.titulo}".`);
                 } else {
                     await apiCall('/api/productos', {
                         method: 'POST',
                         body: JSON.stringify(datosLibro)
                     });
-                    alert(`âœ… ¡Éxito! El libro "${datosLibro.titulo}" ha sido guardado.`);
+                    alert(`Exito: el libro "${datosLibro.titulo}" se guardo correctamente.`);
                 }
 
                 window.location.href = '/html/Admin/Gestion_de_inventario.html';

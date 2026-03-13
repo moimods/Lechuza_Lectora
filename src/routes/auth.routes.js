@@ -3,6 +3,8 @@ const {
   login,
   logout,
   registro,
+  enviarCodigoVerificacion,
+  verificarCodigoVerificacion,
   actualizarPassword,
   recuperarPassword
 } = require("../controllers/auth.controller");
@@ -13,6 +15,8 @@ const router = express.Router();
 // Rutas públicas
 router.post("/login", login);
 router.post("/registro", registro);
+router.post("/enviar-codigo", enviarCodigoVerificacion);
+router.post("/verificar-codigo", verificarCodigoVerificacion);
 router.post("/recuperar-password", recuperarPassword);
 
 // Rutas protegidas

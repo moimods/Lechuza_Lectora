@@ -74,7 +74,7 @@
 <body class="form-page">
     
     <header class="navbar user-navbar">
-        <div class="logo-container" onclick="window.location.href='/index.html'" style="cursor: pointer;">
+        <div class="logo-container" onclick="window.location.href='/html/Logeado/Inicio_Logeado.html'" style="cursor: pointer;">
             <img src="/Imagenes/logo.png" alt="Logo La Lechuza Lectora" class="logo"> 
             <span class="site-name">LA LECHUZA LECTORA</span>
         </div>
@@ -158,31 +158,19 @@
 
         <script src="/JS/api.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                let usuarioRaw = localStorage.getItem('usuario') || 'null';
-
-                if (usuarioRaw === 'null') {
-                    const usuarioLegacy =
-                        localStorage.getItem('usuario_logeado') ||
-                        localStorage.getItem('usuarioCompleto');
-
-                    if (usuarioLegacy) {
-                        localStorage.setItem('usuario', usuarioLegacy);
-                        localStorage.removeItem('usuario_logeado');
-                        localStorage.removeItem('usuarioCompleto');
-                        usuarioRaw = usuarioLegacy;
-                    }
-                }
-
+            document.addEventListener('DOMContentLoaded', async () => {
                 let usuario = null;
-                try {
-                    usuario = JSON.parse(usuarioRaw);
-                } catch {
-                    usuario = null;
-                }
-
-                if (usuario && !localStorage.getItem('usuario')) {
-                    localStorage.setItem('usuario', JSON.stringify(usuario));
+                if (window.API?.requireSession) {
+                    usuario = await window.API.requireSession({
+                        redirectToLogin: false,
+                        rememberCurrentPath: true
+                    });
+                } else {
+                    try {
+                        usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+                    } catch {
+                        usuario = null;
+                    }
                 }
 
                 const direccionTemp =
@@ -216,8 +204,10 @@
                 }
 
                 if (!usuario) {
+                    localStorage.setItem('postLoginRedirect', '/html/Logeado/Agregar_domicilio.html');
                     alert("Debes iniciar sesión para agregar un domicilio.");
                     window.location.href = '/html/Inicio_de_sesion/Inicio_sesion.html';
+                    return;
                 }
             });
         </script>
