@@ -74,8 +74,8 @@
                 <span style="width: 40px; height: 10px; background: #eee; border-radius: 5px;"></span>
             </div>
 
-            <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 10px;">3. Método de Pago</h1>
-            <p style="text-align: center; color: #888; margin-bottom: 30px;">Elige cómo deseas pagar tu pedido.</p>
+            <h1 class="checkout-title" style="color: #5d4037; text-align: center; margin-bottom: 10px;">3. Pago con Mercado Pago</h1>
+            <p style="text-align: center; color: #888; margin-bottom: 30px;">Tu pedido se validará directamente en Mercado Pago.</p>
             <div id="mp-extension-status" style="background:#f7efe4;color:#5d4037;padding:10px 12px;border-radius:8px;margin-bottom:20px;font-size:0.9rem;">
                 Verificando extensión de Mercado Pago...
             </div>
@@ -92,22 +92,14 @@
                         </div>
                     </label>
 
-                    <label class="payment-option" id="label-paypal">
-                        <input type="radio" name="payment_method" value="paypal" onchange="updatePaymentSelection()">
-                        <i class="fa-brands fa-paypal" style="color: #003087; font-size: 24px;"></i>
-                        <div style="flex-grow: 1;">
-                            <span style="font-weight: bold; color: #5d4037; display: block;">PayPal</span>
-                            <span style="font-size: 0.85rem; color: #777;">Paga con tu cuenta PayPal y confirma al instante</span>
-                        </div>
-                    </label>
                 </div>
                 
                 <div class="navigation-actions" style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
                     <button type="button" onclick="window.history.back()" style="background: #f0f0f0; color: #555; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">
                         ← Regresar
                     </button>
-                    <button type="button" onclick="goToConfirm()" style="background: #5d4037; color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(93, 64, 55, 0.2);">
-                        Revisar y Pagar →
+                    <button id="btn-next-checkout" type="button" onclick="goToConfirm()" style="background: #5d4037; color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(93, 64, 55, 0.2);">
+                        Ir a Mercado Pago →
                     </button>
                 </div>
             </div>
@@ -119,9 +111,10 @@
     </footer>
 
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="/JS/config.js"></script>
     <script src="/JS/api.js"></script>
     <script>
-        function initMercadoPagoExtensionStatus() {
+        async function initMercadoPagoExtensionStatus() {
             const statusEl = document.getElementById('mp-extension-status');
             const publicKey = window.APP_CONFIG?.MERCADOPAGO_PUBLIC_KEY || '';
 
@@ -133,9 +126,21 @@
             }
 
             if (!publicKey) {
-                statusEl.textContent = 'Extensión disponible, falta MERCADOPAGO_PUBLIC_KEY para inicializar componentes avanzados.';
+                statusEl.textContent = 'Mercado Pago activo en modo redirección segura. La validación se realiza desde el servidor al crear la preferencia.';
                 statusEl.style.background = '#fff6e2';
                 statusEl.style.color = '#7a5a10';
+
+                try {
+                    const health = await API.get('/payments/health');
+                    const mpReady = Boolean(health?.data?.providers?.mercadopago?.ready ?? health?.providers?.mercadopago?.ready);
+                    if (!mpReady) {
+                        statusEl.textContent = 'Mercado Pago no está configurado en servidor. Configura access token para continuar.';
+                        statusEl.style.background = '#ffe9e7';
+                        statusEl.style.color = '#8e2f2f';
+                    }
+                } catch (healthError) {
+                    console.warn('No se pudo verificar estado de Mercado Pago:', healthError?.message || healthError);
+                }
                 return;
             }
 
@@ -214,35 +219,60 @@
         });
 
         function getSelectedPayment() {
-            const selected = document.querySelector('input[name="payment_method"]:checked');
-            return selected ? selected.value : 'mercadopago';
+            return 'mercadopago';
         }
 
         function updatePaymentSelection() {
             document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
-            const selectedPayment = getSelectedPayment();
-            if (selectedPayment === 'paypal') {
-                document.getElementById('label-paypal').classList.add('selected');
-                localStorage.setItem('metodo_pago', 'PayPal');
-                localStorage.setItem('metodo_pago_checkout', 'paypal');
-                return;
-            }
-
             document.getElementById('label-mercadopago').classList.add('selected');
             localStorage.setItem('metodo_pago', 'Mercado Pago');
             localStorage.setItem('metodo_pago_checkout', 'mercadopago');
         }
 
-        window.onload = () => {
-            initMercadoPagoExtensionStatus();
-            const saved = (localStorage.getItem('metodo_pago_checkout') || 'mercadopago').toLowerCase();
-            const selector = saved === 'paypal' ? 'input[value="paypal"]' : 'input[value="mercadopago"]';
-            const radio = document.querySelector(selector);
+        window.onload = async () => {
+            await initMercadoPagoExtensionStatus();
+            const radio = document.querySelector('input[value="mercadopago"]');
             if (radio) radio.checked = true;
             updatePaymentSelection();
         };
 
-        // Función para avanzar al siguiente paso
+        async function iniciarMercadoPagoDesdePasoPago() {
+            const btn = document.getElementById('btn-next-checkout');
+            const previousText = btn.textContent;
+
+            btn.disabled = true;
+            btn.textContent = 'Conectando con Mercado Pago...';
+
+            try {
+                const cart = getCheckoutCart();
+                const idDireccion = localStorage.getItem('id_direccion_pedido');
+                const idMetodoPago = Number(localStorage.getItem('id_metodo_pago_pedido') || 0) || null;
+
+                const checkoutResult = await API.post('/payments/mercadopago', {
+                    items: cart.map((p) => ({
+                        id_producto: p.id,
+                        cantidad: p.quantity,
+                        precio: p.price,
+                        titulo: p.title || 'Libro'
+                    })),
+                    id_direccion: parseInt(idDireccion, 10),
+                    id_metodo_pago: idMetodoPago
+                });
+
+                const initPoint = checkoutResult?.data?.init_point || checkoutResult?.init_point;
+                if (!initPoint) {
+                    throw new Error('No se pudo generar el enlace de pago de Mercado Pago.');
+                }
+
+                localStorage.setItem('compra_en_progreso', '1');
+                window.location.href = initPoint;
+            } catch (error) {
+                alert(error.message || 'Error al iniciar Mercado Pago.');
+                btn.disabled = false;
+                btn.textContent = previousText;
+            }
+        }
+
         function goToConfirm() {
             // Validamos que haya una dirección guardada del paso anterior
             if (!localStorage.getItem('id_direccion_pedido')) {
@@ -259,9 +289,8 @@
             }
 
             localStorage.setItem('compra_en_progreso', '1');
-            
-            // Redirigir al paso 4 (Confirmar)
-            window.location.href = "/html/Logeado/compra/Confirmar_Compra.html";
+
+            iniciarMercadoPagoDesdePasoPago();
         }
     </script>
 <script src="/JS/lechubot-widget.js" defer></script>

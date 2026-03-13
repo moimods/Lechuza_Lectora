@@ -1,5 +1,8 @@
 (() => {
 
+const currentPath = String(window.location.pathname || "").toLowerCase();
+if (currentPath.includes("/html/admin/")) return;
+
 if (window.__LECHUBOT_LOADED__) return;
 window.__LECHUBOT_LOADED__ = true;
 
@@ -111,14 +114,28 @@ function normalizeBook(book){
  const categoria = String(book.categoria ?? book.genero ?? "General");
  const precio = Number(book.precio ?? book.price ?? 0);
  const imagen = String(book.imagen ?? book.imagen_url ?? "/Imagenes/The_Sisters_Brothers.png");
+ const stock = Number(book.stock ?? book.existencias ?? book.cantidad_disponible ?? book.cantidad ?? 0);
 
  return {
   id,
   titulo: title,
   categoria,
   precio,
-  imagen: imagen.startsWith("/") ? imagen : `/${imagen}`
+  imagen: imagen.startsWith("/") ? imagen : `/${imagen}`,
+  stock: Number.isFinite(stock) ? Math.max(0, stock) : 0
  };
+}
+
+function syncCartBadge(cart){
+ const total = Array.isArray(cart)
+  ? cart.reduce((acc, item) => acc + Number(item?.quantity ?? item?.qty ?? item?.cantidad ?? 0), 0)
+  : 0;
+
+ const badgeA = document.getElementById("cart-count");
+ const badgeB = document.getElementById("cartCount");
+
+ if (badgeA) badgeA.textContent = String(total);
+ if (badgeB) badgeB.textContent = String(total);
 }
 
 function readCart(){
@@ -158,20 +175,35 @@ function saveCart(cart){
 
 function addBookToCart(book){
  const cart = readCart();
+ const maxStock = Number(book.stock ?? 0);
  const found = cart.find((item) => Number(item.id) === Number(book.id));
+
  if(found){
+  if (maxStock > 0 && Number(found.quantity || 0) >= maxStock) {
+   return { added: false, reason: "stock_limit", cart, stock: maxStock, quantity: Number(found.quantity || 0) };
+  }
   found.quantity = Number(found.quantity || 0) + 1;
  } else {
+  if (maxStock === 0) {
+   return { added: false, reason: "stock_empty", cart, stock: 0, quantity: 0 };
+  }
   cart.push({
    id: Number(book.id || 0),
    title: String(book.titulo || "Libro"),
    price: Number(book.precio || 0),
    quantity: 1,
-   image: String(book.imagen || "/Imagenes/The_Sisters_Brothers.png")
+   image: String(book.imagen || "/Imagenes/The_Sisters_Brothers.png"),
+   stock: maxStock > 0 ? maxStock : null
   });
  }
  saveCart(cart);
- return cart;
+ syncCartBadge(cart);
+ return {
+  added: true,
+  cart,
+  stock: maxStock,
+  quantity: Number((cart.find((item) => Number(item.id) === Number(book.id)) || {}).quantity || 0)
+ };
 }
 
 const normalizeText = (value) =>
@@ -523,6 +555,7 @@ function appendBotBooks(body, text, books = []) {
    const titulo = String(book.titulo || "Sin titulo");
    const categoria = String(book.categoria || "Sin categoria");
    const precio = Number(book.precio || 0).toFixed(2);
+  const stock = Number(book.stock || 0);
    const id = Number(book.id || 0);
 
    html += `
@@ -533,7 +566,8 @@ function appendBotBooks(body, text, books = []) {
           <div><b>📘 ${escapeHtml(titulo)}</b></div>
           <div>📚 ${escapeHtml(categoria)}</div>
           <div class="lechubot-book-price">💰 $${escapeHtml(precio)} MXN</div>
-          <button class="lechubot-add" data-id="${id}" data-title="${escapeHtml(titulo)}" data-price="${escapeHtml(precio)}" data-image="${escapeHtml(imagen || "/Imagenes/The_Sisters_Brothers.png")}">Agregar al carrito</button>
+          <div class="lechubot-book-meta">📦 Existencias: <b>${stock}</b></div>
+          <button class="lechubot-add" data-id="${id}" data-title="${escapeHtml(titulo)}" data-price="${escapeHtml(precio)}" data-stock="${stock}" data-image="${escapeHtml(imagen || "/Imagenes/The_Sisters_Brothers.png")}">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -705,8 +739,8 @@ async function handleLocalEcommerceIntent(text, body, history, typing){
   } catch {}
 
   appendBotBooks(body,"📚 Te recomiendo estos libros populares:",[
-   { id:1, titulo:"El Hobbit", categoria:"Fantasia", precio:299, imagen:"/Imagenes/The_Sisters_Brothers.png" },
-   { id:2, titulo:"El Instituto", categoria:"Suspenso", precio:320, imagen:"/Imagenes/perfume.png" }
+    { id:1, titulo:"El Hobbit", categoria:"Fantasia", precio:299, imagen:"/Imagenes/The_Sisters_Brothers.png", stock: 9 },
+    { id:2, titulo:"El Instituto", categoria:"Suspenso", precio:320, imagen:"/Imagenes/perfume.png", stock: 6 }
   ]);
   pushHistory(history,{ role:"bot", text:"Recomendaciones", intent:"recomendaciones" });
   return true;
@@ -729,7 +763,7 @@ async function handleLocalEcommerceIntent(text, body, history, typing){
   } catch {}
 
   appendBotBooks(body,"📚 Libros de fantasia:",[
-   { id:3, titulo:"Juego de Tronos", categoria:"Fantasia", precio:350, imagen:"/Imagenes/The_Sisters_Brothers.png" }
+    { id:3, titulo:"Juego de Tronos", categoria:"Fantasia", precio:350, imagen:"/Imagenes/The_Sisters_Brothers.png", stock: 4 }
   ]);
   pushHistory(history,{ role:"bot", text:"Libros de fantasia", intent:"catalogo_fantasia" });
   return true;
@@ -1007,14 +1041,26 @@ body.addEventListener("click",(e)=>{
   const id = Number(e.target.dataset.id || 0);
   const title = String(e.target.dataset.title || "Libro");
   const price = Number(e.target.dataset.price || 0);
+  const stock = Number(e.target.dataset.stock || 0);
   const image = String(e.target.dataset.image || "/Imagenes/The_Sisters_Brothers.png");
 
-  addBookToCart({
+  const addResult = addBookToCart({
    id,
    titulo: title,
    precio: price,
-   imagen: image
+   imagen: image,
+   stock
   });
+
+  if(!addResult?.added){
+   const stockMsg = addResult?.reason === "stock_empty"
+    ? `No hay existencias disponibles de "${title}" en este momento.`
+    : `Ya alcanzaste el maximo disponible de "${title}" (${addResult?.stock || 0} en existencia).`;
+   appendMessage(body, stockMsg, "bot");
+   return;
+  }
+
+  appendMessage(body, `✔ "${title}" agregado. Cantidad en carrito: ${addResult.quantity}.`, "bot");
 
   e.target.textContent="✔ Agregado";
   setTimeout(()=>{

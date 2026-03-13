@@ -12,9 +12,6 @@
         .help-container { background: rgba(255, 250, 240, 0.95); border-radius: 15px; padding: 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); margin: 40px auto; max-width: 800px; position: relative; z-index: 5; backdrop-filter: blur(5px); }
         .help-module { background: white; border-radius: 12px; text-decoration: none; display: flex; align-items: center; margin-bottom: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .help-module:hover { transform: translateX(10px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #5d4037; }
-        .help-search-bar { background: white; padding: 15px 25px; border-radius: 30px; display: flex; align-items: center; border: 2px solid transparent; margin-bottom: 35px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: border-color 0.3s; }
-        .help-search-bar:focus-within { border-color: #5d4037; }
-        .help-search-bar input { border: none; outline: none; width: 100%; font-size: 1.1rem; margin-left: 15px; color: #5d4037; }
         .background-overlay { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed; background-size: cover; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .icon-red { color: #d32f2f; } .icon-yellow { color: #fbc02d; } .icon-brown { color: #5d4037; } .icon-blue { color: #1976d2; }
         .dropdown-menu { display: none; position: absolute; right: 0; top: 50px; background: white; min-width: 170px; box-shadow: 0px 8px 16px rgba(0,0,0,0.3); z-index: 9999; border-radius: 8px; padding: 10px 0; border: 1px solid #ddd; }
@@ -64,12 +61,8 @@
     <main class="main-content">
         <div class="background-overlay"></div>
         <div class="help-container">
-            <h1 style="color: #5d4037; margin-bottom: 10px; text-align: center;">¿Cómo podemos ayudarte?</h1>
-            <p style="text-align: center; color: #795548; margin-bottom: 30px;">Busca artículos o elige una categoría</p>
-            <div class="help-search-bar">
-                <i class="fa-solid fa-magnifying-glass" style="color: #5d4037; font-size: 1.2rem;"></i>
-                <input type="text" placeholder="Escribe tu duda (ej: envíos, pagos...)" id="search-input">
-            </div>
+            <h1 style="color: var(--color-primary); margin-bottom: 10px; text-align: center;">¿Cómo podemos ayudarte?</h1>
+            <p style="text-align: center; color: #795548; margin-bottom: 30px;">Selecciona una categoría de ayuda</p>
             <div class="help-modules-grid">
                 <a href="/html/Ayuda/mis-compras.html" class="help-module">
                     <i class="fa-solid fa-box-open icon-red" style="font-size: 2rem; margin-right: 25px;"></i>
@@ -101,12 +94,6 @@
     <footer style="text-align: center; padding: 30px; color: #5d4037; margin-top: auto;"><div class="copyright">© 2026 La Lechuza Lectora | Centro de Soporte al Cliente</div></footer>
     <script>
         function toggleMobileMenu() { const nav = document.getElementById('mobile-nav'); nav.classList.toggle('active'); }
-        const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('keyup', (e) => {
-            const term = e.target.value.toLowerCase();
-            const modules = document.querySelectorAll('.help-module');
-            modules.forEach(mod => { const text = mod.textContent.toLowerCase(); mod.style.display = text.includes(term) ? 'flex' : 'none'; });
-        });
         const avatarBtn = document.getElementById('avatar-btn');
         const dropdownMenu = document.getElementById('avatar-dropdown');
         if (avatarBtn) {

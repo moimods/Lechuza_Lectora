@@ -48,31 +48,6 @@
             border-color: #5d4037;
         }
 
-        .help-search-bar {
-            background: white;
-            padding: 15px 25px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            border: 2px solid transparent;
-            margin-bottom: 35px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: border-color 0.3s;
-        }
-
-        .help-search-bar:focus-within {
-            border-color: #5d4037;
-        }
-
-        .help-search-bar input {
-            border: none;
-            outline: none;
-            width: 100%;
-            font-size: 1.1rem;
-            margin-left: 15px;
-            color: #5d4037;
-        }
-
         .background-overlay {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('/Imagenes/Carrusel/5.jpg') no-repeat center center fixed;
@@ -164,13 +139,8 @@
         <div class="background-overlay"></div>
 
         <div class="help-container">
-            <h1 style="color: #5d4037; margin-bottom: 10px; text-align: center;">¿Cómo podemos ayudarte?</h1>
-            <p style="text-align: center; color: #795548; margin-bottom: 30px;">Busca artículos o elige una categoría</p>
-            
-            <div class="help-search-bar">
-                <i class="fa-solid fa-magnifying-glass" style="color: #5d4037; font-size: 1.2rem;"></i>
-                <input type="text" placeholder="Escribe tu duda (ej: envíos, pagos...)" id="search-input">
-            </div>
+            <h1 style="color: var(--color-primary); margin-bottom: 10px; text-align: center;">¿Cómo podemos ayudarte?</h1>
+            <p style="text-align: center; color: #795548; margin-bottom: 30px;">Selecciona una categoría de ayuda</p>
 
             <div class="help-modules-grid">
                 <a href="/html/Ayuda/mis-compras.html" class="help-module">
@@ -211,8 +181,8 @@
             </div>
 
             <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(0,0,0,0.1);">
-                <p style="color: #5d4037; font-weight: bold; margin-bottom: 15px;">¿No encontraste lo que buscabas?</p>
-                <button class="btn-primary" onclick="window.location.href='Contacto.html'" style="background: #5d4037; color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: background 0.3s;">
+                <p style="color: var(--color-primary); font-weight: bold; margin-bottom: 15px;">¿No encontraste lo que buscabas?</p>
+                <button class="btn-primary" onclick="window.location.href='Contacto.html'" style="background: var(--color-primary); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: background 0.3s;">
                     <i class="fa-solid fa-headset"></i> Hablar con Soporte
                 </button>
             </div>
@@ -239,17 +209,6 @@
             }
         });
 
-        // Simulación de búsqueda
-        const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('keyup', (e) => {
-            const term = e.target.value.toLowerCase();
-            const modules = document.querySelectorAll('.help-module');
-            
-            modules.forEach(mod => {
-                const text = mod.textContent.toLowerCase();
-                mod.style.display = text.includes(term) ? 'flex' : 'none';
-            });
-        });
     </script>
     <script src="/JS/nav-toggle-global.js" defer></script>
 <script src="/JS/lechubot-widget.js" defer></script>

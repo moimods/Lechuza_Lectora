@@ -50,6 +50,11 @@
             box-shadow: 0 4px 12px rgba(93, 64, 55, 0.15);
         }
 
+        .payment-option.unconfigured {
+            border-style: dashed;
+            opacity: 0.92;
+        }
+
         /* Checkmark para el seleccionado */
         .payment-option.selected::after {
             content: "\f058"; /* FontAwesome check-circle */
@@ -82,22 +87,7 @@
 
             <div id="payment-method-list"></div>
 
-            <form id="payment-method-form" style="display:grid;gap:10px;margin:15px 0 25px 0;text-align:left;">
-                <label>
-                    Tipo de método
-                    <select id="tipo-metodo" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;">
-                        <option value="mercadopago">Mercado Pago</option>
-                        <option value="paypal">PayPal</option>
-                    </select>
-                </label>
-                <label>
-                    Correo o alias del método
-                    <input id="referencia-metodo" type="text" maxlength="80" placeholder="ejemplo@correo.com" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;">
-                </label>
-                <button type="submit" style="background: none; border: 1px dashed #ccc; width: 100%; padding: 10px; border-radius: 10px; color: #666; cursor: pointer; font-size: 0.85rem;">
-                    <i class="fa-solid fa-plus"></i> Añadir nuevo método
-                </button>
-            </form>
+            <p style="font-size:0.85rem;color:#777;margin:14px 0 25px 0;">Casillas disponibles: Mercado Pago y PayPal.</p>
 
             <button class="btn-confirm" onclick="confirmarPago()" style="width: 100%; background: #5d4037; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(93, 64, 55, 0.3);">
                 Confirmar y Pagar
@@ -115,7 +105,12 @@
 
     <script src="/JS/api.js" defer></script>
     <script>
-        let metodos = [];
+        const METHOD_TYPES = ['mercadopago', 'paypal'];
+        let metodosByTipo = {
+            mercadopago: null,
+            paypal: null
+        };
+        let selectedTipo = 'mercadopago';
 
         function getReferenceFromMetodo(metodo) {
             const tipo = String(metodo.tipo || '').toLowerCase();
@@ -125,38 +120,48 @@
             return metodo.token_pago || metodo.referencia || 'Cuenta Mercado Pago';
         }
 
+        function getMethodTitle(tipo) {
+            return tipo === 'paypal' ? 'PayPal' : 'Mercado Pago';
+        }
+
+        function getMethodIcon(tipo) {
+            return tipo === 'paypal' ? 'fa-brands fa-paypal' : 'fa-solid fa-wallet';
+        }
+
+        function getMethodColor(tipo) {
+            return tipo === 'paypal' ? '#003087' : '#009ee3';
+        }
+
         function renderMethods() {
             const container = document.getElementById('payment-method-list');
 
-            if (!metodos.length) {
-                container.innerHTML = '<p style="color:#777;margin-bottom:15px;">No hay métodos guardados en tu cuenta.</p>';
-                return;
-            }
-
-            container.innerHTML = metodos.map((m, index) => {
-                const selectedClass = m.selected ? 'selected' : '';
-                const tipo = String(m.tipo || '').toLowerCase();
-                const icon = tipo === 'paypal' ? 'fa-brands fa-paypal' : 'fa-solid fa-wallet';
-                const bg = tipo === 'paypal' ? '#003087' : '#009ee3';
-                const title = tipo === 'paypal' ? 'PayPal' : 'Mercado Pago';
+            container.innerHTML = METHOD_TYPES.map((tipo) => {
+                const metodo = metodosByTipo[tipo];
+                const configured = Boolean(metodo);
+                const selectedClass = selectedTipo === tipo ? 'selected' : '';
+                const unconfiguredClass = configured ? '' : 'unconfigured';
+                const referenceText = configured
+                    ? getReferenceFromMetodo(metodo)
+                    : 'Sin registrar';
+                const actionText = configured ? 'Actualizar' : 'Registrar';
 
                 return `
-                <div class="payment-option ${selectedClass}" onclick="selectOption(${index})">
-                    <div class="icon-box" style="background: ${bg}; color: white; width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-right: 15px; font-size: 1.2rem;">
-                        <i class="${icon}"></i>
+                <div class="payment-option ${selectedClass} ${unconfiguredClass}" onclick="selectOption('${tipo}')">
+                    <div class="icon-box" style="background: ${getMethodColor(tipo)}; color: white; width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; margin-right: 15px; font-size: 1.2rem;">
+                        <i class="${getMethodIcon(tipo)}"></i>
                     </div>
                     <div style="text-align: left; flex:1;">
-                        <span style="display: block; font-size: 0.75rem; color: #888; text-transform: uppercase;">${title}</span>
-                        <p style="margin: 0; font-weight: bold; color: #333;">${getReferenceFromMetodo(m)}</p>
+                        <span style="display: block; font-size: 0.75rem; color: #888; text-transform: uppercase;">${getMethodTitle(tipo)}</span>
+                        <p style="margin: 0; font-weight: bold; color: ${configured ? '#333' : '#777'};">${referenceText}</p>
                     </div>
-                    <button type="button" onclick="event.stopPropagation(); removeOption(${index})" style="background:none;border:none;color:#a00;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" onclick="event.stopPropagation(); configureMethod('${tipo}')" style="background:none;border:none;color:#5d4037;cursor:pointer;font-weight:700;">${actionText}</button>
                 </div>
                 `;
             }).join('');
         }
 
-        function selectOption(index) {
-            metodos = metodos.map((m, i) => ({ ...m, selected: i === index }));
+        function selectOption(tipo) {
+            selectedTipo = tipo;
             renderMethods();
         }
 
@@ -164,67 +169,66 @@
             try {
                 const response = await API.get('/usuario/metodos-pago');
                 const rows = Array.isArray(response.data) ? response.data : [];
-                metodos = rows.map((m) => ({ ...m, selected: Boolean(m.es_principal) }));
 
-                if (metodos.length && !metodos.some((m) => m.selected)) {
-                    metodos[0].selected = true;
+                metodosByTipo = { mercadopago: null, paypal: null };
+
+                for (const tipo of METHOD_TYPES) {
+                    const record = rows.find((row) => String(row.tipo || '').toLowerCase() === tipo);
+                    if (record) {
+                        metodosByTipo[tipo] = record;
+                    }
+                }
+
+                const principal = rows.find((row) => Boolean(row.es_principal));
+                if (principal && METHOD_TYPES.includes(String(principal.tipo || '').toLowerCase())) {
+                    selectedTipo = String(principal.tipo || '').toLowerCase();
+                } else if (metodosByTipo.paypal) {
+                    selectedTipo = 'paypal';
+                } else {
+                    selectedTipo = 'mercadopago';
                 }
 
                 renderMethods();
             } catch (err) {
                 console.error('No se pudieron cargar métodos de pago:', err);
-                metodos = [];
+                metodosByTipo = { mercadopago: null, paypal: null };
+                selectedTipo = 'mercadopago';
                 renderMethods();
             }
         }
 
-        async function removeOption(index) {
-            const metodo = metodos[index];
-            if (!metodo) return;
-
-            if (!confirm('¿Eliminar este método de pago?')) {
-                return;
-            }
-
-            try {
-                await API.delete(`/usuario/metodos-pago/${metodo.id_metodo}`);
-                await cargarMetodos();
-            } catch (err) {
-                alert('No se pudo eliminar el método de pago.');
-            }
-        }
-
-        document.getElementById('payment-method-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const tipo = document.getElementById('tipo-metodo').value;
-            const referencia = document.getElementById('referencia-metodo').value.trim();
-
-            if (!referencia) {
-                alert('Ingresa una referencia válida del método.');
-                return;
-            }
-
-            const payload = {
-                tipo,
-                token_pago: referencia,
-                last_four: null,
-                referencia,
-                es_principal: metodos.length === 0
-            };
+        async function configureMethod(tipo) {
+            const existente = metodosByTipo[tipo];
+            const nombre = getMethodTitle(tipo);
+            const actual = existente ? getReferenceFromMetodo(existente) : '';
+            const input = prompt(`Ingresa la referencia para ${nombre}:`, actual);
+            if (input === null) return;
+            const referencia = input.trim();
+            if (!referencia) return;
 
             try {
-                await API.post('/usuario/metodos-pago', payload);
-                e.target.reset();
+                if (existente && existente.id_metodo) {
+                    await API.delete(`/usuario/metodos-pago/${existente.id_metodo}`);
+                }
+
+                await API.post('/usuario/metodos-pago', {
+                    tipo,
+                    token_pago: referencia,
+                    last_four: null,
+                    referencia,
+                    es_principal: selectedTipo === tipo
+                });
+
                 await cargarMetodos();
             } catch (err) {
                 alert('No se pudo guardar el método de pago. Verifica los datos e intenta de nuevo.');
             }
-        });
+        }
 
         async function confirmarPago() {
-            const selected = metodos.find((m) => m.selected);
+            const selected = metodosByTipo[selectedTipo];
             if (!selected) {
-                alert('Selecciona un método de pago guardado en tu cuenta.');
+                alert(`Debes registrar tu método de ${getMethodTitle(selectedTipo)} antes de continuar.`);
                 return;
             }
 
@@ -233,6 +237,7 @@
                     await API.put(`/usuario/metodos-pago/${selected.id_metodo}`, { es_principal: true });
                 }
 
+                localStorage.setItem('selectedPaymentMethod', selectedTipo);
                 alert(`Método seleccionado: ${getReferenceFromMetodo(selected)}. No se realizó ninguna transacción.`);
                 window.location.href = "/html/Logeado/compra/pago.html";
             } catch (err) {

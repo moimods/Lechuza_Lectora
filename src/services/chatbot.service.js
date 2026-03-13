@@ -4,19 +4,19 @@ const openAIService = require("./openai.service");
 const FALLBACK_MESSAGE = [
   "Lo siento, no entendi tu solicitud.",
   "Puedo ayudarte a:",
-  "📚 Buscar libros",
-  "⭐ Recibir recomendaciones",
-  "🛒 Explicar como comprar",
-  "📦 Consultar pedidos"
+  "Buscar libros",
+  "Recibir recomendaciones",
+  "Explicar como comprar",
+  "Consultar pedidos"
 ].join("\n");
 
 const HELP_MESSAGE = [
-  "Soy LechuBot 🦉 de La Lechuza Lectora.",
+  "Soy LechuBot de La Lechuza Lectora.",
   "Te puedo ayudar con:",
-  "📚 Buscar libros por titulo, autor o categoria.",
-  "⭐ Recomendar lecturas.",
-  "🛒 Explicar como comprar.",
-  "📦 Consultar el estado de un pedido."
+  "Buscar libros por titulo, autor o categoria.",
+  "Recomendar lecturas.",
+  "Explicar como comprar.",
+  "Consultar el estado de un pedido."
 ].join("\n");
 
 const GENRE_HINTS = ["programacion", "fantasia", "ciencia ficcion", "historia", "novela", "terror", "romance", "misterio"];
