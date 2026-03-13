@@ -8,6 +8,7 @@
 // =============================
 const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || "http://localhost:3000/api";
 const TOKEN_KEY = "laLechuza_jwt_token";
+const CART_OWNER_KEY = "laLechuza_cart_owner";
 const LOGIN_REMINDER_KEY = "laLechuza_login_reminder";
 const SAVED_CREDENTIALS_KEY = "laLechuza_saved_credentials";
 const SESSION_TIMEOUT_MS = Number((window.APP_CONFIG && window.APP_CONFIG.SESSION_TIMEOUT_MS) || (12 * 60 * 60 * 1000));
@@ -241,6 +242,21 @@ function activarDestruccionSesionPorInactividad() {
   }
 }
 
+function limpiarCarritoSesion() {
+  localStorage.removeItem("carrito");
+  localStorage.removeItem("laLechuzaLectoraCart");
+}
+
+function construirCartOwner(usuario, fallbackEmail = "") {
+  const userId = String(usuario?.id_usuario || usuario?.id || "").trim();
+  if (userId) return `id:${userId}`;
+
+  const email = String(usuario?.email || fallbackEmail || "").trim().toLowerCase();
+  if (email) return `email:${email}`;
+
+  return "";
+}
+
 // =============================
 // OBTENER CSRF TOKEN
 // =============================
@@ -424,8 +440,25 @@ API.login = async (email, password, options = {}) => {
   const rememberCredentials = options.rememberCredentials;
 
   if (token) {
+    const ownerAnterior = String(localStorage.getItem(CART_OWNER_KEY) || "");
+    const ownerNuevo = construirCartOwner(usuario, email);
+    if (ownerAnterior && ownerNuevo && ownerAnterior !== ownerNuevo) {
+      limpiarCarritoSesion();
+    }
+
     guardarToken(token);
     reiniciarTemporizadorSesion();
+
+    if (ownerNuevo) {
+      localStorage.setItem(CART_OWNER_KEY, ownerNuevo);
+    }
+
+    if (usuario && typeof usuario === "object") {
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+      localStorage.setItem("userId", String(usuario.id_usuario || usuario.id || ""));
+      localStorage.setItem("userName", usuario.nombre_completo || usuario.nombre || "Usuario");
+      localStorage.setItem("userRole", usuario.rol || "cliente");
+    }
 
     if (rememberCredentials === true) {
       guardarCredenciales(email, password);
@@ -453,6 +486,7 @@ API.logout = async () => {
     console.warn("Error en logout:", error);
   }
   eliminarToken();
+  localStorage.removeItem(CART_OWNER_KEY);
 };
 
 API.tieneSesion = tieneSesion;
@@ -548,6 +582,7 @@ window.appLogout = function appLogout(event) {
         "userId",
         "userName",
         "userRole",
+        "laLechuza_cart_owner",
         "admin_session",
         "postLoginRedirect"
       ].forEach((key) => localStorage.removeItem(key));

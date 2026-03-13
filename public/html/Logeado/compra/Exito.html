@@ -104,12 +104,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
-            const provider = (params.get('provider') || '').toLowerCase();
+            const provider = (params.get('provider') || 'mercadopago').toLowerCase();
 
             const explicitVentaId = params.get('id_venta');
             const externalReference = params.get('external_reference') || params.get('merchant_order_id');
-            const paypalOrderId = params.get('token') || params.get('order_id');
             const ventaId = explicitVentaId || externalReference || '';
+            const paymentId = params.get('payment_id') || params.get('collection_id') || '';
 
             const randomID = Math.floor(100000 + Math.random() * 900000);
             const orderText = ventaId ? `#LL-${ventaId}` : `#LL-${randomID}`;
@@ -117,33 +117,41 @@
 
             let pagoValidado = true;
             try {
-                if (provider === 'paypal' && paypalOrderId) {
-                    const captureResult = await API.post('/payments/paypal/capture', {
-                        order_id: paypalOrderId,
-                        id_venta: ventaId || null
-                    });
+                if (provider === 'mercadopago' && paymentId) {
+                    const paymentResult = await API.get(`/payments/mercadopago/payment/${encodeURIComponent(paymentId)}`);
+                    const status = String(paymentResult?.data?.status || paymentResult?.status || '').toLowerCase();
 
-                    const status = String(captureResult?.data?.status || '').toUpperCase();
-                    if (status !== 'COMPLETED') {
+                    if (status !== 'approved') {
                         pagoValidado = false;
-                        throw new Error('PayPal no devolvió estado COMPLETED');
+                        const title = document.querySelector('h1');
+                        const icon = document.querySelector('.success-icon');
+                        const msg = document.querySelector('.success-container p');
+
+                        if (status === 'pending' || status === 'in_process') {
+                            title.innerText = 'Pago pendiente de confirmación';
+                            icon.className = 'fas fa-clock success-icon';
+                            icon.style.color = '#f39c12';
+                            msg.innerText = 'Mercado Pago reporta tu pago como pendiente. Te notificaremos cuando se confirme.';
+                        } else {
+                            title.innerText = 'Pago no aprobado';
+                            icon.className = 'fas fa-triangle-exclamation success-icon';
+                            icon.style.color = '#e74c3c';
+                            msg.innerText = 'Mercado Pago reporta que el pago no fue aprobado. Intenta nuevamente desde checkout.';
+                        }
                     }
-                } else if (ventaId) {
-                    await API.post('/payments/confirmar', {
-                        id_venta: ventaId,
-                        estado: 'completado'
-                    });
+                } else if (provider === 'mercadopago' && !paymentId) {
+                    pagoValidado = false;
+                    document.querySelector('h1').innerText = 'No se recibió identificador de pago';
+                    document.querySelector('.success-icon').className = 'fas fa-triangle-exclamation success-icon';
+                    document.querySelector('.success-icon').style.color = '#e67e22';
+                    document.querySelector('.success-container p').innerText = 'No pudimos validar la transacción porque falta payment_id en el retorno de Mercado Pago.';
                 }
             } catch (paymentSyncError) {
                 pagoValidado = false;
-                console.warn('No se pudo confirmar/capturar el pago automáticamente:', paymentSyncError?.message || paymentSyncError);
+                console.warn('No se pudo validar el pago automáticamente:', paymentSyncError?.message || paymentSyncError);
             }
 
-            if (!pagoValidado && provider === 'paypal') {
-                document.querySelector('h1').innerText = 'Validación de pago pendiente';
-                document.querySelector('.success-icon').className = 'fas fa-triangle-exclamation success-icon';
-                document.querySelector('.success-icon').style.color = '#e67e22';
-                document.querySelector('.success-container p').innerText = 'No pudimos validar el pago de PayPal todavía. No se vació tu carrito. Intenta nuevamente en unos minutos.';
+            if (!pagoValidado) {
                 return;
             }
 
@@ -159,7 +167,6 @@
             localStorage.removeItem('compra_en_progreso');
         });
     </script>
-<script src="/JS/lechubot-widget.js" defer></script>
 </body>
 </html>
 

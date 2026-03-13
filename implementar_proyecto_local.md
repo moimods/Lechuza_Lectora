@@ -1,6 +1,5 @@
-# Guia rapida para usar el proyecto en otro dispositivo
 
-## 1. Clonar el repositorio
+## 1. Clonar el repo
 
 ```bash
 git clone https://github.com/moimods/Lechuza_Lectora.git
@@ -95,3 +94,186 @@ git push -u origin mi-rama
 - No subir `.env`
 - Verificar que `.gitignore` incluya `node_modules/` y `.env`
 - Ejecutar una prueba rapida de login y productos
+
+## Despliegue en Vercel
+
+### 1. Preparacion ya incluida en este repo
+
+- `vercel.json`: enruta todo el trafico a `api/index.js`.
+- `api/index.js`: entrypoint serverless que carga tu app Express.
+- `src/config/db.js`: compatible con `DATABASE_URL` y SSL para produccion.
+
+### 2. Crear proyecto en Vercel
+
+1. Entra a Vercel y conecta tu repositorio GitHub.
+2. Framework preset: `Other`.
+3. Root directory: deja la raiz del repositorio.
+4. Build command: vacio (no aplica build frontend separado).
+5. Output directory: vacio.
+
+### 3. Variables de entorno en Vercel (Project Settings -> Environment Variables)
+
+Configura como minimo:
+
+```env
+NODE_ENV=production
+CORS_ORIGIN=https://TU_DOMINIO_VERCEL.vercel.app
+
+JWT_SECRET=tu_jwt_secret_fuerte
+JWT_REFRESH_SECRET=tu_refresh_secret_fuerte
+ACCESS_TOKEN_EXPIRES=15m
+REFRESH_TOKEN_EXPIRES=7d
+JWT_EXPIRES=2h
+
+# Base URL publica del proyecto
+APP_BASE_URL=https://TU_DOMINIO_VERCEL.vercel.app
+
+# PostgreSQL (recomendado usar DATABASE_URL)
+DATABASE_URL=postgresql://usuario:password@host:5432/dbname
+DB_SSL=true
+DB_SSL_REJECT_UNAUTHORIZED=false
+DB_POOL_MAX=3
+
+# Mercado Pago
+MP_ACCESS_TOKEN=APP_USR-xxxxxxxx
+MERCADOPAGO_PUBLIC_KEY=APP_USR-xxxxxxxx
+PAYMENT_PROVIDER=mercadopago
+
+# SMTP (recuperacion por correo)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu_correo@gmail.com
+SMTP_PASS=tu_app_password
+SMTP_FROM="La Lechuza Lectora <tu_correo@gmail.com>"
+```
+
+### 3.1 Plantillas listas por proveedor de base de datos
+
+Usa una sola plantilla segun tu proveedor. En todos los casos, reemplaza `TU_DOMINIO_VERCEL`.
+
+#### Opcion A: Neon (recomendada)
+
+```env
+NODE_ENV=production
+CORS_ORIGIN=https://TU_DOMINIO_VERCEL.vercel.app
+APP_BASE_URL=https://TU_DOMINIO_VERCEL.vercel.app
+
+JWT_SECRET=pon_un_secret_largo_y_unico
+JWT_REFRESH_SECRET=pon_otro_secret_largo_y_unico
+ACCESS_TOKEN_EXPIRES=15m
+REFRESH_TOKEN_EXPIRES=7d
+JWT_EXPIRES=2h
+
+DATABASE_URL=postgresql://usuario:password@ep-xxxx.us-east-1.aws.neon.tech/dbname?sslmode=require
+DB_SSL=true
+DB_SSL_REJECT_UNAUTHORIZED=false
+DB_POOL_MAX=3
+
+MP_ACCESS_TOKEN=APP_USR-xxxxxxxxxxxxxxxx
+MERCADOPAGO_PUBLIC_KEY=APP_USR-xxxxxxxxxxxxxxxx
+PAYMENT_PROVIDER=mercadopago
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu_correo@gmail.com
+SMTP_PASS=tu_app_password
+SMTP_FROM="La Lechuza Lectora <tu_correo@gmail.com>"
+```
+
+#### Opcion B: Supabase Postgres
+
+```env
+NODE_ENV=production
+CORS_ORIGIN=https://TU_DOMINIO_VERCEL.vercel.app
+APP_BASE_URL=https://TU_DOMINIO_VERCEL.vercel.app
+
+JWT_SECRET=pon_un_secret_largo_y_unico
+JWT_REFRESH_SECRET=pon_otro_secret_largo_y_unico
+ACCESS_TOKEN_EXPIRES=15m
+REFRESH_TOKEN_EXPIRES=7d
+JWT_EXPIRES=2h
+
+DATABASE_URL=postgresql://postgres:password@db.xxxxx.supabase.co:5432/postgres
+DB_SSL=true
+DB_SSL_REJECT_UNAUTHORIZED=false
+DB_POOL_MAX=3
+
+MP_ACCESS_TOKEN=APP_USR-xxxxxxxxxxxxxxxx
+MERCADOPAGO_PUBLIC_KEY=APP_USR-xxxxxxxxxxxxxxxx
+PAYMENT_PROVIDER=mercadopago
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu_correo@gmail.com
+SMTP_PASS=tu_app_password
+SMTP_FROM="La Lechuza Lectora <tu_correo@gmail.com>"
+```
+
+#### Opcion C: Railway Postgres
+
+```env
+NODE_ENV=production
+CORS_ORIGIN=https://TU_DOMINIO_VERCEL.vercel.app
+APP_BASE_URL=https://TU_DOMINIO_VERCEL.vercel.app
+
+JWT_SECRET=pon_un_secret_largo_y_unico
+JWT_REFRESH_SECRET=pon_otro_secret_largo_y_unico
+ACCESS_TOKEN_EXPIRES=15m
+REFRESH_TOKEN_EXPIRES=7d
+JWT_EXPIRES=2h
+
+DATABASE_URL=postgresql://postgres:password@containers-us-west-xxx.railway.app:5432/railway
+DB_SSL=true
+DB_SSL_REJECT_UNAUTHORIZED=false
+DB_POOL_MAX=3
+
+MP_ACCESS_TOKEN=APP_USR-xxxxxxxxxxxxxxxx
+MERCADOPAGO_PUBLIC_KEY=APP_USR-xxxxxxxxxxxxxxxx
+PAYMENT_PROVIDER=mercadopago
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu_correo@gmail.com
+SMTP_PASS=tu_app_password
+SMTP_FROM="La Lechuza Lectora <tu_correo@gmail.com>"
+```
+
+Nota:
+`DB_SSL_REJECT_UNAUTHORIZED=false` suele ser necesario en serverless con certificados gestionados. Si tu proveedor entrega CA valida y verificable, puedes subirlo a `true`.
+
+### 4. Base de datos
+
+- Vercel NO incluye PostgreSQL automaticamente.
+- Usa Neon, Supabase, Render Postgres, Railway u otro proveedor.
+- Importa tus scripts SQL (`db_lechuza.sql` y `db_lechuza_indices.sql`) en esa base.
+
+### 5. Verificaciones despues de desplegar
+
+1. `https://TU_DOMINIO/api/health` debe responder `ok: true`.
+2. `https://TU_DOMINIO/api/payments/health` debe indicar Mercado Pago configurado.
+3. Abre `https://TU_DOMINIO/` y prueba login, catalogo y checkout.
+
+### 6. Webhook de Mercado Pago
+
+En Mercado Pago configura esta URL de webhook:
+
+```text
+https://TU_DOMINIO_VERCEL.vercel.app/api/payments/webhook
+```
+
+### 7. Comandos utiles
+
+```bash
+# instalar CLI (opcional)
+npm i -g vercel
+
+# despliegue manual desde local
+vercel
+
+# produccion
+vercel --prod
+```

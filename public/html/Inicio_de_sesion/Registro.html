@@ -30,9 +30,59 @@
             z-index: 1000;
         }
 
-        .robot-box { background: #f9f9f9; border: 1px solid #dcdcdc; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; border-radius: 4px; }
-        .checkbox-wrapper { width: 24px; height: 24px; border: 2px solid #c1c1c1; cursor: pointer; background: #fff; position: relative; }
-        .checkbox-wrapper.checked::after { content: '✓'; position: absolute; color: #009b5a; font-size: 20px; top: -5px; left: 3px; }
+        .puzzle-box {
+            background: #f9f9f9;
+            border: 1px solid #dcdcdc;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .puzzle-track {
+            position: relative;
+            height: 56px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #f3e7d8, #fffaf3);
+            border: 1px solid #d7ccc8;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .puzzle-target {
+            position: absolute;
+            top: 12px;
+            width: 32px;
+            height: 32px;
+            border: 2px dashed #8d6e63;
+            border-radius: 8px;
+            background: rgba(141, 110, 99, 0.12);
+        }
+        .puzzle-piece {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #5d4037;
+            color: #fff;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+        }
+        .puzzle-slider {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .puzzle-status {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: #5d4037;
+            font-weight: 600;
+        }
+        .puzzle-status.ok {
+            color: #2e7d32;
+        }
 
         @media (max-width: 768px) {
             .registration-grid { grid-template-columns: 1fr !important; }
@@ -122,10 +172,15 @@
                         </div>
                     </div>
                     
-                    <div class="robot-box">
-                        <div class="checkbox-wrapper" id="robotCheck"></div>
-                        <span style="margin-left:10px; font-size:14px; flex-grow:1;">No soy un robot</span>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/RecaptchaLogo.svg" width="25" alt="Recaptcha">
+                    <div class="puzzle-box">
+                        <span style="font-size:14px; display:block; color:#5d4037; font-weight:700;">Verificación anti-bot (puzzle)</span>
+                        <div class="puzzle-track" id="puzzleTrack">
+                            <div class="puzzle-target" id="puzzleTarget"></div>
+                            <div class="puzzle-piece" id="puzzlePiece">🧩</div>
+                        </div>
+                        <input class="puzzle-slider" type="range" id="puzzleSlider" min="0" max="100" value="0">
+                        <div class="puzzle-status" id="puzzleStatus">Desliza la pieza hasta encajar con el contorno.</div>
+                        <button type="button" id="puzzleReset" style="margin-top:8px;background:none;border:1px solid #c9b8a8;border-radius:8px;padding:6px 10px;color:#5d4037;cursor:pointer;">Reiniciar puzzle</button>
                     </div>
                 </div>
             </form>
@@ -148,7 +203,8 @@
 
 <script src="/JS/api.js" defer></script>
 <script>
-    let robotChecked = false;
+    let puzzleSolved = false;
+    let puzzleTargetPercent = 65;
 
     // 1. Función para mostrar/ocultar contraseña
     function togglePass(id) {
@@ -181,8 +237,8 @@
             return; 
         }
 
-        if (!robotChecked) {
-            alert("Marca la casilla 'No soy un robot'.");
+        if (!puzzleSolved) {
+            alert("Completa el puzzle de verificación para continuar.");
             return;
         }
 
@@ -235,8 +291,7 @@
                 // Mostrar modal de éxito
                 document.getElementById('success-modal').style.display = 'flex';
                 this.reset(); // Limpiar el formulario
-                robotChecked = false;
-                document.getElementById('robotCheck').classList.remove('checked');
+                setupPuzzleCaptcha();
             } else {
                 alert("❌ Error: " + (result.error || result.message || "No se pudo completar el registro."));
                 btnSubmit.innerText = originalText;
@@ -249,10 +304,42 @@
         }
     });
 
-    document.getElementById('robotCheck').addEventListener('click', function() {
-        robotChecked = !robotChecked;
-        this.classList.toggle('checked', robotChecked);
-    });
+    function setupPuzzleCaptcha() {
+        const slider = document.getElementById('puzzleSlider');
+        const piece = document.getElementById('puzzlePiece');
+        const target = document.getElementById('puzzleTarget');
+        const track = document.getElementById('puzzleTrack');
+        const status = document.getElementById('puzzleStatus');
+
+        if (!slider || !piece || !target || !track || !status) return;
+
+        puzzleSolved = false;
+        slider.disabled = false;
+        slider.value = '0';
+        puzzleTargetPercent = Math.floor(Math.random() * 35) + 50;
+
+        target.style.left = `${puzzleTargetPercent}%`;
+        piece.style.left = '0%';
+        status.textContent = 'Desliza la pieza hasta encajar con el contorno.';
+        status.classList.remove('ok');
+
+        slider.oninput = () => {
+            const current = Number(slider.value);
+            piece.style.left = `${current}%`;
+
+            const tolerance = 4;
+            if (Math.abs(current - puzzleTargetPercent) <= tolerance) {
+                puzzleSolved = true;
+                slider.disabled = true;
+                piece.style.left = `${puzzleTargetPercent}%`;
+                status.textContent = 'Verificación completada.';
+                status.classList.add('ok');
+            }
+        };
+    }
+
+    document.getElementById('puzzleReset').addEventListener('click', setupPuzzleCaptcha);
+    setupPuzzleCaptcha();
 
     // Acción del botón Aceptar en el Modal
     document.getElementById('btn-modal-accept').onclick = function() {

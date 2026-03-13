@@ -81,9 +81,15 @@ function debugCodeForDev(email, purpose) {
   return entry ? entry.code : null;
 }
 
+function clearVerification(email, purpose) {
+  const key = makeKey(email, purpose);
+  verifications.delete(key);
+}
+
 module.exports = {
   createVerification,
   verifyCode,
   debugCodeForDev,
+  clearVerification,
   maskEmail
 };

@@ -1,6 +1,7 @@
 const authService = require("../services/auth.service");
 const usuariosService = require("../services/usuarios.service");
 const verificacionService = require("../services/verificacion.service");
+const emailService = require("../services/email.service");
 const { success, error } = require("../utils/response");
 const {
   validateLoginInput,
@@ -27,17 +28,36 @@ async function enviarCodigoVerificacion(req, res, next) {
     }
 
     const payload = verificacionService.createVerification(email, purpose);
+    let delivery = { delivered: false, mode: "dev-console" };
 
-    // Simulación de envío por correo (se puede integrar SMTP/Resend en esta sección).
-    console.log(`[VERIFICACION] Código para ${email} (${purpose}): ${payload.code}`);
+    try {
+      if (purpose === "password-recovery") {
+        delivery = await emailService.sendPasswordRecoveryCode({
+          to: email,
+          code: payload.code,
+          ttlSeconds: payload.ttlSeconds
+        });
+      } else {
+        delivery = await emailService.sendGenericVerificationCode({
+          to: email,
+          code: payload.code,
+          purpose,
+          ttlSeconds: payload.ttlSeconds
+        });
+      }
+    } catch (sendErr) {
+      verificacionService.clearVerification(email, purpose);
+      return error(res, sendErr.message || "No se pudo enviar el correo de verificación", 500);
+    }
 
     const responseData = {
       sent: true,
       maskedEmail: verificacionService.maskEmail(email),
-      expiresIn: payload.ttlSeconds
+      expiresIn: payload.ttlSeconds,
+      deliveryMode: delivery.mode
     };
 
-    if ((process.env.NODE_ENV || "development") !== "production") {
+    if ((process.env.NODE_ENV || "development") !== "production" && !delivery.delivered) {
       responseData.devCode = payload.code;
     }
 

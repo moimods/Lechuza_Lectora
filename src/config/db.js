@@ -1,18 +1,37 @@
 const { Pool } = require("pg");
 
-const pool = new Pool({
-  user: process.env.DB_USER || "postgres",
-  host: process.env.DB_HOST || "localhost",
-  database: process.env.DB_NAME || process.env.DB_DATABASE || "db_lechuza",
-  password: process.env.DB_PASSWORD || "password",
-  port: Number(process.env.DB_PORT || 5432),
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000
-});
+const isVercel = Boolean(process.env.VERCEL);
+const sslEnabled = String(process.env.DB_SSL || process.env.PGSSLMODE || "false").toLowerCase();
+
+const poolConfig = {
+  max: Number(process.env.DB_POOL_MAX || (isVercel ? 3 : 10)),
+  idleTimeoutMillis: Number(process.env.DB_IDLE_TIMEOUT_MS || 30000),
+  connectionTimeoutMillis: Number(process.env.DB_CONN_TIMEOUT_MS || 5000)
+};
+
+if (process.env.DATABASE_URL) {
+  poolConfig.connectionString = process.env.DATABASE_URL;
+} else {
+  poolConfig.user = process.env.DB_USER || "postgres";
+  poolConfig.host = process.env.DB_HOST || "localhost";
+  poolConfig.database = process.env.DB_NAME || process.env.DB_DATABASE || "db_lechuza";
+  poolConfig.password = process.env.DB_PASSWORD || "password";
+  poolConfig.port = Number(process.env.DB_PORT || 5432);
+}
+
+if (sslEnabled === "true" || sslEnabled === "require") {
+  poolConfig.ssl = {
+    rejectUnauthorized: String(process.env.DB_SSL_REJECT_UNAUTHORIZED || "false").toLowerCase() === "true"
+  };
+}
+
+const pool = new Pool(poolConfig);
 
 pool.on("error", (error) => {
   console.error("[DB Error]", error.message);
-  process.exit(-1);
+  if (!isVercel) {
+    process.exit(-1);
+  }
 });
 
 pool.on("connect", () => {

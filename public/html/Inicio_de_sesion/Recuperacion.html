@@ -63,7 +63,7 @@
                     <label for="codigo" style="display: block; font-weight: bold; color: #5d4037; margin-bottom: 8px;">Código de verificación:</label>
                     <div style="position: relative;">
                         <i class="fa-solid fa-key" style="position: absolute; left: 12px; top: 15px; color: #5d4037;"></i>
-                        <input type="text" id="codigo" placeholder="Ingresa el código (1234)" 
+                           <input type="text" id="codigo" placeholder="Ingresa el código de 6 dígitos" 
                                style="width: 100%; padding: 12px 12px 12px 40px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
                     </div>
                 </div>
@@ -132,7 +132,8 @@
         btnSiguiente.addEventListener('click', async () => {
             const email = inputCorreo.value.trim();
             const codigo = inputCodigo.value.trim();
-            if(!codigo) return alert("Por favor, ingresa el código de 4 dígitos.");
+            if(!codigo) return alert("Por favor, ingresa el código de 6 dígitos.");
+            if(!/^\d{6}$/.test(codigo)) return alert("El código debe tener exactamente 6 dígitos.");
             if(!email) return alert("Por favor, ingresa tu correo.");
 
             try {
