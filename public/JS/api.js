@@ -9,6 +9,7 @@
 const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || "http://localhost:3000/api";
 const TOKEN_KEY = "laLechuza_jwt_token";
 const CART_OWNER_KEY = "laLechuza_cart_owner";
+const CART_BACKUPS_KEY = "laLechuza_cart_backups";
 const LOGIN_REMINDER_KEY = "laLechuza_login_reminder";
 const SAVED_CREDENTIALS_KEY = "laLechuza_saved_credentials";
 const SESSION_TIMEOUT_MS = Number((window.APP_CONFIG && window.APP_CONFIG.SESSION_TIMEOUT_MS) || (12 * 60 * 60 * 1000));
@@ -247,6 +248,68 @@ function limpiarCarritoSesion() {
   localStorage.removeItem("laLechuzaLectoraCart");
 }
 
+function leerCarritoActual() {
+  try {
+    const primary = JSON.parse(localStorage.getItem("carrito") || "[]");
+    if (Array.isArray(primary) && primary.length > 0) return primary;
+  } catch {
+    // Ignorar parseo invalido y probar respaldo.
+  }
+
+  try {
+    const legacy = JSON.parse(localStorage.getItem("laLechuzaLectoraCart") || "[]");
+    if (Array.isArray(legacy)) return legacy;
+  } catch {
+    // Sin accion.
+  }
+
+  return [];
+}
+
+function escribirCarritoSesion(items) {
+  const safeItems = Array.isArray(items) ? items : [];
+  localStorage.setItem("carrito", JSON.stringify(safeItems));
+  localStorage.setItem("laLechuzaLectoraCart", JSON.stringify(safeItems));
+}
+
+function leerBackupsCarrito() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(CART_BACKUPS_KEY) || "{}");
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function guardarBackupsCarrito(backups) {
+  const safeBackups = backups && typeof backups === "object" ? backups : {};
+  localStorage.setItem(CART_BACKUPS_KEY, JSON.stringify(safeBackups));
+}
+
+function guardarCarritoDeOwner(ownerKey) {
+  if (!ownerKey) return;
+  const backups = leerBackupsCarrito();
+  backups[ownerKey] = leerCarritoActual();
+  guardarBackupsCarrito(backups);
+}
+
+function restaurarCarritoDeOwner(ownerKey) {
+  if (!ownerKey) {
+    limpiarCarritoSesion();
+    return;
+  }
+
+  const backups = leerBackupsCarrito();
+  const restored = backups[ownerKey];
+
+  if (Array.isArray(restored) && restored.length > 0) {
+    escribirCarritoSesion(restored);
+    return;
+  }
+
+  limpiarCarritoSesion();
+}
+
 function construirCartOwner(usuario, fallbackEmail = "") {
   const userId = String(usuario?.id_usuario || usuario?.id || "").trim();
   if (userId) return `id:${userId}`;
@@ -442,7 +505,14 @@ API.login = async (email, password, options = {}) => {
   if (token) {
     const ownerAnterior = String(localStorage.getItem(CART_OWNER_KEY) || "");
     const ownerNuevo = construirCartOwner(usuario, email);
-    if (ownerAnterior && ownerNuevo && ownerAnterior !== ownerNuevo) {
+
+    if (ownerAnterior) {
+      guardarCarritoDeOwner(ownerAnterior);
+    }
+
+    if (ownerNuevo) {
+      restaurarCarritoDeOwner(ownerNuevo);
+    } else if (ownerAnterior && ownerAnterior !== ownerNuevo) {
       limpiarCarritoSesion();
     }
 
@@ -480,6 +550,11 @@ API.login = async (email, password, options = {}) => {
  * Logout - Elimina JWT
  */
 API.logout = async () => {
+  const ownerActual = String(localStorage.getItem(CART_OWNER_KEY) || "");
+  if (ownerActual) {
+    guardarCarritoDeOwner(ownerActual);
+  }
+
   try {
     await API.post("/auth/logout", {});
   } catch (error) {
@@ -500,6 +575,12 @@ API.guardarCredenciales = guardarCredenciales;
 API.obtenerCredencialesGuardadas = obtenerCredencialesGuardadas;
 API.limpiarCredencialesGuardadas = limpiarCredencialesGuardadas;
 API.reiniciarTemporizadorSesion = reiniciarTemporizadorSesion;
+API.persistCartSnapshot = () => {
+  const ownerActual = String(localStorage.getItem(CART_OWNER_KEY) || "");
+  if (ownerActual) {
+    guardarCarritoDeOwner(ownerActual);
+  }
+};
 
 async function hidratarSesionDesdeToken() {
   if (!tieneSesion()) return;

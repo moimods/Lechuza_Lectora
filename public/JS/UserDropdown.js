@@ -56,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // A. Limpieza en el CLIENTE (Navegador)
         // Borramos TODO: IDs, Nombres, Carrito, Tokens
+        if (window.API && typeof window.API.persistCartSnapshot === 'function') {
+            window.API.persistCartSnapshot();
+        }
         localStorage.clear();
         sessionStorage.clear();
         console.log("Limpieza de LocalStorage completada.");

@@ -1,12 +1,35 @@
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
+const compression = require("compression");
 const cookieParser = require("cookie-parser");
 const routes = require("./routes");
 const notFound = require("./middlewares/not-found");
 const errorHandler = require("./middlewares/error-handler");
 
 const app = express();
+
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
+
+function resolveAllowedOrigins() {
+  const raw = String(process.env.CORS_ORIGIN || "").trim();
+  if (!raw) return true;
+
+  const origins = raw
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  if (!origins.length) return true;
+
+  return (origin, callback) => {
+    // Requests same-origin/server-to-server no traen Origin.
+    if (!origin) return callback(null, true);
+    if (origins.includes(origin)) return callback(null, true);
+    return callback(new Error("CORS: origen no permitido"));
+  };
+}
 
 app.use((req, res, next) => {
   const isHtmlRequest = req.method === "GET" && (req.path === "/" || req.path.endsWith(".html"));
@@ -22,10 +45,11 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || true,
+  origin: resolveAllowedOrigins(),
   credentials: true
 }));
 
+app.use(compression());
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

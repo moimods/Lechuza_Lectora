@@ -277,3 +277,97 @@ vercel
 # produccion
 vercel --prod
 ```
+
+## Despliegue en Railway (Recomendado para este proyecto)
+
+### 1. Preparacion ya aplicada al repo
+
+- `railway.json` configurado con:
+	- start command: `npm run start:railway`
+	- healthcheck: `/api/health`
+	- reinicio automatico en fallo
+- `src/app.js` optimizado para produccion:
+	- `trust proxy` habilitado
+	- compresion HTTP (`compression`)
+	- CORS con lista de dominios separada por comas
+- `src/config/db.js` compatible con `DATABASE_URL` y SSL.
+
+### 2. Crear el proyecto en Railway
+
+1. Entra a Railway y crea `New Project`.
+2. Selecciona `Deploy from GitHub repo` y elige este repositorio.
+3. Railway detectara Node.js automaticamente (Nixpacks).
+
+### 3. Agregar PostgreSQL en Railway
+
+1. En el mismo proyecto, agrega `New -> Database -> PostgreSQL`.
+2. Railway inyecta `DATABASE_URL` automaticamente al servicio.
+3. Importa estructura SQL en esa base:
+	 - `db_lechuza.sql`
+	 - `db_lechuza_indices.sql`
+
+### 4. Variables de entorno en Railway (Service -> Variables)
+
+Configura estas variables (ademas de `DATABASE_URL`):
+
+```env
+NODE_ENV=production
+
+# Dominio publico de Railway (te lo da Railway tras deploy)
+APP_BASE_URL=https://TU_SERVICIO.up.railway.app
+
+# Puedes poner uno o varios dominios separados por coma
+CORS_ORIGIN=https://TU_SERVICIO.up.railway.app,https://www.tu-dominio.com
+
+JWT_SECRET=pon_un_secret_largo_y_unico
+JWT_REFRESH_SECRET=pon_otro_secret_largo_y_unico
+ACCESS_TOKEN_EXPIRES=15m
+REFRESH_TOKEN_EXPIRES=7d
+JWT_EXPIRES=2h
+
+# DB SSL para proveedores cloud
+DB_SSL=true
+DB_SSL_REJECT_UNAUTHORIZED=false
+DB_POOL_MAX=3
+
+MP_ACCESS_TOKEN=APP_USR-xxxxxxxxxxxxxxxx
+MERCADOPAGO_PUBLIC_KEY=APP_USR-xxxxxxxxxxxxxxxx
+PAYMENT_PROVIDER=mercadopago
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu_correo@gmail.com
+SMTP_PASS=tu_app_password
+SMTP_FROM="La Lechuza Lectora <tu_correo@gmail.com>"
+```
+
+### 5. Configuracion de red en Railway
+
+1. En `Settings -> Networking`, genera dominio publico si aun no existe.
+2. Copia ese dominio y actualiza:
+	 - `APP_BASE_URL`
+	 - `CORS_ORIGIN`
+
+### 6. Webhook de Mercado Pago (obligatorio)
+
+Configura en Mercado Pago:
+
+```text
+https://TU_SERVICIO.up.railway.app/api/payments/webhook
+```
+
+### 7. Verificacion post-deploy
+
+1. `https://TU_SERVICIO.up.railway.app/api/health` -> debe responder `ok: true`.
+2. `https://TU_SERVICIO.up.railway.app/api/payments/health` -> Mercado Pago listo/configurado.
+3. Abre `https://TU_SERVICIO.up.railway.app/`.
+4. Prueba login, catalogo, carrito y flujo de pago.
+5. Prueba recuperacion de contraseña por correo.
+
+### 8. Troubleshooting rapido
+
+- Si responde 503 en `/api/health`: revisa `DATABASE_URL` y estado de Postgres en Railway.
+- Si falla CORS: valida `CORS_ORIGIN` exacto (incluye `https://`).
+- Si no manda correos: revisa `SMTP_*` y usa app password en Gmail.
+- Si falla retorno de pago: valida `APP_BASE_URL` y webhook en Mercado Pago.
