@@ -70,15 +70,17 @@ app.get("/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");
     return res.status(200).json({
+      status: "ok",
+      service: "Lechuza_Lectora",
       ok: true,
-      service: "la-lechuza-web",
       database: "up",
       timestamp: new Date().toISOString()
     });
   } catch (err) {
     return res.status(503).json({
+      status: "error",
+      service: "Lechuza_Lectora",
       ok: false,
-      service: "la-lechuza-web",
       database: "down",
       error: "Database unavailable"
     });

@@ -1,6 +1,7 @@
 const { Pool } = require("pg");
 
 const isVercel = Boolean(process.env.VERCEL);
+const isRailway = Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID);
 const sslEnabled = String(process.env.DB_SSL || process.env.PGSSLMODE || "false").toLowerCase();
 
 const poolConfig = {
@@ -29,7 +30,7 @@ const pool = new Pool(poolConfig);
 
 pool.on("error", (error) => {
   console.error("[DB Error]", error.message);
-  if (!isVercel) {
+  if (!isVercel && !isRailway) {
     process.exit(-1);
   }
 });

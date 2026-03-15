@@ -344,6 +344,103 @@ SMTP_PASS=tu_app_password
 SMTP_FROM="La Lechuza Lectora <tu_correo@gmail.com>"
 ```
 
+### 4.1 Bloque exacto para pegar en Railway
+
+Pega este bloque en `Service -> Variables` y reemplaza solo los valores de ejemplo:
+
+```env
+NODE_ENV=production
+PORT=3000
+
+APP_BASE_URL=https://TU_SERVICIO.up.railway.app
+CORS_ORIGIN=https://TU_SERVICIO.up.railway.app
+
+JWT_SECRET=CAMBIA_ESTE_SECRET_POR_UNO_LARGO_Y_UNICO
+JWT_REFRESH_SECRET=CAMBIA_ESTE_REFRESH_SECRET_POR_UNO_LARGO_Y_UNICO
+ACCESS_TOKEN_EXPIRES=15m
+REFRESH_TOKEN_EXPIRES=7d
+JWT_EXPIRES=2h
+
+# Railway Postgres (si agregaste plugin Postgres, suele inyectarse solo)
+DATABASE_URL=postgresql://usuario:password@host:5432/dbname
+DB_SSL=true
+DB_SSL_REJECT_UNAUTHORIZED=false
+DB_POOL_MAX=3
+
+MP_ACCESS_TOKEN=APP_USR-xxxxxxxxxxxxxxxxxxxxxxxx
+MERCADOPAGO_PUBLIC_KEY=APP_USR-xxxxxxxxxxxxxxxxxxxxxxxx
+PAYMENT_PROVIDER=mercadopago
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu_correo@gmail.com
+SMTP_PASS=tu_app_password
+SMTP_FROM="La Lechuza Lectora <tu_correo@gmail.com>"
+```
+
+Notas rapidas:
+
+- `PORT` debe existir y tu app ya escucha en `process.env.PORT` + `0.0.0.0`.
+- Si usas dominio propio, agrega ese dominio tambien en `CORS_ORIGIN` separado por coma.
+- Si Railway ya inyecto `DATABASE_URL`, no lo dupliques con otro valor manual.
+
+### 4.2 Checklist operativo (60 segundos) post-deploy
+
+Usa este orden despues de cada despliegue en Railway:
+
+1. Health principal (debe dar 200):
+
+```text
+https://TU_SERVICIO.up.railway.app/health
+```
+
+2. Health API + DB (debe dar `ok: true` y `database: up`):
+
+```text
+https://TU_SERVICIO.up.railway.app/api/health
+```
+
+3. Health pagos (debe indicar Mercado Pago configurado):
+
+```text
+https://TU_SERVICIO.up.railway.app/api/payments/health
+```
+
+4. Frontend carga:
+
+```text
+https://TU_SERVICIO.up.railway.app/
+```
+
+5. Login de usuario:
+
+- Inicia sesion normal.
+- Verifica que cargue catalogo y no haya error CORS en consola.
+
+6. Checkout rapido:
+
+- Entra a pago y confirma que redirige a Mercado Pago.
+
+7. Recuperacion por correo:
+
+- Solicita codigo en `Recuperacion.html`.
+- Confirma recepcion del correo y restablece contraseña.
+
+8. Webhook Mercado Pago:
+
+- Verifica en dashboard de Mercado Pago que webhook apunta a:
+
+```text
+https://TU_SERVICIO.up.railway.app/api/payments/webhook
+```
+
+Si falla algo, revisa en este orden:
+
+1. Variables (`APP_BASE_URL`, `CORS_ORIGIN`, `DATABASE_URL`, `MP_ACCESS_TOKEN`, `SMTP_*`).
+2. Dominio activo de Railway.
+3. Logs del servicio en Railway (`Deployments -> View Logs`).
+
 ### 5. Configuracion de red en Railway
 
 1. En `Settings -> Networking`, genera dominio publico si aun no existe.
