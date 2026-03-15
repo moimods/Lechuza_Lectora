@@ -284,12 +284,14 @@ vercel --prod
 
 - `railway.json` configurado con:
 	- start command: `npm run start:railway`
-	- healthcheck: `/api/health`
+	- healthcheck: `/health`
+	- timeout de healthcheck: `300s`
 	- reinicio automatico en fallo
 - `src/app.js` optimizado para produccion:
 	- `trust proxy` habilitado
 	- compresion HTTP (`compression`)
 	- CORS con lista de dominios separada por comas
+	- endpoint `GET /health` con verificacion de BD
 - `src/config/db.js` compatible con `DATABASE_URL` y SSL.
 
 ### 2. Crear el proyecto en Railway
@@ -348,6 +350,15 @@ SMTP_FROM="La Lechuza Lectora <tu_correo@gmail.com>"
 2. Copia ese dominio y actualiza:
 	 - `APP_BASE_URL`
 	 - `CORS_ORIGIN`
+
+### 5.1 Reglas clave de Healthcheck (Railway)
+
+1. Tu app debe escuchar SIEMPRE en la variable `PORT` inyectada por Railway.
+2. El endpoint `/health` debe responder HTTP `200` solo cuando la app esta lista.
+3. Si tienes validacion de host estricta, permite `healthcheck.railway.app`.
+4. Si necesitas mas tiempo de arranque, puedes aumentar:
+	- en UI de Railway, o
+	- con variable `RAILWAY_HEALTHCHECK_TIMEOUT_SEC`.
 
 ### 6. Webhook de Mercado Pago (obligatorio)
 

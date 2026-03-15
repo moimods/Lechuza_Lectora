@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
+const pool = require("./config/db");
 const routes = require("./routes");
 const notFound = require("./middlewares/not-found");
 const errorHandler = require("./middlewares/error-handler");
@@ -63,6 +64,25 @@ app.get("/", (req, res) => {
 
 app.get("/inicio", (req, res) => {
   res.redirect("/html/Logeado/Inicio_Logeado.html");
+});
+
+app.get("/health", async (req, res) => {
+  try {
+    await pool.query("SELECT 1");
+    return res.status(200).json({
+      ok: true,
+      service: "la-lechuza-web",
+      database: "up",
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    return res.status(503).json({
+      ok: false,
+      service: "la-lechuza-web",
+      database: "down",
+      error: "Database unavailable"
+    });
+  }
 });
 
 const pageAliases = {
