@@ -465,6 +465,33 @@ Nota:
 cmd /c npm run preflight:railway
 ```
 
+## Estructura recomendada (evolucion)
+
+Para mantener el proyecto ordenado a mediano plazo en Railway/Node, esta es la estructura recomendada:
+
+```text
+Lechuza_Lectora
+|
+|-- backend
+|   |-- server.js
+|   |-- routes
+|   |-- controllers
+|   |-- config
+|
+|-- public
+|   |-- html
+|   |-- css
+|   |-- js
+|
+|-- package.json
+|-- railway.json
+```
+
+Nota:
+
+- La estructura actual ya funciona en Railway.
+- Esta estructura se recomienda como refactor futuro para separar backend/frontend con claridad.
+
 ### 5. Configuracion de red en Railway
 
 1. En `Settings -> Networking`, genera dominio publico si aun no existe.

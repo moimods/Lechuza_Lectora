@@ -1,9 +1,9 @@
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
-const pool = require("./config/db");
 const routes = require("./routes");
 const notFound = require("./middlewares/not-found");
 const errorHandler = require("./middlewares/error-handler");
@@ -12,6 +12,7 @@ const app = express();
 
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
+app.use(helmet());
 
 function resolveAllowedOrigins() {
   const raw = String(process.env.CORS_ORIGIN || "").trim();
@@ -66,25 +67,8 @@ app.get("/inicio", (req, res) => {
   res.redirect("/html/Logeado/Inicio_Logeado.html");
 });
 
-app.get("/health", async (req, res) => {
-  try {
-    await pool.query("SELECT 1");
-    return res.status(200).json({
-      status: "ok",
-      service: "Lechuza_Lectora",
-      ok: true,
-      database: "up",
-      timestamp: new Date().toISOString()
-    });
-  } catch (err) {
-    return res.status(503).json({
-      status: "error",
-      service: "Lechuza_Lectora",
-      ok: false,
-      database: "down",
-      error: "Database unavailable"
-    });
-  }
+app.get("/health", (req, res) => {
+  return res.status(200).json({ status: "ok" });
 });
 
 const pageAliases = {
