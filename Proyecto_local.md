@@ -441,6 +441,30 @@ Si falla algo, revisa en este orden:
 2. Dominio activo de Railway.
 3. Logs del servicio en Railway (`Deployments -> View Logs`).
 
+### 4.3 Pre-flight automatico antes de push/deploy
+
+Comando:
+
+```bash
+npm run preflight:railway
+```
+
+Que valida automaticamente:
+
+- script `start` y `start:railway`
+- `server.js` raiz
+- `railway.json` con `healthcheckPath=/health`
+- variables requeridas: `MP_ACCESS_TOKEN`, `APP_BASE_URL`, `DATABASE_URL`, `JWT_SECRET`
+- respuesta local de `http://localhost:PORT/health`
+
+Nota:
+
+- Si usas PowerShell y falla `npm`, ejecuta:
+
+```powershell
+cmd /c npm run preflight:railway
+```
+
 ### 5. Configuracion de red en Railway
 
 1. En `Settings -> Networking`, genera dominio publico si aun no existe.
