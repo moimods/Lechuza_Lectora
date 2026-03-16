@@ -5,13 +5,17 @@ const isRailway = Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY
 const sslEnabled = String(process.env.DB_SSL || process.env.PGSSLMODE || "false").toLowerCase();
 
 const poolConfig = {
-  max: Number(process.env.DB_POOL_MAX || (isVercel ? 3 : 10)),
+  max: Number(process.env.DB_POOL_MAX || ((isVercel || isRailway) ? 3 : 10)),
   idleTimeoutMillis: Number(process.env.DB_IDLE_TIMEOUT_MS || 30000),
   connectionTimeoutMillis: Number(process.env.DB_CONN_TIMEOUT_MS || 5000)
 };
 
 if (process.env.DATABASE_URL) {
   poolConfig.connectionString = process.env.DATABASE_URL;
+} else if (isRailway) {
+  throw new Error(
+    "DATABASE_URL no definida en Railway. Agrega una base PostgreSQL al proyecto y vincula la variable DATABASE_URL al servicio de API."
+  );
 } else {
   poolConfig.user = process.env.DB_USER || "postgres";
   poolConfig.host = process.env.DB_HOST || "localhost";

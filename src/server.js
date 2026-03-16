@@ -3,7 +3,7 @@ require("dotenv").config();
 const app = require("./app");
 const pool = require("./config/db");
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
 
 async function iniciarServidor() {
@@ -16,16 +16,17 @@ async function iniciarServidor() {
       process.exit(1);
     }
 
-     app.listen(PORT, HOST, () => {
+    app.listen(PORT, HOST, () => {
       console.log(`
 
 LA LECHUZA LECTORA 
 
-   WEB URL:    http://${HOST}:${PORT}/                     
-   API URL:    http://${HOST}:${PORT}/api                  
- Ambiente:   ${process.env.NODE_ENV || "development"}     
- BD:         ${process.env.DB_NAME || "db_lechuza"}        
- JWT Secret: ${process.env.JWT_SECRET ? "Configurado" : "NO CONFIGURADO"} 
+WEB URL: http://localhost:${PORT}
+API URL: http://localhost:${PORT}/api
+
+Ambiente: ${process.env.NODE_ENV || "development"}
+BD: ${process.env.DB_NAME || "db_lechuza"}
+JWT Secret: ${process.env.JWT_SECRET ? "Configurado" : "NO CONFIGURADO"}
 
       `);
     });

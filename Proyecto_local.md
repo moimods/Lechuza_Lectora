@@ -530,3 +530,18 @@ https://TU_SERVICIO.up.railway.app/api/payments/webhook
 - Si falla CORS: valida `CORS_ORIGIN` exacto (incluye `https://`).
 - Si no manda correos: revisa `SMTP_*` y usa app password en Gmail.
 - Si falla retorno de pago: valida `APP_BASE_URL` y webhook en Mercado Pago.
+
+#### Error comun: `connect ECONNREFUSED ::1:5432`
+
+Este error significa que la app intento conectar a `localhost` dentro del contenedor porque no encontro `DATABASE_URL` en Railway.
+
+Solucion:
+
+1. En Railway, agrega un servicio PostgreSQL en el mismo proyecto.
+2. En el servicio API, crea variable `DATABASE_URL` usando referencia al Postgres del proyecto.
+3. Redeploy del servicio API.
+
+Validacion:
+
+- `https://TU_SERVICIO.up.railway.app/health` -> `{"status":"ok"}`
+- `https://TU_SERVICIO.up.railway.app/api/health` -> `ok: true` y `database: up`
