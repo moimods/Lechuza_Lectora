@@ -361,7 +361,8 @@ ACCESS_TOKEN_EXPIRES=15m
 REFRESH_TOKEN_EXPIRES=7d
 JWT_EXPIRES=2h
 
-# Railway Postgres (si agregaste plugin Postgres, suele inyectarse solo)
+# Railway Postgres (usar Variable Reference)
+# DATABASE_URL=${{Postgres.DATABASE_URL}}
 DATABASE_URL=postgresql://usuario:password@host:5432/dbname
 DB_SSL=true
 DB_SSL_REJECT_UNAUTHORIZED=false
@@ -383,7 +384,8 @@ Notas rapidas:
 
 - `PORT` debe existir y tu app ya escucha en `process.env.PORT` + `0.0.0.0`.
 - Si usas dominio propio, agrega ese dominio tambien en `CORS_ORIGIN` separado por coma.
-- Si Railway ya inyecto `DATABASE_URL`, no lo dupliques con otro valor manual.
+- En Railway, usa referencia `DATABASE_URL -> Postgres.DATABASE_URL`.
+- No pegues credenciales de DB manualmente cuando tengas Variable Reference disponible.
 
 ### 4.2 Checklist operativo (60 segundos) post-deploy
 

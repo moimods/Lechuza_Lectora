@@ -2,7 +2,8 @@ const { Pool } = require("pg");
 
 const isVercel = Boolean(process.env.VERCEL);
 const isRailway = Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID);
-const sslEnabled = String(process.env.DB_SSL || process.env.PGSSLMODE || "false").toLowerCase();
+const sslEnabled = String(process.env.DB_SSL || process.env.PGSSLMODE || (isRailway ? "false" : "false")).toLowerCase();
+const databaseUrl = String(process.env.DATABASE_URL || "").trim();
 
 const poolConfig = {
   max: Number(process.env.DB_POOL_MAX || ((isVercel || isRailway) ? 3 : 10)),
@@ -10,19 +11,13 @@ const poolConfig = {
   connectionTimeoutMillis: Number(process.env.DB_CONN_TIMEOUT_MS || 5000)
 };
 
-if (process.env.DATABASE_URL) {
-  poolConfig.connectionString = process.env.DATABASE_URL;
-} else if (isRailway) {
+if (!databaseUrl) {
   throw new Error(
-    "DATABASE_URL no definida en Railway. Agrega una base PostgreSQL al proyecto y vincula la variable DATABASE_URL al servicio de API."
+    "DATABASE_URL no definida. En Railway crea una Variable Reference: DATABASE_URL -> Postgres.DATABASE_URL"
   );
-} else {
-  poolConfig.user = process.env.DB_USER || "postgres";
-  poolConfig.host = process.env.DB_HOST || "localhost";
-  poolConfig.database = process.env.DB_NAME || process.env.DB_DATABASE || "db_lechuza";
-  poolConfig.password = process.env.DB_PASSWORD || "password";
-  poolConfig.port = Number(process.env.DB_PORT || 5432);
 }
+
+poolConfig.connectionString = databaseUrl;
 
 if (sslEnabled === "true" || sslEnabled === "require") {
   poolConfig.ssl = {
@@ -40,7 +35,12 @@ pool.on("error", (error) => {
 });
 
 pool.on("connect", () => {
-  console.log("✅ Conectado a PostgreSQL");
+  try {
+    const parsed = new URL(databaseUrl);
+    console.log(`✅ Conectado a PostgreSQL (${parsed.hostname}:${parsed.port || "5432"})`);
+  } catch {
+    console.log("✅ Conectado a PostgreSQL");
+  }
 });
 
 /**
